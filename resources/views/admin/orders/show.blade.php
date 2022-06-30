@@ -40,11 +40,11 @@
                 </tr>
                 <tr>
                     <th scope="col">Мастер</th>
-                    <td>{{ $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name }}</td>
+                    <td>{{ isset($order->schedule) ? $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name : '' }}</td>
                 </tr>
                 <tr>
                     <th scope="col">Дата и время начала работ</th>
-                    <td>{{ $order->schedule->start_time }}</td>
+                    <td>{{ isset($order->schedule) ? date('d.m.Y H:i', strtotime($order->schedule->start_time)) : '' }}</td>
                 </tr>
                 <tr>
                     <th scope="col">Длительность работ, часов</th>

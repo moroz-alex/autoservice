@@ -108,7 +108,12 @@ class CreateController extends Controller
 //        dump($iterations);
 //        $interval = date_diff($finish, $start);
 //        dump($interval->format('%s %F'));
+        $disableDays = array_diff([1,2,3,4,5,6,7], $workDays);
+        foreach ($disableDays as &$disableDay) {
+            if ($disableDay == 7) $disableDay = 0;
+        }
+        $disableDays = implode(',', $disableDays);
 
-        return view('admin.schedules.create', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList'));
+        return view('admin.schedules.create', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays'));
     }
 }

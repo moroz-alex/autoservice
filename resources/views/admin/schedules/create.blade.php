@@ -10,9 +10,12 @@
 @section('scriptTop')
     <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet"/>
     <link href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
 @endsection
 
 @section('content')
@@ -25,9 +28,11 @@
                     <form action="{{ route('admin.schedules.store') }}" method="post" name="schedules">
                         @csrf
                         <div class="mb-3">
-                            <label for="schedules" class="form-label">Выберите свободное время и мастера<span
+                            <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
                                     class="text-danger">*</span></label>
-                            <div id="pageInfo" class="fs-3 fw-bold"></div>
+                            <div class="fs-4 fw-bold mb-2">
+                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y') }}" readonly>
+                            </div>
                             <table class="table compact hover cell-border" id="schedules">
                                 <thead>
                                 <tr>
@@ -41,7 +46,7 @@
                                 <tbody>
                                 @foreach($timeSlots as $time => $masters)
                                     <tr>
-                                        <td hidden>{{ date('Y-m-d\TH:i', $time) }}</td>
+                                        <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
                                         <td>{{ date('H:i', $time) }}</td>
                                         @foreach($masters as $master => $state)
                                             @if($state == 'unusable')
@@ -85,7 +90,21 @@
         </div>
         <script>
             $(document).ready(function () {
-                var events = $('#events');
+                var selectedDate;
+
+                selectedDate = new DateTime($('#pageInfoDate'), {
+                    format: 'DD.MM.YYYY',
+                    i18n: {
+                        previous: 'Предыдущий',
+                        next: 'Следующий',
+                        months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                        weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+                    },
+                    minDate: new Date('{{ date('Y-m-d') }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month')) }}'),
+                    disableDays: [{{ $disableDays }}],
+                });
+
                 var table = $('#schedules').DataTable({
                     select: {
                         style: 'single',
@@ -94,56 +113,42 @@
                         info: false,
                         toggleable: false,
                     },
-                    stateSave: true,
-                    searching: false,
+                    searching: true,
                     lengthChange: false,
-                    pageLength: {{ $timeSlotsNumber }},
+                    paging: false,
                     ordering: false,
+                    info: false,
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
                         zeroRecords: 'Дата не найдена',
-                        info: 'Страница _PAGE_ из _PAGES_',
                         infoEmpty: 'Дата не найдена',
-                        infoFiltered: '(отфильтровано из _MAX_ дат)',
+                        infoFiltered: '(отфильтровано из _MAX_ записей)',
                         search: 'Поиск даты ',
-                        paginate: {
-                            "next": "Вперед",
-                            "previous": "Назад"
-                        },
                         select: {
                             rows: ""
                         },
                     },
-                    {{--                    columns: [--}}
-                    {{--                        {data: 'date'},--}}
-                    {{--                        {data: 'time'},--}}
-                    {{--                        @foreach($masters as $master)--}}
-                    {{--                            {data: {{$master->id}} },--}}
-                    {{--                        @endforeach--}}
-                    {{--                    ],--}}
-                    // dom: '<"top"p<"clear">>rt<"bottom"iflp<"clear">>',
                 });
 
-                var info = table.page.info();
-                date = new Date(table.cell(info.start, 0).data());
-                $('#pageInfo').html('Дата: ' + date.toLocaleDateString('ru-RU'));
-
                 table
-                    .on('select', function (e, dt, type, indexes) {
+                    .on('select', function () {
                         master = table.cell({selected: true}).data();
                         master = master.match(/>(\d+)</);
                         if (master !== null) master = master[1];
                         date = table.cell(table.cell({selected: true}).index().row, 0).data();
-                        date = date.replace('T', ' ');
-                        // table.cell({ selected: true }).data(master);
+
                         $("input[name='start_time']").val(date);
                         $("input[name='master_id']").val(master);
                     });
 
-                $('#schedules').on('page.dt', function () {
-                    var info = table.page.info();
-                    date = new Date(table.cell(info.start, 0).data());
-                    $('#pageInfo').html('Дата: ' + date.toLocaleDateString('ru-RU'));
+                $('#schedules_filter').hide();
+
+                selectedDate = moment($('#pageInfoDate').val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+                table.search(selectedDate).draw();
+
+                $('#pageInfoDate').on('change', function () {
+                    var searchDate = moment(this.value, 'DD.MM.YYYY').format('YYYY-MM-DD');
+                    table.search(searchDate).draw();
                 });
 
             });
