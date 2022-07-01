@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Category;
+namespace App\Http\Controllers\Admin\Schedule;
 
+use App\Facades\ScheduleService;
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Task;
-use Illuminate\Http\Request;
+use App\Models\Order;
 
 class EditController extends Controller
 {
-    public function __invoke(Category $category)
+    public function __invoke(Order $order)
     {
-        return  view('admin.categories.edit', compact('category'));
+        $mastersList = ScheduleService::getMastersList($order);
+        $timeSlots = ScheduleService::getTimeSlots($order, $mastersList);
+        $timeSlotsNumber = ScheduleService::getTimeSlotsNumber();
+        $disableDays = ScheduleService::getDisabledDays();
+
+        return view('admin.schedules.edit', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays'));
     }
 }

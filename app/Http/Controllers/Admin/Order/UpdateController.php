@@ -43,6 +43,6 @@ class UpdateController extends Controller
         $order->update($orderData);
         $order->tasks()->sync($orderTasks);
 
-        return redirect()->route('admin.orders.index');
+        return redirect()->route('admin.schedules.edit', compact('order'));
     }
 }

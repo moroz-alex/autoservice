@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Services;
 
 use App\Components\ImportDataClient;
 use GuzzleHttp\Exception\ClientException;

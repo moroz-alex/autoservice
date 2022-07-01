@@ -24,7 +24,6 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-//        dd($this->request);
         return [
             'order_id'=>'required|integer|exists:orders,id',
             'start_time'=>'required|date_format:Y-m-d H:i',

@@ -1,18 +1,21 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование мастера')
-@section('header', 'Редактировать мастера ' . $master->first_name . ' ' . $master->last_name)
+@section('title', 'МойАвтосервис : Редактирование расписания заказа')
+@section('header', 'Редактировать расписание заказа ' . $order->id)
+@section('breadcrumb', 'Редактирования расписания заказа')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.masters.index') }}">Мастера</a></li>
+    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
 @endsection
-@section('breadcrumb', 'Редактирование мастера')
 
 @section('scriptTop')
-    <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/select/1.4.0/css/select.dataTables.min.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/datetime/1.1.2/css/dataTables.dateTime.min.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
-    <script src="{{ asset('/js/jquery.maskedinput.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/datetime/1.1.2/js/dataTables.dateTime.min.js"></script>
 @endsection
 
 @section('content')
@@ -21,112 +24,148 @@
             @include('admin.includes.header')
 
             <div class="row">
-                <div class="col-12">
-                    <form action="{{ route('admin.masters.update', $master->id) }}" method="post">
+                <div class="col-12 mb-5">
+                    <form action="{{ route('admin.schedules.update', $order->id) }}" method="post" name="schedules">
                         @csrf
                         @method('patch')
                         <div class="mb-3">
-                            <label for="first_name" class="form-label">Имя <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="first_name" id="first_name"
-                                   placeholder="Введите имя мастера"
-                                   value="{{ !empty(old('first_name')) ? old('first_name') : $master->first_name }}">
-                            @error('first_name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="last_name" class="form-label">Фамилия</label>
-                            <input type="text" class="form-control" name="last_name" id="last_name"
-                                   placeholder="Введите фамилию мастера"
-                                   value="{{ !empty(old('last_name')) ? old('last_name') : $master->last_name }}">
-                            @error('last_name')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="tasks" class="form-label">Выполняемые работы</label>
-                            <table class="table" id="tasks">
+                            <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
+                                    class="text-danger">*</span></label>
+                            <div class="fs-4 fw-bold mb-2">
+                                Дата: <input type="text" id="pageInfoDate" name="date"
+                                             value="{{ isset($order->schedule) ? date('d.m.Y', strtotime($order->schedule->start_time)) : date('d.m.Y') }}"
+                                             readonly>
+                            </div>
+                            <table class="table compact hover cell-border" id="schedules">
                                 <thead>
                                 <tr>
-                                    <th scope="col" style="width: 4em">ID</th>
-                                    <th scope="col">Категория</th>
-                                    <th scope="col">Работа</th>
+                                    <th scope="col" style="width: 5em" hidden>Дата</th>
+                                    <th scope="col" style="width: 5em">Время</th>
+                                    @foreach($mastersList as $master)
+                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
+                                    @endforeach
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($tasks as $task)
-                                    <tr class="{{ is_array($master->tasks->pluck('id')->toArray()) && in_array($task->id, $master->tasks->pluck('id')->toArray()) ? ' selected' : '' }}">
-                                        <td>{{ $task->id }}</td>
-                                        <td>{{ $task->category->title }}</td>
-                                        <td>{{ $task->title }}</td>
+                                @foreach($timeSlots as $time => $masters)
+                                    <tr>
+                                        <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
+                                        <td>{{ date('H:i', $time) }}</td>
+                                        @foreach($masters as $master => $state)
+                                            @if($state == 'unusable')
+                                                <td class="protected
+                                                    @if(isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master)
+                                                    bg-danger text-white">{{ date('H:i', $time) }}
+                                                    НЕКОРРЕКТНОЕ ВРЕМЯ
+                                                    @else
+                                                        table-secondary text-muted">{{ date('H:i', $time) }}
+                                                        Недоступно
+                                                    @endif
+                                                </td>
+                                            @elseif($state == 'used')
+                                                <td class="table-warning protected">{{ date('H:i', $time) }}
+                                                    Занято
+                                                </td>
+                                            @else
+                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }}"><span hidden>{{ $master }}</span></td>
+                                            @endif
+                                        @endforeach
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
-                            <div id="taskId">
-                            </div>
-
-                            @error('task_ids')
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
+                            @error('order_id')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <input type="hidden" name="start_time">
+                            @error('start_time')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <input type="hidden" name="duration" value="{{ $order->duration }}">
+                            @error('duration')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                            <input type="hidden" name="master_id">
+                            @error('master_id')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('admin.masters.index') }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
             <!-- /.row -->
+
         </div>
         <script>
-            var taskIds;
             $(document).ready(function () {
-                var events = $('#events');
-                var table = $('#tasks').DataTable({
-                    select: {
-                        style: 'multi+shift'
+                var selectedDate;
+
+                selectedDate = new DateTime($('#pageInfoDate'), {
+                    format: 'DD.MM.YYYY',
+                    i18n: {
+                        previous: 'Предыдущий',
+                        next: 'Следующий',
+                        months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                        weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                     },
+                    minDate: new Date('{{ date('Y-m-d') }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month')) }}'),
+                    disableDays: [{{ $disableDays }}],
+                });
 
-                    order: [[1, 'asc']],
-
+                var table = $('#schedules').DataTable({
+                    select: {
+                        style: 'single',
+                        selector: 'td:not(:nth-child(2),.protected)',
+                        items: 'cell',
+                        info: false,
+                        toggleable: false,
+                    },
+                    searching: true,
+                    lengthChange: false,
+                    paging: false,
+                    ordering: false,
+                    info: false,
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Работ не найдено',
-                        info: 'Страница _PAGE_ из _PAGES_',
-                        infoEmpty: 'Работ не найдено',
-                        infoFiltered: '(отфильтровано из _MAX_ работ)',
-                        search: 'Поиск работы или категории ',
-                        paginate: {
-                            "next": "Вперед",
-                            "previous": "Назад"
-                        },
+                        zeroRecords: 'Свободного времени в выбранную дату не найдено. Выберите другую дату.',
+                        infoEmpty: 'Дата не найдена',
+                        infoFiltered: '(отфильтровано из _MAX_ записей)',
+                        search: 'Поиск даты ',
                         select: {
                             rows: ""
                         },
                     },
-                    columns: [
-                        {data: 'id'},
-                        {data: 'category'},
-                        {data: 'title'},
-                    ]
                 });
 
-                table.rows( '.selected' ).select();
+                table.cells('.selected').select();
 
                 table
-                    .on('select', function (e, dt, type, indexes) {
-                        taskIds = table.rows('.selected').data().pluck('id').toArray();
-                    })
-                    .on('deselect', function (e, dt, type, indexes) {
-                        taskIds = table.rows('.selected').data().pluck('id').toArray();
+                    .on('select', function () {
+                        master = table.cell({selected: true}).data();
+                        master = master.match(/>(\d+)</);
+                        if (master !== null) master = master[1];
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
+
+                        $("input[name='start_time']").val(date);
+                        $("input[name='master_id']").val(master);
                     });
-            });
-            $("form").submit(function () {
-                var res = "";
-                taskIds.forEach(function(item, i, taskIds) {
-                    res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
+
+                $('#schedules_filter').hide();
+
+                selectedDate = moment($('#pageInfoDate').val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+                table.search(selectedDate).draw();
+
+                $('#pageInfoDate').on('change', function () {
+                    var searchDate = moment(this.value, 'DD.MM.YYYY').format('YYYY-MM-DD');
+                    table.search(searchDate).draw();
                 });
-                document.getElementById('taskId').innerHTML = res;
+
             });
+
         </script>
     </main>
     @include('admin.includes.footer')
