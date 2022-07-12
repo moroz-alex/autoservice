@@ -117,7 +117,10 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить</button>
+                        <div class="alert alert-warning" role="alert">
+                            Внимание! После изменения заказа обязательно проверьте расписание!
+                        </div>
+                        <button type="submit" class="btn btn-primary">Обновить заказ и проверить расписание</button>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>

@@ -40,10 +40,9 @@
                             {{ $order->price }}
                         </td>
                         <td style="color: #E0E0E0">
-                            <i class="fa-solid fa-calendar-check me-2 {{ isset($order->schedule->start_time) ? 'text-success' : '' }}" title="Заказ{{ isset($order->schedule->start_time) ? '' : ' не' }} добавлен в расписание"></i>
+                            <i class="fa-solid fa-calendar-check me-2 {{ isset($order->schedule->start_time) ? ($order->is_schedule_errors ? 'text-danger' : 'text-success') : '' }}" title="Заказ{{ isset($order->schedule->start_time) ? '' : ' не' }} добавлен в расписание{{ $order->is_schedule_errors ? '. Имеется ошибка!' : '' }}"></i>
                             <i class="fa-solid fa-circle-check me-2 {{ $order->is_done ? 'text-success' : '' }}" title="Заказ{{ $order->is_done ? '' : ' не' }} выполен"></i>
                             <i class="fa-solid fa-sack-dollar {{ $order->is_paid ? 'text-success' : '' }}" title="Заказ{{ $order->is_paid ? '' : ' не' }} оплачен"></i>
-
                         </td>
                         <td>
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>

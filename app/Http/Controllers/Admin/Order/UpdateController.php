@@ -14,7 +14,6 @@ class UpdateController extends Controller
         $data = $request->validated();
         $order = OrderService::update($data, $order);
 
-
         return redirect()->route('admin.schedules.edit', compact('order'));
     }
 }

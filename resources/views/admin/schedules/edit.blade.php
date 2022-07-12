@@ -112,7 +112,7 @@
                         weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                     },
                     minDate: new Date('{{ date('Y-m-d') }}'),
-                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month')) }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month -1 day')) }}'),
                     disableDays: [{{ $disableDays }}],
                 });
 

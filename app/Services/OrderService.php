@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\Task;
 use Illuminate\Support\Facades\DB;
+use App\Facades\ScheduleService;
 
 class OrderService
 {
@@ -40,6 +41,7 @@ class OrderService
             $orderData = $this->createOrderData($data);
 
             $order = Order::create($orderData);
+;
             if (isset($data['orderTasks'])) {
                 $order->tasks()->attach($data['orderTasks']);
             }
@@ -83,7 +85,7 @@ class OrderService
 
     private function createOrderData($data)
     {
-        $orderData = [
+        return [
             'car_id' => $data['car_id'],
             'duration' => $data['orderDuration'],
             'price' => $data['orderPrice'],
@@ -92,7 +94,6 @@ class OrderService
             'is_done' => '0',
             'is_paid' => '0',
         ];
-        return $orderData;
     }
 
     private function getOrderTasks($data)
@@ -109,5 +110,13 @@ class OrderService
             $data['orderDuration'] += $data['task_qts'][$index] * $data['task_drs'][$index];
         }
         return $data;
+    }
+
+    public function checkOrdersSchedule($orders)
+    {
+        foreach ($orders as $order) {
+            $order->is_schedule_errors = ScheduleService::checkOrderScheduleFit($order);
+        }
+        return $orders;
     }
 }
