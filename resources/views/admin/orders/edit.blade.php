@@ -118,7 +118,7 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ url()->previous() }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>

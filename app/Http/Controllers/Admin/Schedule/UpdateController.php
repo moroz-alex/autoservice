@@ -1,17 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Category;
+namespace App\Http\Controllers\Admin\Schedule;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Category\UpdateRequest;
-use App\Models\Category;
+use App\Http\Requests\Admin\Schedule\UpdateRequest;
+use App\Models\Order;
+use App\Models\Schedule;
 
 class UpdateController extends Controller
 {
-    public function __invoke(UpdateRequest $request, Category $category)
+    public function __invoke(UpdateRequest $request, Order $order)
     {
         $data = $request->validated();
-        $category->update($data);
-        return  redirect()->route('admin.categories.index');
+        $schedule = Schedule::where('order_id', $order->id)->first();
+
+        if (isset($schedule)) {
+            $schedule->update($data);
+        } else {
+            Schedule::create($data);
+        }
+        return  redirect()->route('admin.orders.index');
     }
 }

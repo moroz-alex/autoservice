@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Order;
+namespace App\Http\Requests\Admin\Schedule;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -25,30 +25,26 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'car_id'=>'required|integer|exists:cars,id',
-            'task_ids'=>'array|required',
-            'task_ids.*'=>'integer|exists:tasks,id',
-            'task_qts'=>'array|required',
-            'task_qts.*'=>'integer|min:1',
-            'task_prs'=>'array|required',
-            'task_prs.*'=>'integer|min:1',
-            'task_drs'=>'array|required',
-            'task_drs.*'=>'integer|min:1',
+            'order_id' => 'required|integer|exists:orders,id',
+            'start_time' => 'required|date_format:Y-m-d H:i',
+            'duration' => 'required|integer',
+            'master_id' => 'required|integer|exists:masters,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'car_id.required' => 'Необходимо выбрать автомобиль',
-            'car_id.integer' => 'Некорректный ID автомобиля',
-            'car_id.exists' => 'Несуществующий ID автомобиля',
-            'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
-            'task_ids.*.exists' => 'Некорретный ID работы',
-            'task_ids.*.integer' => 'Некорретный ID работы',
-            'task_qts.required' => 'Необходимо указать количество работ',
-            'task_qts.*.integer' => 'Некорретное количество работ',
-            'task_qts.*.min' => 'Некорретное количество работ',
+            'order_id.required' => 'Отсутствует ID заказа',
+            'order_id.integer' => 'Некорректный ID заказа',
+            'order_id.exists' => 'Несуществующий ID заказа',
+            'start_time.required' => 'Необходимо выбрать дату и время начала работ',
+            'start_time.date_format' => 'Некорректные дата и время начала работ',
+            'duration.required' => 'Отсутствует длительность заказа',
+            'duration.integer' => 'Некорректная длительность заказа',
+            'master_id.required' => 'Отсутствует ID мастера',
+            'master_id.integer' => 'Некорректный ID мастера',
+            'master_id.exists' => 'Несуществующий ID мастера',
         ];
     }
 }

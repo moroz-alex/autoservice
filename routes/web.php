@@ -98,13 +98,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
     });
 
     Route::group(['namespace' => 'Schedule', 'prefix' => 'schedules'], function () {
-//        Route::get('/', 'IndexController')->name('admin.schedules.index');
         Route::get('/create/{order}', 'CreateController')->name('admin.schedules.create');
         Route::post('/', 'StoreController')->name('admin.schedules.store');
-//        Route::get('/{schedule}', 'ShowController')->name('admin.schedules.show');
-//        Route::get('/{schedule}/edit', 'EditController')->name('admin.schedules.edit');
-//        Route::patch('/{schedule}', 'UpdateController')->name('admin.schedules.update');
-//        Route::delete('/{schedule}', 'DestroyController')->name('admin.schedules.destroy');
+//        Route::get('/', 'ShowController')->name('admin.schedules.show');
+        Route::get('/edit/{order}', 'EditController')->name('admin.schedules.edit');
+        Route::patch('/{order}', 'UpdateController')->name('admin.schedules.update');
     });
 });
 

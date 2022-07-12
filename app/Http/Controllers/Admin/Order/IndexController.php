@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Order;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Database\Eloquent;
 
 
 class IndexController extends Controller
