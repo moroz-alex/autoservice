@@ -194,7 +194,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Providers\ScheduleServiProvider::class,
+        App\Providers\ScheduleServiceProvider::class,
+        App\Providers\OrderServiceProvider::class,
 
     ],
 
@@ -212,6 +213,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
          'ScheduleService' => App\Facades\ScheduleService::class,
+         'OrderService' => App\Facades\OrderService::class,
     ])->toArray(),
 
 ];

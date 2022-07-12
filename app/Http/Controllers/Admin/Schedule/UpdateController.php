@@ -13,7 +13,7 @@ class UpdateController extends Controller
     {
         $data = $request->validated();
         $schedule = Schedule::where('order_id', $order->id)->first();
-//        dd($schedule);
+
         if (isset($schedule)) {
             $schedule->update($data);
         } else {
