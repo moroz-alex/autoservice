@@ -142,16 +142,11 @@
                 });
 
                 table.cells('.selected').select();
+                getTableData();
 
                 table
                     .on('select', function () {
-                        master = table.cell({selected: true}).data();
-                        master = master.match(/>(\d+)</);
-                        if (master !== null) master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
-
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
+                        getTableData();
                     });
 
                 $('#schedules_filter').hide();
@@ -163,6 +158,18 @@
                     var searchDate = moment(this.value, 'DD.MM.YYYY').format('YYYY-MM-DD');
                     table.search(searchDate).draw();
                 });
+
+                function getTableData() {
+                    master = table.cell({selected: true}).data();
+                    if (master) {
+                        master = master.match(/>(\d+)</);
+                        master = master[1];
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
+
+                        $("input[name='start_time']").val(date);
+                        $("input[name='master_id']").val(master);
+                    }
+                }
 
             });
 

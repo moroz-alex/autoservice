@@ -207,6 +207,7 @@
                         table_tasks.cell(this).data(data);
                     } else if (name == 'task_drs') {
                         var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val();
+                        data = data.replace(" selected", "");
                         data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
                         table_tasks.cell(this).data(data);
                     }
