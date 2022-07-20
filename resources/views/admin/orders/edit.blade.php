@@ -117,6 +117,19 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <h3>Статус заказа</h3>
+                        <div class="mb-3">
+                            <div>
+                                <input type="hidden" name="is_done" value="0">
+                                <input type="checkbox" {{ $order->is_done ? 'checked' : '' }} id="is_done" name="is_done" value="1"/>
+                                <label for="is_done" class="form-label">Заказ выполен</label>
+                            </div>
+                            <div>
+                                <input type="hidden" name="is_paid" value="0">
+                                <input type="checkbox" {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid"/>
+                                <label for="is_paid" class="form-label">Заказ оплачен</label>
+                            </div>
+                        </div>
                         <div class="alert alert-warning" role="alert">
                             Внимание! После изменения заказа обязательно проверьте расписание!
                         </div>

@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\OrderTask;
 use App\Models\Task;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use App\Facades\ScheduleService;
 
@@ -40,8 +42,7 @@ class OrderService
 
             $orderData = $this->createOrderData($data);
 
-            $order = Order::create($orderData);
-;
+            $order = Order::create($orderData);;
             if (isset($data['orderTasks'])) {
                 $order->tasks()->attach($data['orderTasks']);
             }
@@ -69,6 +70,7 @@ class OrderService
             }
 
             $orderData = $this->createOrderData($data);
+            $order->tasksChanged = $this->checkOrderTasksChanges($data, $order);
 
             $order->update($orderData);
             $order->tasks()->sync($data['orderTasks']);
@@ -91,7 +93,7 @@ class OrderService
             'price' => $data['orderPrice'],
             'is_confirmed' => '0',
             'user_id' => '2',  // Заменить на текущего менеджера
-            'is_done' => '0',
+            'is_done' => $data['is_done'] ?? '0',
             'is_paid' => '0',
         ];
     }
@@ -110,6 +112,23 @@ class OrderService
             $data['orderDuration'] += $data['task_qts'][$index] * $data['task_drs'][$index];
         }
         return $data;
+    }
+
+    public function checkOrderTasksChanges($data, $order)
+    {
+        $orderOldData = OrderTask::select('task_id', 'quantity', 'duration', 'price')->where('order_id', $order->id)->get()->toArray();
+        foreach ($data['orderTasks'] as $id =>$task) {
+            $tasks[] = [
+                'task_id' => $id,
+                'quantity' => (int)$task['quantity'],
+                'duration' => (int)$task['duration'],
+                'price' => (int)$task['price'],
+                ];
+        }
+        sort($tasks);
+        sort($orderOldData);
+
+        return $tasks != $orderOldData;
     }
 
     public function checkOrdersSchedule($orders)

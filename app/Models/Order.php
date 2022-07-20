@@ -11,6 +11,8 @@ class Order extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public $tasksChanged;
+
     protected $table = 'orders';
     protected $guarded = false;
 
