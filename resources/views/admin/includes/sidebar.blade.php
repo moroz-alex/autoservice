@@ -5,6 +5,10 @@
 {{--                <div class="sb-nav-link-icon" style="width: 1em"><i class="fas fa-tachometer-alt"></i></div>--}}
 {{--                Панель--}}
 {{--            </a>--}}
+            <a class="nav-link" href="{{ route('admin.schedules.index') }}">
+                <div class="sb-nav-link-icon text-center" style="width: 1em"><i class="fa-solid fa-calendar-days"></i></div>
+                Расписание
+            </a>
             <a class="nav-link" href="{{ route('admin.orders.index') }}">
                 <div class="sb-nav-link-icon text-center" style="width: 1em"><i class="fa-solid fa-clipboard-list"></i></div>
                 Заказы
@@ -14,7 +18,7 @@
                 Работы
             </a>
             <a class="nav-link" href="{{ route('admin.categories.index') }}">
-                <div class="sb-nav-link-icon text-center" style="width: 1em"><i class="fa-solid fa-clipboard-list"></i></div>
+                <div class="sb-nav-link-icon text-center" style="width: 1em"><i class="fa-solid fa-table-list"></i></div>
                 Категории работ
             </a>
             <a class="nav-link" href="{{ route('admin.masters.index') }}">

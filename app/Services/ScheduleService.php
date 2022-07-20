@@ -22,9 +22,9 @@ class ScheduleService
         return $this->settings;
     }
 
-    public function getTimeSlots($order, $mastersList)
+    public function getTimeSlots($order, $mastersList, $startDate = null)
     {
-        $startDate = date('Y-m-d');
+        $startDate = $startDate ?? date('Y-m-d');
         $endDate = date('Y-m-d', strtotime('+1 month'));
         $scheduleTasks = Schedule::where('start_time', '<=', $endDate)->where('start_time', '>=', $startDate)->get();
 
@@ -45,12 +45,22 @@ class ScheduleService
     public function getMastersList($order)
     {
         $mastersListAll = Master::all();
+        $orderTasksIds = $order->tasks()->pluck('task_id')->toArray();
         foreach ($mastersListAll as $master) {
-            if (empty(array_diff($order->tasks()->pluck('task_id')->toArray(), $master->tasks->pluck('id')->toArray()))) {
+            if (empty(array_diff($orderTasksIds, $master->tasks->pluck('id')->toArray()))) {
                 $mastersList[] = $master;
             }
         }
         return $mastersList;
+    }
+
+    public function getAllMasters()
+    {
+        $mastersList = Master::all();
+        foreach ($mastersList as $master) {
+            $mastersListArray[] = $master;
+        }
+        return $mastersListArray;
     }
 
     public function getDisabledDays()
@@ -82,13 +92,14 @@ class ScheduleService
 
     private function fillScheduleUsedTimeSlots($timeSlots, $scheduleTasks, $mastersList, $order)
     {
+        $orderId = $order->id ?? 0;
         $mastersListIds = array_column($mastersList, 'id');
         foreach ($scheduleTasks as $task) {
             $taskStart = strtotime($task->start_time);
             $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
-            if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $order->id) {
-                $timeSlots[$taskStart][$task->master_id] = 'used';
-                for ($time = $taskStart; $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
+            if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
+                $timeSlots[$taskStart][$task->master_id] = $task->order_id;
+                for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
                     $timeSlots[$time][$task->master_id] = 'used';
                 }
             }
@@ -98,7 +109,8 @@ class ScheduleService
 
     private function getScheduleFreeTimeSlots($timeSlots, $mastersList, $order)
     {
-        $orderTimeSlotsNumber = $order->duration / $this->timeSlotSize;
+        $orderDuration = $order->duration ?? $this->timeSlotSize;
+        $orderTimeSlotsNumber = $orderDuration / $this->timeSlotSize;
         $timeNow = strtotime('now');
         foreach ($mastersList as $master) {
             $timeSlotsKeys = array_keys($timeSlots);
@@ -112,7 +124,7 @@ class ScheduleService
                     while (isset($timeSlots[$time][$master->id]) && $timeSlots[$time][$master->id] == 'unusable') {
                         $count++;
                         if ($count >= $orderTimeSlotsNumber) {
-                            $startTime = strtotime('-' . $order->duration - $this->timeSlotSize . ' minutes', $time);
+                            $startTime = strtotime('-' . $orderDuration - $this->timeSlotSize . ' minutes', $time);
                             $timeSlots[$startTime][$master->id] = 'free';
                         }
                         $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time);
@@ -131,6 +143,7 @@ class ScheduleService
         return $timeSlots;
     }
 
+
     public function checkOrderScheduleFit($order)
     {
         if (!isset($order->schedule)) return 0;
@@ -148,16 +161,11 @@ class ScheduleService
 
         $timeSlots = $this->getScheduleFreeTimeSlots($timeSlots, $mastersList, $order);
 
-//        foreach ($timeSlots as $time => $master) {
-//            echo date('Y-m-d H:i:s', $time) . ' - ' . $master[$order->schedule->master_id] . '<br>';
-//        }
-//        dd($timeSlots[strtotime($order->schedule->start_time)][$order->schedule->master_id]);
         if ($timeSlots[strtotime($order->schedule->start_time)][$order->schedule->master_id] != 'free'
             && isset($order->schedule) && $order->schedule->start_time > date('Y-m-d H:i:s')) {
             return 1;
         } else {
             return 0;
         }
-//        dd($timeSlots, $scheduleTasks);
     }
 }

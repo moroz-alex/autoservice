@@ -14,11 +14,13 @@ class Order extends Model
     protected $table = 'orders';
     protected $guarded = false;
 
+    protected $with = ['tasks', 'car', 'schedule'];
+
     public function car() {
         return $this->belongsTo(Car::class, 'car_id', 'id');
     }
 
-    public  function tasks() {
+    public function tasks() {
         return $this->belongsToMany(Task::class, 'order_tasks', 'order_id', 'task_id')->withPivot('quantity', 'duration', 'price');
     }
 

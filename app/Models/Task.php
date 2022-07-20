@@ -14,6 +14,8 @@ class Task extends Model
     protected $table = 'tasks';
     protected $guarded = false;
 
+    protected $with = ['category'];
+
     const TIME_INTERVALS = [
         '15 минут' => 15,
         '30 минут' => 30,

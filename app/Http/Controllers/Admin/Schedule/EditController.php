@@ -14,7 +14,7 @@ class EditController extends Controller
         $timeSlots = ScheduleService::getTimeSlots($order, $mastersList);
         $timeSlotsNumber = ScheduleService::getTimeSlotsNumber();
         $disableDays = ScheduleService::getDisabledDays();
-        ScheduleService::checkOrderScheduleFit($order);
+
         return view('admin.schedules.edit', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays'));
     }
 }

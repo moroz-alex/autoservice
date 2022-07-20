@@ -62,7 +62,7 @@
                                                         Недоступно
                                                     @endif
                                                 </td>
-                                            @elseif($state == 'used')
+                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
                                                 <td class="table-warning protected">{{ date('H:i', $time) }}
                                                     Занято
                                                 </td>
