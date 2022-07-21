@@ -4,12 +4,18 @@
 @section('header', 'Типовые работы')
 @section('breadcrumb', 'Типовые работы')
 
+@section('scriptTop')
+    <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+@endsection
+
 @section('content')
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-            <a href="{{ route('admin.tasks.create') }}" class="btn btn-primary">Добавить работу</a>
-            <table class="table">
+            <a href="{{ route('admin.tasks.create') }}" class="btn btn-primary mb-3">Добавить работу</a>
+            <table class="table" id="tasks">
                 <thead>
                 <tr>
                     <th scope="col" style="width: 4em">Арт.</th>
@@ -45,8 +51,25 @@
                 @endforeach
                 </tbody>
             </table>
-
         </div>
+        <script>
+            $(document).ready(function () {
+                $('#tasks').DataTable({
+                    language: {
+                        lengthMenu: 'Показать _MENU_ строк',
+                        zeroRecords: 'Работ не найдено',
+                        info: 'Страница _PAGE_ из _PAGES_',
+                        infoEmpty: 'Работ не найдено',
+                        infoFiltered: '(отфильтровано из _MAX_ работ)',
+                        search: 'Поиск работы ',
+                        paginate: {
+                            "next": "Вперед",
+                            "previous": "Назад"
+                        },
+                    },
+                });
+            });
+        </script>
     </main>
     @include('admin.includes.footer')
 @endsection
