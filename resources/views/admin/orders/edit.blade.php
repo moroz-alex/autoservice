@@ -118,22 +118,22 @@
                             @enderror
                         </div>
                         <h3>Статус заказа</h3>
-                        <div class="mb-3">
-                            <div>
+                        <div class="mb-5">
+                            <div class="form-check form-switch mt-2">
                                 <input type="hidden" name="is_done" value="0">
-                                <input type="checkbox" {{ $order->is_done ? 'checked' : '' }} id="is_done" name="is_done" value="1"/>
-                                <label for="is_done" class="form-label">Заказ выполен</label>
+                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_done ? 'checked' : '' }} id="is_done" name="is_done" value="1"/>
+                                <label for="is_done" class="form-check-label">Заказ выполен</label>
                             </div>
-                            <div>
+                            <div class="form-check form-switch mt-2">
                                 <input type="hidden" name="is_paid" value="0">
-                                <input type="checkbox" {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid"/>
-                                <label for="is_paid" class="form-label">Заказ оплачен</label>
+                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid" value="1"/>
+                                <label for="is_paid" class="form-check-label">Заказ оплачен</label>
                             </div>
                         </div>
-                        <div class="alert alert-warning" role="alert">
-                            Внимание! После изменения заказа обязательно проверьте расписание!
+                        <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert" style="display: none">
+                            Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить заказ и проверить расписание</button>
+                        <button type="submit" class="btn btn-primary">Обновить заказ</button>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
@@ -247,9 +247,11 @@
                 table_tasks
                     .on('select', function (e, dt, type, indexes) {
                         getTableTasksData();
+                        $('#tasks_change_alert').show('fast');
                     })
                     .on('deselect', function (e, dt, type, indexes) {
                         getTableTasksData();
+                        $('#tasks_change_alert').show('fast');
                     })
 
                 function getTableTasksData() {

@@ -94,7 +94,7 @@ class OrderService
             'is_confirmed' => '0',
             'user_id' => '2',  // Заменить на текущего менеджера
             'is_done' => $data['is_done'] ?? '0',
-            'is_paid' => '0',
+            'is_paid' => $data['is_paid'] ?? '0',
         ];
     }
 

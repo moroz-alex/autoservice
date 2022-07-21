@@ -13,7 +13,8 @@ class UpdateController extends Controller
     {
         $data = $request->validated();
         $order = OrderService::update($data, $order);
-        if ($order->tasksChanged) {
+
+        if ($order->tasksChanged || !isset($order->schedule->start_time)) {
             return redirect()->route('admin.schedules.edit', compact('order'));
         } else {
             return redirect()->route('admin.orders.index');

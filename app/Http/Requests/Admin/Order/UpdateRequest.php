@@ -28,6 +28,7 @@ class UpdateRequest extends FormRequest
         return [
             'car_id'=>'required|integer|exists:cars,id',
             'is_done'=>'boolean',
+            'is_paid'=>'boolean',
             'task_ids'=>['array', 'required', new HasMaster],
             'task_ids.*'=>'integer|exists:tasks,id',
             'task_qts'=>'array|required',
@@ -45,7 +46,8 @@ class UpdateRequest extends FormRequest
             'car_id.required' => 'Необходимо выбрать автомобиль',
             'car_id.integer' => 'Некорректный ID автомобиля',
             'car_id.exists' => 'Несуществующий ID автомобиля',
-            'is_done'=>'Некорректный статус выполнения работы',
+            'is_done'=>'Некорректный статус готовности заказа',
+            'is_paid'=>'Некорректный статус оплаты заказа',
             'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
             'task_ids.*.exists' => 'Некорретный ID работы',
             'task_ids.*.integer' => 'Некорретный ID работы',
