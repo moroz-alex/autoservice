@@ -4,22 +4,44 @@
 @section('header', 'Заказы')
 @section('breadcrumb', 'Заказы')
 
+@section('scriptTop')
+    <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
+@endsection
+
 @section('content')
     <main>
         <div class="container-fluid px-4 mb-5">
             @include('admin.includes.header')
-            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">Добавить заказ</a>
-            <table class="table">
+            <form class="row mb-3" action="" method="get">
+                <h5>Показать заказы (с - по)</h5>
+                <div class="col-1 col-md-3 col-sm-4 form-group">
+                    <input type="date" class="form-control" name="date_from" value="{{ $dates['date_from'] }}">
+                </div>
+                <div class="col-1 col-md-3 col-sm-4 form-group">
+                    <input type="date" class="form-control" name="date_to" value="{{ $dates['date_to'] }}">
+                </div>
+                <div class="col-1 col-md-3 col-sm-4 form-group">
+                    <button type="submit" class="btn btn-secondary">Показать</button>
+                </div>
+            </form>
+            @error('date_from')
+            <div class="text-danger">{{ $message }}</div>
+            @enderror
+
+            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary mb-3">Добавить заказ</a>
+            <table class="table" id="orders">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 5em">№</th>
-                    <th scope="col" style="width: 9em">Дата и время</th>
+                    <th scope="col" style="width: 4em">№ заказа</th>
+                    <th scope="col" style="width: 7em">Дата и время заказа</th>
                     <th scope="col">Автомобиль</th>
                     <th scope="col">Работы</th>
-                    <th scope="col" style="width: 4em">Время, часов</th>
-                    <th scope="col" style="width: 8em">Сумма, грн.</th>
-                    <th scope="col" style="width: 6em">Статус</th>
-                    <th scope="col" style="width: 6em">Действия</th>
+                    <th scope="col" style="width: 3em">Время, часов</th>
+                    <th scope="col" style="width: 4em">Сумма, грн.</th>
+                    <th scope="col" style="width: 4em">Статус</th>
+                    <th scope="col" style="width: 4em">Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,8 +81,27 @@
                 @endforeach
                 </tbody>
             </table>
-            {{ $orders->links() }}
         </div>
+        <script>
+            $(document).ready(function () {
+                $('#orders').DataTable({
+                    order: [[0, 'desc']],
+                    language: {
+                        lengthMenu: 'Показать _MENU_ строк',
+                        zeroRecords: 'Заказов не найдено',
+                        info: 'Страница _PAGE_ из _PAGES_',
+                        infoEmpty: 'Заказов не найдено',
+                        infoFiltered: '(отфильтровано из _MAX_ заказов)',
+                        search: 'Поиск заказа ',
+                        paginate: {
+                            "next": "Вперед",
+                            "previous": "Назад"
+                        },
+                    },
+                    stateSave: true,
+                });
+            });
+        </script>
     </main>
     @include('admin.includes.footer')
 @endsection
