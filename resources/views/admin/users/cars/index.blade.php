@@ -16,7 +16,7 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-            <a href="{{ route('users.cars.create', $user->id) }}" class="btn btn-primary">Добавить автомобиль</a>
+            <a href="{{ route('admin.users.cars.create', $user->id) }}" class="btn btn-primary">Добавить автомобиль</a>
             <table class="table">
                 <thead>
                 <tr>
@@ -33,13 +33,13 @@
                     <tr>
                         <td>{{ $car->id }}</td>
                         <td>{{ $car->model->brand->title}}</td>
-                        <td><a href="{{ route('users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="link-dark text-decoration-none">{{ $car->model->title }}</a></td>
+                        <td><a href="{{ route('admin.users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="link-dark text-decoration-none">{{ $car->model->title }}</a></td>
                         <td>{{ $car->year}}</td>
                         <td>{{ $car->number }}</td>
                         <td>
-                            <a href="{{ route('users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('users.cars.edit',['user' => $user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
-                            <form action="{{ route('users.cars.destroy', ['user' => $user->id, 'car' => $car->id]) }}" method="post" style="display:inline">
+                            <a href="{{ route('admin.users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
+                            <a href="{{ route('admin.users.cars.edit',['user' => $user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                            <form action="{{ route('admin.users.cars.destroy', ['user' => $user->id, 'car' => $car->id]) }}" method="post" style="display:inline">
                                 @csrf
                                 @method('delete')
                                 <button class="btn btn-light" style="display: contents">

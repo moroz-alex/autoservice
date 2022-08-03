@@ -196,6 +196,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\ScheduleServiceProvider::class,
         App\Providers\OrderServiceProvider::class,
+        App\Providers\CarServiceProvider::class,
 
     ],
 
@@ -214,6 +215,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
          'ScheduleService' => App\Facades\ScheduleService::class,
          'OrderService' => App\Facades\OrderService::class,
+         'CarService' => App\Facades\CarService::class,
     ])->toArray(),
 
 ];

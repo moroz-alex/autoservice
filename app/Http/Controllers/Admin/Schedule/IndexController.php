@@ -4,16 +4,22 @@ namespace App\Http\Controllers\Admin\Schedule;
 
 use App\Facades\ScheduleService;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Schedule\IndexRequest;
 
 class IndexController extends Controller
 {
-    public function __invoke()
+    public function __invoke(IndexRequest $request)
     {
-        $startDate = date('Y-m-d', strtotime('-1 month'));
+        $dates = $request->validated();
+        if (empty($dates)) {
+            $dates['date_from'] = date('Y-m-d', strtotime('-1 month'));
+            $dates['date_to'] = date('Y-m-d', strtotime('+1 month'));
+        }
+
         $mastersList = ScheduleService::getAllMasters();
-        $timeSlots = ScheduleService::getTimeSlots(null, $mastersList, $startDate);
+        $timeSlots = ScheduleService::getTimeSlots(null, $mastersList, $dates['date_from'], $dates['date_to']);
         $timeSlotsNumber = ScheduleService::getTimeSlotsNumber();
         $disableDays = ScheduleService::getDisabledDays();
-        return view('admin.schedules.index', compact('timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays'));
+        return view('admin.schedules.index', compact('timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays', 'dates'));
     }
 }

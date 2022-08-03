@@ -27,7 +27,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <form action="{{ route('users.cars.store', $user->id) }}" method="post">
+                    <form action="{{ route('admin.users.cars.store', $user->id) }}" method="post">
                         @csrf
                         <div class="mb-3">
                             <label for="models" class="form-label">Выберите модель <span class="text-danger">*</span></label>

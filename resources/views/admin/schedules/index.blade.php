@@ -19,18 +19,41 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-
+            <form class="row mb-5" action="" method="get">
+                <h5>Показать расписание (с - по)</h5>
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
+                    <input type="date" class="form-control" name="date_from" value="{{ $dates['date_from'] }}">
+                </div>
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
+                    <input type="date" class="form-control" name="date_to" value="{{ $dates['date_to'] }}">
+                </div>
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
+                    <button type="submit" class="btn btn-secondary">Показать</button>
+                </div>
+                @error('date_from')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+                @error('date_to')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+            </form>
+            @php
+                $today = strtotime(date('Y-m-d'));
+                $searchDate = $today >= strtotime($dates['date_from']) && $today <= strtotime($dates['date_to']) ? $today : strtotime($dates['date_from']);
+                $searchDate = date('d.m.Y', $searchDate);
+            @endphp
             <div class="row">
                 <div class="col-12 mb-5">
                     <div class="mb-3">
                         <div class="row">
                             <div class="fs-4 fw-bold mb-2 col-9">
                                 Дата: <input type="text" id="pageInfoDate" name="date"
-                                             value="{{ date('d.m.Y') }}"
+                                             value="{{ $searchDate }}"
                                              readonly>
                             </div>
                             <div class="col-3">
-                                <a href="{{ route('admin.orders.create') }}" class="btn btn-primary float-end">Добавить заказ</a>
+                                <a href="{{ route('admin.orders.create') }}" class="btn btn-primary float-end">Добавить
+                                    заказ</a>
                             </div>
                         </div>
                         <table class="table compact hover cell-border" id="schedules">
@@ -65,8 +88,6 @@
                     </div>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             $(document).ready(function () {
@@ -80,8 +101,8 @@
                         months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
                         weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                     },
-                    minDate: new Date('{{ date('Y-m-d', strtotime('-1 month')) }}'),
-                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month -1 day')) }}'),
+                    minDate: new Date('{{ date('Y-m-d', strtotime($dates['date_from'])) }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime($dates['date_to'])) }}'),
                     disableDays: [{{ $disableDays }}],
                 });
 
@@ -93,7 +114,7 @@
                     info: false,
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Свободного времени в выбранную дату не найдено. Выберите другую дату.',
+                        zeroRecords: 'Расписания в выбранную дату не найдено. Выберите другую дату.',
                         infoEmpty: 'Дата не найдена',
                         infoFiltered: '(отфильтровано из _MAX_ записей)',
                         search: 'Поиск даты ',

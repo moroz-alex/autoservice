@@ -1,14 +1,11 @@
-@extends('admin.layouts.main')
+@extends('layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование автомобиля ' . $car->model->title)
-@section('header', 'Редактирование автомобиля пользователя')
-@section('breadcrumb', 'Редактирование авто ' . $car->model->brand->title . ' ' . $car->model->title)
+@section('title', 'МойАвтосервис : Добавление автомобиля клиента')
+@section('header', 'Добавить авто клиента ' . $user->last_name . ' ' . $user->name)
+@section('breadcrumb', 'Добавление авто клиента')
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
-    </li>
-    <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $user->id) }}">{{ 'Пользователь ' . $user->last_name . ' ' . $user->name }}</a>
+            href="{{ route('user.cars.index', $user->id) }}">{{ 'Автомобили клиента' }}</a>
     </li>
 @endsection
 
@@ -17,20 +14,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
-    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
     <script src="{{ asset('/js/jquery.maskedinput.min.js') }}"></script>
 @endsection
 
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('admin.includes.header')
+            @include('includes.header')
 
             <div class="row">
-                <div class="col-12 mb-5">
-                    <form action="{{ route('admin.users.cars.update',['user' => $user->id, 'car' => $car->id]) }}" method="post">
+                <div class="col-12">
+                    <form action="{{ route('user.cars.store', $user->id) }}" method="post">
                         @csrf
-                        @method('patch')
                         <div class="mb-3">
                             <label for="models" class="form-label">Выберите модель <span class="text-danger">*</span></label>
                             <table class="table" id="models">
@@ -43,7 +38,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach($models as $model)
-                                    <tr class="{{ $car->model_id == $model->id ? ' selected' : ''}}">
+                                    <tr>
                                         <td>{{ $model->id }}</td>
                                         <td>{{ $model->brand->title }}</td>
                                         <td>{{ $model->title }}</td>
@@ -52,7 +47,7 @@
                                 </tbody>
                             </table>
 
-                            <input type="hidden" name="model_id" value="{{ $car->model_id }}">
+                            <input type="hidden" name="model_id" value="">
                             @error('model_id')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -62,7 +57,7 @@
                             <label for="year" class="form-label">Год выпуска</label>
                             <input type="text" class="form-control" name="year" id="year"
                                    placeholder="Введите год выпуска автомобиля"
-                                   value="{{ $car->year }}">
+                                   value="{{ old('year') }}">
                             @error('year')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -76,7 +71,7 @@
                             <label for="number" class="form-label">Гос. номер</label>
                             <input type="text" class="form-control" name="number" id="number"
                                    placeholder="Введите номер автомобиля"
-                                   value="{{ $car->number }}">
+                                   value="{{ old('number') }}">
                             @error('number')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -85,7 +80,7 @@
                             <label for="vin" class="form-label">VIN-код</label>
                             <input type="text" class="form-control" name="vin" id="vin"
                                    placeholder="Введите VIN-код автомобиля"
-                                   value="{{ $car->vin }}">
+                                   value="{{ old('vin') }}">
                             @error('vin')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -98,8 +93,8 @@
 
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
 
-                        <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('admin.users.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="{{ route('user.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
 
                 </div>
@@ -109,13 +104,12 @@
         </div>
         <script>
             $(document).ready(function () {
-
                 var events = $('#events');
                 var table = $('#models').DataTable({
                     select: {
                         style: 'single'
                     },
-                    stateSave: true,
+
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
                         zeroRecords: 'Моделей не найдено',
@@ -131,12 +125,7 @@
                             rows: ""
                         },
                     },
-                    keys: true,
                 });
-
-                table.row( '.selected' ).select();
-                var selectedCell = table.row( '.selected' ).data();
-                table.cell( selectedCell[0] - 2, 0 ).focus();
 
                 table
                     .on('select', function (e, dt, type, indexes) {
@@ -149,5 +138,5 @@
             });
         </script>
     </main>
-    @include('admin.includes.footer')
+    @include('includes.footer')
 @endsection

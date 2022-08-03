@@ -63,13 +63,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::delete('/{user}', 'DestroyController')->name('admin.users.destroy');
 
         Route::group(['namespace' => 'Car', 'prefix' => '{user}/cars'], function () {
-            Route::get('/', 'IndexController')->name('users.cars.index');
-            Route::get('/create', 'CreateController')->name('users.cars.create');
-            Route::post('/', 'StoreController')->name('users.cars.store');
-            Route::get('/{car}', 'ShowController')->name('users.cars.show');
-            Route::get('/{car}/edit', 'EditController')->name('users.cars.edit');
-            Route::patch('/{car}', 'UpdateController')->name('users.cars.update');
-            Route::delete('/{car}', 'DestroyController')->name('users.cars.destroy');
+            Route::get('/', 'IndexController')->name('admin.users.cars.index');
+            Route::get('/create', 'CreateController')->name('admin.users.cars.create');
+            Route::post('/', 'StoreController')->name('admin.users.cars.store');
+            Route::get('/{car}', 'ShowController')->name('admin.users.cars.show');
+            Route::get('/{car}/edit', 'EditController')->name('admin.users.cars.edit');
+            Route::patch('/{car}', 'UpdateController')->name('admin.users.cars.update');
+            Route::delete('/{car}', 'DestroyController')->name('admin.users.cars.destroy');
         });
     });
 
@@ -103,6 +103,34 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::post('/', 'StoreController')->name('admin.schedules.store');
         Route::get('/edit/{order}', 'EditController')->name('admin.schedules.edit');
         Route::patch('/{order}', 'UpdateController')->name('admin.schedules.update');
+    });
+});
+
+Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], function () {
+//    Route::get('/create', 'CreateController')->name('user.create');
+//    Route::post('/', 'StoreController')->name('user.store');
+    Route::get('/{user}', 'ShowController')->name('user.show');
+    Route::get('/{user}/edit', 'EditController')->name('user.edit');
+    Route::patch('/{user}', 'UpdateController')->name('user.update');
+
+    Route::group(['namespace' => 'Car', 'prefix' => '{user}/cars'], function () {
+        Route::get('/', 'IndexController')->name('user.cars.index');
+        Route::get('/create', 'CreateController')->name('user.cars.create');
+        Route::post('/', 'StoreController')->name('user.cars.store');
+        Route::get('/{car}', 'ShowController')->name('user.cars.show');
+        Route::get('/{car}/edit', 'EditController')->name('user.cars.edit');
+        Route::patch('/{car}', 'UpdateController')->name('user.cars.update');
+        Route::delete('/{car}', 'DestroyController')->name('user.cars.destroy');
+    });
+
+    Route::group(['namespace' => 'Order', 'prefix' => '{user}/orders'], function () {
+        Route::get('/', 'IndexController')->name('user.orders.index');
+//        Route::get('/create', 'CreateController')->name('user.orders.create');
+//        Route::post('/', 'StoreController')->name('user.orders.store');
+//        Route::get('/{order}', 'ShowController')->name('user.orders.show');
+//        Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
+//        Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
+//        Route::delete('/{order}', 'DestroyController')->name('user.orders.destroy');
     });
 });
 

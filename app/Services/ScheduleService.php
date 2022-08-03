@@ -22,10 +22,10 @@ class ScheduleService
         return $this->settings;
     }
 
-    public function getTimeSlots($order, $mastersList, $startDate = null)
+    public function getTimeSlots($order, $mastersList, $startDate = null, $endDate = null)
     {
         $startDate = $startDate ?? date('Y-m-d');
-        $endDate = date('Y-m-d', strtotime('+1 month'));
+        $endDate = $endDate ?? date('Y-m-d', strtotime('+1 month'));
         $scheduleTasks = Schedule::where('start_time', '<=', $endDate)->where('start_time', '>=', $startDate)->get();
 
         $timeSlots = $this->createTimeSlots($startDate, $endDate, $mastersList);

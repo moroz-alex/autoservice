@@ -18,7 +18,7 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
             <a href="#" class="btn btn-warning mb-3 me-2">Изменить пароль</a>
-            <a href="{{ route('users.cars.index', $user->id) }}" class="btn btn-info mb-3">Автомобили</a>
+            <a href="{{ route('admin.users.cars.index', $user->id) }}" class="btn btn-info mb-3">Автомобили</a>
             <table class="table">
                 <tbody>
                 <tr>

@@ -95,7 +95,7 @@
                 @endforeach
                 </tbody>
             </table>
-            <div class="col-12">
+            <div class="col-12 mb-5">
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary me-2">Назад</a>
                 <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-warning me-2"><i
                         class="fa-solid fa-pen"></i></a>

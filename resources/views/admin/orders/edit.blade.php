@@ -134,6 +134,7 @@
                             Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить заказ</button>
+                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>

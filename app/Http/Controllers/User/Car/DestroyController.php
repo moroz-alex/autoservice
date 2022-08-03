@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Admin\User\Car;
+namespace App\Http\Controllers\User\Car;
 
+use App\Facades\CarService;
 use App\Http\Controllers\Controller;
 use App\Models\Car;
 use App\Models\User;
@@ -11,7 +12,9 @@ class DestroyController extends Controller
 {
     public function __invoke(User $user, Car $car)
     {
-        $car->delete();
-        return redirect()->route('admin.users.cars.index', $user->id);
+        if (!CarService::hasOrders($car)) {
+            $car->delete();
+        }
+        return redirect()->route('user.cars.index', $user->id);
     }
 }

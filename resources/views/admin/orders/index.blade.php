@@ -14,21 +14,24 @@
     <main>
         <div class="container-fluid px-4 mb-5">
             @include('admin.includes.header')
-            <form class="row mb-3" action="" method="get">
+            <form class="row mb-5" action="" method="get">
                 <h5>Показать заказы (с - по)</h5>
-                <div class="col-1 col-md-3 col-sm-4 form-group">
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
                     <input type="date" class="form-control" name="date_from" value="{{ $dates['date_from'] }}">
                 </div>
-                <div class="col-1 col-md-3 col-sm-4 form-group">
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
                     <input type="date" class="form-control" name="date_to" value="{{ $dates['date_to'] }}">
                 </div>
-                <div class="col-1 col-md-3 col-sm-4 form-group">
+                <div class="col-xl-2 col-lg-3 col-md-3 col-sm-4 form-group">
                     <button type="submit" class="btn btn-secondary">Показать</button>
                 </div>
+                @error('date_from')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
+                @error('date_to')
+                <div class="text-danger">{{ $message }}</div>
+                @enderror
             </form>
-            @error('date_from')
-            <div class="text-danger">{{ $message }}</div>
-            @enderror
 
             <a href="{{ route('admin.orders.create') }}" class="btn btn-primary mb-3">Добавить заказ</a>
             <table class="table" id="orders">
