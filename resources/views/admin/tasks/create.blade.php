@@ -58,6 +58,16 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-5">
+                            <div class="form-check form-switch mt-2">
+                                <input type="hidden" name="is_available_to_customer" value="0">
+                                <input type="checkbox" role="switch" class="form-check-input" id="is_available_to_customer" name="is_available_to_customer" value="1"/>
+                                <label for="is_available_to_customer" class="form-check-label">Доступно для самостоятельного заказа клиентом</label>
+                            </div>
+                            @error('is_available_to_customer')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <button type="submit" class="btn btn-primary">Добавить</button>
                         <a href="{{ route('admin.tasks.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>

@@ -29,6 +29,7 @@ class UpdateRequest extends FormRequest
             'duration'=>'required|integer',
             'price'=>'required|integer',
             'category_id' => 'required|integer|exists:categories,id',
+            'is_available_to_customer' => 'boolean',
         ];
     }
 
@@ -43,6 +44,7 @@ class UpdateRequest extends FormRequest
             'category_id.required' => 'Необходимо выбрать категорию работы',
             'category_id.integer' => 'Некорректный идентификатор категории',
             'category_id.exists' => 'Категория не найдена',
+            'is_available_to_customer' => 'Некорректный статус доступности работы к самостоятельному заказу клиентом',
         ];
     }
 }

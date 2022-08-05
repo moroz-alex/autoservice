@@ -24,6 +24,7 @@
                     <th scope="col" style="width: 4em">Нормо-часы</th>
                     <th scope="col" style="width: 6em">Цена нормочаса</th>
                     <th scope="col" style="width: 6em">Цена работы</th>
+                    <th scope="col" style="width: 3em">Доступно клиенту</th>
                     <th scope="col" style="width: 3em">Действия</th>
                 </tr>
                 </thead>
@@ -36,6 +37,7 @@
                         <td>{{ $task->duration / 60 }}</td>
                         <td>{{ $task->price }} <span class="text-secondary">грн.</span></td>
                         <td>{{ $task->price * $task->duration / 60 }} <span class="text-secondary">грн.</span></td>
+                        <td>{!! $task->is_available_to_customer ? "<i class=\"fa-solid fa-circle-check\"></i>" : "" !!}</td>
                         <td>
                             <a href="{{ route('admin.tasks.show', $task->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
                             <a href="{{ route('admin.tasks.edit', $task->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
@@ -67,6 +69,7 @@
                             "previous": "Назад"
                         },
                     },
+                    pageLength: 25,
                 });
             });
         </script>

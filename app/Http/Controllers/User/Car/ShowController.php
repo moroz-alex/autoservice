@@ -5,7 +5,6 @@ namespace App\Http\Controllers\User\Car;
 use App\Facades\CarService;
 use App\Http\Controllers\Controller;
 use App\Models\Car;
-use App\Models\Order;
 use App\Models\User;
 use function view;
 

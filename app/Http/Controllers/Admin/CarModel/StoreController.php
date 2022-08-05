@@ -22,18 +22,18 @@ class StoreController extends BaseController
                 ],
             );
 
-            $models = $this->service->importCarData('auto/categories/1/marks/' . $brand->value . '/models/');
-            foreach ($models as $model) {
-                CarModel::firstOrCreate(
-                    [
-                        'source_id' => $model->value,
-                    ],
-                    [
-                        'brand_id' => $newBrand->id,
-                        'title' => $model->name,
-                    ],
-                );
-            }
+//            $models = $this->service->importCarData('auto/categories/1/marks/' . $brand->value . '/models/');
+//            foreach ($models as $model) {
+//                CarModel::firstOrCreate(
+//                    [
+//                        'source_id' => $model->value,
+//                    ],
+//                    [
+//                        'brand_id' => $newBrand->id,
+//                        'title' => $model->name,
+//                    ],
+//                );
+//            }
         }
 
         $settings = Settings::first();

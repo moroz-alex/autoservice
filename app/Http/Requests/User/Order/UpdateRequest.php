@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Order;
+namespace App\Http\Requests\User\Order;
 
 use App\Rules\Order\HasMaster;
 use Illuminate\Foundation\Http\FormRequest;
@@ -46,8 +46,8 @@ class UpdateRequest extends FormRequest
             'car_id.required' => 'Необходимо выбрать автомобиль',
             'car_id.integer' => 'Некорректный ID автомобиля',
             'car_id.exists' => 'Несуществующий ID автомобиля',
-            'is_done'=> 'Некорректный статус готовности заказа',
-            'is_paid'=> 'Некорректный статус оплаты заказа',
+            'is_done'=>'Некорректный статус готовности заказа',
+            'is_paid'=>'Некорректный статус оплаты заказа',
             'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
             'task_ids.*.exists' => 'Некорретный ID работы',
             'task_ids.*.integer' => 'Некорретный ID работы',

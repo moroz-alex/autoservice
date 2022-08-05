@@ -127,9 +127,9 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
         Route::get('/', 'IndexController')->name('user.orders.index');
 //        Route::get('/create', 'CreateController')->name('user.orders.create');
 //        Route::post('/', 'StoreController')->name('user.orders.store');
-//        Route::get('/{order}', 'ShowController')->name('user.orders.show');
-//        Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
-//        Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
+        Route::get('/{order}', 'ShowController')->name('user.orders.show');
+        Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
+        Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
 //        Route::delete('/{order}', 'DestroyController')->name('user.orders.destroy');
     });
 });

@@ -20,7 +20,7 @@ class IndexController extends Controller
         }
 
         $orders = Order::where('created_at', '>=', $dates['date_from'] . ' 00:00:00')
-            ->where('created_at', '<=', $dates['date_to'] . ' 00:00:00')
+            ->where('created_at', '<=', $dates['date_to'] . ' 23:59:59')
             ->orderByDesc('id')
             ->get();
         $orders = OrderService::checkOrdersSchedule($orders);
