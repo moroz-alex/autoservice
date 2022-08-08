@@ -18,7 +18,7 @@ class ImportDataClient
 
         $this->client = new Client([
             'base_uri' => 'https://' . $settings->api_key . '@developers.ria.com/',
-            'timeout' => 2.0,
+            'timeout' => 10.0,
         ]);
     }
 }
