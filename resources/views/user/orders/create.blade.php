@@ -1,11 +1,11 @@
-@extends('admin.layouts.main')
+@extends('layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование заказа')
-@section('header', 'Редактировать заказ ' . $order->id)
+@section('title', 'МойАвтосервис : Добавление нового заказа')
+@section('header', 'Добавить заказ')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.orders.index') }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
 @endsection
-@section('breadcrumb', 'Редактирование заказа')
+@section('breadcrumb', 'Добавление заказа')
 
 @section('scriptTop')
     <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -17,13 +17,12 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('admin.includes.header')
+            @include('includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('admin.orders.update', $order->id) }}" method="post" name="orders">
+                    <form action="{{ route('user.orders.store', $user->id ) }}" method="post" name="orders">
                         @csrf
-                        @method('patch')
                         <h3>Автомобиль</h3>
                         <div class="mb-3">
                             <label for="cars" class="form-label">Выберите автомобиль <span class="text-danger">*</span></label>
@@ -32,37 +31,28 @@
                                 <tr>
                                     <th scope="col" style="width: 3em">ID</th>
                                     <th scope="col">Модель</th>
-                                    <th scope="col" style="width: 8em">Номер</th>
-                                    <th scope="col" style="width: 25em">Владелец</th>
-                                    <th scope="col" style="width: 9em">Телефон владельца</th>
+                                    <th scope="col">Номер</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($cars as $car)
-                                    <tr
-                                        @if(!is_null(old('car_id')) && old('car_id') == $car->id)
-                                        class="selected"
-                                        @elseif(is_null(old('car_id')) && $car->id == $order->car->id)
-                                        class="selected"
-                                        @endif>
+                                    <tr class="{{ old('car_id') == $car->id ? ' selected' : '' }}">
                                         <td>{{ $car->id }}</td>
                                         <td>{{ $car->model->brand->title . ' ' . $car->model->title . ' ' . $car->year }}</td>
                                         <td>{{ $car->number }}</td>
-                                        <td>{{ $car->user->name . ' ' . $car->user->last_name }}</td>
-                                        <td>{{ $car->user->phone }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
 
-                            <input type="hidden" name="car_id" value="{{ $order->car->id }}">
+                            <input type="hidden" name="car_id" value="">
                             @error('car_id')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <h3>Работы</h3>
+                        <h3>Работа</h3>
                         <div class="mb-3">
-                            <label for="tasks" class="form-label">Выберите работы <span
+                            <label for="tasks" class="form-label">Выберите работу <span
                                     class="text-danger">*</span></label>
                             <table class="table" id="tasks">
                                 <thead>
@@ -70,34 +60,27 @@
                                     <th scope="col" style="width: 3em">ID</th>
                                     <th scope="col" class="d-sm-none d-md-table-cell">Категория</th>
                                     <th scope="col">Работа</th>
-                                    <th scope="col" style="width: 3em">Время</th>
-                                    <th scope="col" style="width: 3em">Цена нч, грн.</th>
+                                    <th scope="col" style="width: 3em">Время, мин.</th>
+                                    <th scope="col" style="width: 3em" hidden>Цена нч, грн.</th>
+                                    <th scope="col" style="width: 3em">Цена услуги, грн.</th>
                                     <th scope="col" style="width: 3em">Кол-во</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($tasks as $task)
-                                    <tr
-                                        @if(is_array(old('task_ids')) && in_array($task->id, old('task_ids')))
-                                        class='selected'
-                                        @elseif(!is_array(old('task_ids')) && isset($task->selected))
-                                        class='selected'
-                                        @endif>
+                                    <tr class="{{ is_array(old('task_ids')) && in_array($task->id, old('task_ids')) ? ' selected' : '' }}">
                                         <td>{{ $task->id }}</td>
                                         <td class="d-sm-none d-md-table-cell">{{ $task->category->title }}</td>
                                         <td>{{ $task->title }}</td>
-                                        <td>
-                                            <select name="task_drs">
-                                                @foreach($timeIntervals as $name => $value)
-                                                    <option
-                                                        value="{{ $value }}" {{ $value == $task->duration ? 'selected' : '' }}>{{ $name }}</option>
-                                                @endforeach
-                                            </select>
+                                        <td><input type="text" name="task_drs" value="{{ $task->duration }}"
+                                                   style="width: 5em" readonly></td>
+                                        <td hidden><input type="text" name="task_prs" value="{{ $task->price }}"
+                                                   style="width: 5em" readonly></td>
+                                        <td><input type="text" name="task_val"
+                                                   value="{{ $task->price * ($task->duration / 60) }}"
+                                                   style="width: 5em" readonly></td>
+                                        <td><input type="text" name="task_qts" value="1" style="width: 5em" readonly>
                                         </td>
-                                        <td><input type="text" name="task_prs"
-                                                   value="{{ $task->price }}" style="width: 5em"></td>
-                                        <td><input type="text" name="task_qts" value="{{ $task->quantity ?? 1 }}"
-                                                   style="width: 5em"></td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -117,25 +100,8 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <h3>Статус заказа</h3>
-                        <div class="mb-5">
-                            <div class="form-check form-switch mt-2">
-                                <input type="hidden" name="is_done" value="0">
-                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_done ? 'checked' : '' }} id="is_done" name="is_done" value="1"/>
-                                <label for="is_done" class="form-check-label">Заказ выполен</label>
-                            </div>
-                            <div class="form-check form-switch mt-2">
-                                <input type="hidden" name="is_paid" value="0">
-                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid" value="1"/>
-                                <label for="is_paid" class="form-check-label">Заказ оплачен</label>
-                            </div>
-                        </div>
-                        <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert" style="display: none">
-                            Внимание! После изменения работ в заказе обязательно проверьте расписание!
-                        </div>
-                        <button type="submit" class="btn btn-primary">Обновить заказ</button>
-                        <a href="{{ route('admin.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
@@ -193,8 +159,7 @@
 
                 var table_tasks = $('#tasks').DataTable({
                     select: {
-                        style: 'multi+shift',
-                        selector: 'td:nth-child(1), td:nth-child(2), td:nth-child(3)',
+                        style: 'single',
                     },
 
                     order: [[1, 'asc']],
@@ -220,39 +185,22 @@
                         {data: 'title'},
                         {data: 'duration'},
                         {data: 'price'},
+                        {data: 'val'},
                         {data: 'quantity'},
                     ],
                     stateSave: true,
                 });
 
-                table_tasks.rows('.selected').select();
                 getTableTasksData();
 
-                $('#tasks tbody').on('change', 'td', function () {
-                    var data = table_tasks.cell(this).data();
-                    var name = data.match(/name="(\S+)"/);
-                    if (name !== null) name = name[1];
-                    if (name == 'task_prs' || name == 'task_qts') {
-                        var value = table_tasks.cell(this).$("input[name='" + name + "']", this).val();
-                        data = "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" style=\"width: 5em\">";
-                        table_tasks.cell(this).data(data);
-                    } else if (name == 'task_drs') {
-                        var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val()
-                        data = data.replace(" selected", "");
-                        data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
-                        table_tasks.cell(this).data(data);
-                    }
-                    getTableTasksData();
-                });
+                table_tasks.rows('.selected').select();
 
                 table_tasks
                     .on('select', function (e, dt, type, indexes) {
                         getTableTasksData();
-                        $('#tasks_change_alert').show('fast');
                     })
                     .on('deselect', function (e, dt, type, indexes) {
                         getTableTasksData();
-                        $('#tasks_change_alert').show('fast');
                     })
 
                 function getTableTasksData() {
@@ -274,7 +222,7 @@
                 var res = "";
                 taskDrs.forEach(function (item, i, taskDrs) {
                     item = item.replace('task_drs', 'task_drs[' + i + ']');
-                    item = item.replace('select', 'select hidden');
+                    item = item.replace('text', 'hidden');
                     res = res + item;
                 });
                 document.getElementById('taskDuration').innerHTML = res;
@@ -297,5 +245,5 @@
             });
         </script>
     </main>
-    @include('admin.includes.footer')
+    @include('includes.footer')
 @endsection

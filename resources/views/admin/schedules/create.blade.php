@@ -53,7 +53,7 @@
                                                 <td class="table-secondary text-muted protected">{{ date('H:i', $time) }}
                                                     Недоступно
                                                 </td>
-                                            @elseif($state == 'used')
+                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
                                                 <td class="table-warning protected">{{ date('H:i', $time) }} Занято</td>
                                             @else
                                                 <td><span hidden>{{ $master }}</span></td>

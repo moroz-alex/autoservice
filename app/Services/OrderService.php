@@ -108,7 +108,7 @@ class OrderService
                 'duration' => $data['task_drs'][$index],
                 'price' => $data['task_prs'][$index],
             ];
-            $data['orderPrice'] += $data['task_qts'][$index] * $data['task_prs'][$index];
+            $data['orderPrice'] += $data['task_qts'][$index] * $data['task_prs'][$index] * ($data['task_drs'][$index] / 60);
             $data['orderDuration'] += $data['task_qts'][$index] * $data['task_drs'][$index];
         }
         return $data;

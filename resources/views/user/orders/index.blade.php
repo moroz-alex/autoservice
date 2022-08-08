@@ -8,6 +8,7 @@
     <main>
         <div class="container-fluid px-4">
             @include('includes.header')
+            <a href="{{ route('user.orders.create', $user->id) }}" class="btn btn-primary mb-3">Добавить заказ</a>
             <table class="table" id="orders">
                 <thead>
                 <tr>

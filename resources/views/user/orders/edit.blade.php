@@ -33,9 +33,7 @@
                                 <tr>
                                     <th scope="col" style="width: 3em">ID</th>
                                     <th scope="col">Модель</th>
-                                    <th scope="col" style="width: 8em">Номер</th>
-                                    <th scope="col" style="width: 25em">Владелец</th>
-                                    <th scope="col" style="width: 9em">Телефон владельца</th>
+                                    <th scope="col">Номер</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -49,8 +47,6 @@
                                         <td>{{ $car->id }}</td>
                                         <td>{{ $car->model->brand->title . ' ' . $car->model->title . ' ' . $car->year }}</td>
                                         <td>{{ $car->number }}</td>
-                                        <td>{{ $car->user->name . ' ' . $car->user->last_name }}</td>
-                                        <td>{{ $car->user->phone }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -71,8 +67,9 @@
                                     <th scope="col" style="width: 3em">ID</th>
                                     <th scope="col" class="d-sm-none d-md-table-cell">Категория</th>
                                     <th scope="col">Работа</th>
-                                    <th scope="col" style="width: 3em">Время</th>
-                                    <th scope="col" style="width: 3em">Цена нч, грн.</th>
+                                    <th scope="col" style="width: 3em">Время, мин.</th>
+                                    <th scope="col" style="width: 3em" hidden>Цена нч, грн.</th>
+                                    <th scope="col" style="width: 3em">Цена услуги, грн.</th>
                                     <th scope="col" style="width: 3em">Кол-во</th>
                                 </tr>
                                 </thead>
@@ -89,18 +86,15 @@
                                             <td>{{ $task->id }}</td>
                                             <td class="d-sm-none d-md-table-cell">{{ $task->category->title }}</td>
                                             <td>{{ $task->title }}</td>
-                                            <td>
-                                                <select name="task_drs">
-                                                    @foreach($timeIntervals as $name => $value)
-                                                        <option
-                                                            value="{{ $value }}" {{ $value == $task->duration ? 'selected' : '' }}>{{ $name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </td>
-                                            <td><input type="text" name="task_prs"
-                                                       value="{{ $task->price }}" style="width: 5em"></td>
+                                            <td><input type="text" name="task_drs" value="{{ $task->duration }}"
+                                                       style="width: 5em" readonly></td>
+                                            <td hidden><input type="text" name="task_prs"
+                                                       value="{{ $task->price }}" style="width: 5em" readonly></td>
+                                            <td><input type="text" name="task_val"
+                                                       value="{{ $task->price * ($task->duration / 60) }}"
+                                                       style="width: 5em" readonly></td>
                                             <td><input type="text" name="task_qts" value="{{ $task->quantity ?? 1 }}"
-                                                       style="width: 5em"></td>
+                                                       style="width: 5em" readonly></td>
                                         </tr>
                                     @endif
                                 @endforeach
@@ -184,8 +178,7 @@
 
                 var table_tasks = $('#tasks').DataTable({
                     select: {
-                        style: 'multi+shift',
-                        selector: 'td:nth-child(1), td:nth-child(2), td:nth-child(3)',
+                        style: 'single',
                     },
 
                     order: [[1, 'asc']],
@@ -211,6 +204,7 @@
                         {data: 'title'},
                         {data: 'duration'},
                         {data: 'price'},
+                        {data: 'val'},
                         {data: 'quantity'},
                     ],
                     stateSave: true,
@@ -218,23 +212,6 @@
 
                 table_tasks.rows('.selected').select();
                 getTableTasksData();
-
-                $('#tasks tbody').on('change', 'td', function () {
-                    var data = table_tasks.cell(this).data();
-                    var name = data.match(/name="(\S+)"/);
-                    if (name !== null) name = name[1];
-                    if (name == 'task_prs' || name == 'task_qts') {
-                        var value = table_tasks.cell(this).$("input[name='" + name + "']", this).val();
-                        data = "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" style=\"width: 5em\">";
-                        table_tasks.cell(this).data(data);
-                    } else if (name == 'task_drs') {
-                        var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val()
-                        data = data.replace(" selected", "");
-                        data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
-                        table_tasks.cell(this).data(data);
-                    }
-                    getTableTasksData();
-                });
 
                 table_tasks
                     .on('select', function (e, dt, type, indexes) {
@@ -254,7 +231,6 @@
                 };
             });
 
-
             $("form").submit(function () {
                 var res = "";
                 taskIds.forEach(function (item, i, taskIds) {
@@ -265,7 +241,7 @@
                 var res = "";
                 taskDrs.forEach(function (item, i, taskDrs) {
                     item = item.replace('task_drs', 'task_drs[' + i + ']');
-                    item = item.replace('select', 'select hidden');
+                    item = item.replace('text', 'hidden');
                     res = res + item;
                 });
                 document.getElementById('taskDuration').innerHTML = res;
