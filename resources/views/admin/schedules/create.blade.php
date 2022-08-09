@@ -4,7 +4,7 @@
 @section('header', 'Добавить заказ в расписание')
 @section('breadcrumb', 'Добавление заказа в расписание')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.schedules.index') }}">Расписание</a></li>
 @endsection
 
 @section('scriptTop')

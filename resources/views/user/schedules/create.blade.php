@@ -1,10 +1,10 @@
-@extends('admin.layouts.main')
+@extends('layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование расписания заказа')
-@section('header', 'Редактировать расписание заказа ' . $order->id)
-@section('breadcrumb', 'Редактирования расписания заказа')
+@section('title', 'МойАвтосервис : Добавление заказа в расписание')
+@section('header', 'Добавить заказ в расписание')
+@section('breadcrumb', 'Добавление заказа в расписание')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.schedules.index') }}">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
 @endsection
 
 @section('scriptTop')
@@ -21,19 +21,17 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('admin.includes.header')
+            @include('includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('admin.schedules.update', $order->id) }}" method="post" name="schedules">
+                    <form action="{{ route('user.schedules.store', $user->id) }}" method="post" name="schedules">
                         @csrf
-                        @method('patch')
                         <div class="mb-3">
-                            <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
+                            <label for="schedules" class="form-label">Выберите желаемую дату и время<span
                                     class="text-danger">*</span></label>
                             <div class="fs-4 fw-bold mb-2">
-                                Дата: <input type="text" id="pageInfoDate" name="date"
-                                             value="{{ isset($order->schedule) ? date('d.m.Y', strtotime($order->schedule->start_time)) : date('d.m.Y') }}"
+                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y', array_key_first($timeSlotsForClient)) }}"
                                              readonly>
                             </div>
                             <table class="table compact hover cell-border" id="schedules">
@@ -41,35 +39,22 @@
                                 <tr>
                                     <th scope="col" style="width: 5em" hidden>Дата</th>
                                     <th scope="col" style="width: 5em">Время</th>
-                                    @foreach($mastersList as $master)
-                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
-                                    @endforeach
+                                    <th scope="col">Выберите</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($timeSlots as $time => $masters)
+
+                                @foreach($timeSlotsForClient as $time => $state)
                                     <tr>
                                         <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
                                         <td>{{ date('H:i', $time) }}</td>
-                                        @foreach($masters as $master => $state)
-                                            @if($state == 'unusable')
-                                                <td class="protected
-                                                    @if(isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master)
-                                                    bg-danger text-white">{{ date('H:i', $time) }}
-                                                    НЕКОРРЕКТНОЕ ВРЕМЯ
-                                                    @else
-                                                        table-secondary text-muted">{{ date('H:i', $time) }}
-                                                        Недоступно
-                                                    @endif
-                                                </td>
-                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }}
-                                                    Занято
-                                                </td>
-                                            @else
-                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }}"><span hidden>{{ $master }}</span></td>
-                                            @endif
-                                        @endforeach
+                                        @if($state == 'unusable')
+                                            <td class="table-secondary text-muted protected">
+                                                Недоступно
+                                            </td>
+                                        @else
+                                            <td></td>
+                                        @endif
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -91,8 +76,8 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                        <a href="{{ route('user.orders.edit', ['user' => $user->id , 'order' =>$order->id]) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
@@ -112,7 +97,7 @@
                         weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                     },
                     minDate: new Date('{{ date('Y-m-d') }}'),
-                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month -1 day')) }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month')) }}'),
                     disableDays: [{{ $disableDays }}],
                 });
 
@@ -131,7 +116,7 @@
                     info: false,
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Свободного времени в выбранную дату не найдено. Выберите другую дату.',
+                        zeroRecords: 'Дата не найдена',
                         infoEmpty: 'Дата не найдена',
                         infoFiltered: '(отфильтровано из _MAX_ записей)',
                         search: 'Поиск даты ',
@@ -141,12 +126,15 @@
                     },
                 });
 
-                table.cells('.selected').select();
-                getTableData();
-
                 table
                     .on('select', function () {
-                        getTableData();
+                        master = table.cell({selected: true}).data();
+                        master = master.match(/>(\d+)</);
+                        if (master !== null) master = master[1];
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
+
+                        $("input[name='start_time']").val(date);
+                        $("input[name='master_id']").val(master);
                     });
 
                 $('#schedules_filter').hide();
@@ -159,21 +147,9 @@
                     table.search(searchDate).draw();
                 });
 
-                function getTableData() {
-                    master = table.cell({selected: true}).data();
-                    if (master) {
-                        master = master.match(/>(\d+)</);
-                        master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
-
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
-                    }
-                }
-
             });
 
         </script>
     </main>
-    @include('admin.includes.footer')
+    @include('includes.footer')
 @endsection

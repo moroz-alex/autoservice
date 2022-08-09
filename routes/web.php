@@ -130,8 +130,18 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
         Route::get('/{order}', 'ShowController')->name('user.orders.show');
         Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
         Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
-//        Route::delete('/{order}', 'DestroyController')->name('user.orders.destroy');
+// Клиент не может удалить заказ, только отменить!!!
+        //        Route::delete('/{order}', 'DestroyController')->name('user.orders.destroy');
     });
+
+    Route::group(['namespace' => 'Schedule', 'prefix' => '{user}/schedules'], function () {
+//        Route::get('/', 'IndexController')->name('user.schedules.index');
+        Route::get('/create/{order}', 'CreateController')->name('user.schedules.create');
+        Route::post('/', 'StoreController')->name('user.schedules.store');
+//        Route::get('/edit/{order}', 'EditController')->name('user.schedules.edit');
+//        Route::patch('/{order}', 'UpdateController')->name('user.schedules.update');
+    });
+
 });
 
 Auth::routes();

@@ -22,17 +22,17 @@ class ScheduleService
         return $this->settings;
     }
 
-    public function getTimeSlots($order, $mastersList, $startDate = null, $endDate = null)
+    public function getTimeSlots($order, $mastersList, $startDate = null, $endDate = null, $startTime = null)
     {
         $startDate = $startDate ?? date('Y-m-d');
         $endDate = $endDate ?? date('Y-m-d', strtotime('+1 month'));
-        $scheduleTasks = Schedule::where('start_time', '<=', $endDate)->where('start_time', '>=', $startDate)->get();
+        $scheduleTasks = Schedule::where('start_time', '<=', $endDate . ' ' . $this->settings->schedule_end)->where('start_time', '>=', $startDate . ' ' . $this->settings->schedule_start)->get();
 
         $timeSlots = $this->createTimeSlots($startDate, $endDate, $mastersList);
 
         $timeSlots = $this->fillScheduleUsedTimeSlots($timeSlots, $scheduleTasks, $mastersList, $order);
 
-        $timeSlots = $this->getScheduleFreeTimeSlots($timeSlots, $mastersList, $order);
+        $timeSlots = $this->getScheduleFreeTimeSlots($timeSlots, $mastersList, $order, $startTime);
 
         return $timeSlots;
     }
@@ -107,18 +107,18 @@ class ScheduleService
         return $timeSlots;
     }
 
-    private function getScheduleFreeTimeSlots($timeSlots, $mastersList, $order)
+    private function getScheduleFreeTimeSlots($timeSlots, $mastersList, $order, $startTime = null)
     {
         $orderDuration = $order->duration ?? $this->timeSlotSize;
         $orderTimeSlotsNumber = $orderDuration / $this->timeSlotSize;
-        $timeNow = strtotime('now');
+        $timeNow = $startTime ? strtotime($startTime) : strtotime('now');
         foreach ($mastersList as $master) {
             $timeSlotsKeys = array_keys($timeSlots);
             $timeSlotsCount = count($timeSlotsKeys);
             $pos = 0;
             $timeSlot = $timeSlotsKeys[$pos];
             while (isset($timeSlots[$timeSlot]) && $pos < $timeSlotsCount) {
-                if ($timeSlots[$timeSlot][$master->id] == 'unusable' && $timeSlot > $timeNow) {
+                if ($timeSlots[$timeSlot][$master->id] == 'unusable' && $timeSlot >= $timeNow) {
                     $count = 0;
                     $time = $timeSlot;
                     while (isset($timeSlots[$time][$master->id]) && $timeSlots[$time][$master->id] == 'unusable') {
@@ -142,7 +142,6 @@ class ScheduleService
         }
         return $timeSlots;
     }
-
 
     public function checkOrderScheduleFit($order)
     {
@@ -168,4 +167,64 @@ class ScheduleService
             return 0;
         }
     }
+
+    public function getTimeSlotsForClient($order, $mastersList)
+    {
+        $startDate = strtotime('now') < strtotime($this->settings->schedule_end) ? date('Y-m-d') : date('Y-m-d', strtotime('+1 day'));
+        $timeSlots = $this->getTimeSlots($order, $mastersList, $startDate);
+        foreach ($timeSlots as $time => $masters) {
+            foreach ($masters as $master => $state) {
+                $hasFreeSlot = 0;
+                if ($state == 'free') {
+                    $timeSlotsForClient[$time] = 'free';
+                    $hasFreeSlot = 1;
+                    break;
+                }
+            }
+            if (!$hasFreeSlot) {
+                $timeSlotsForClient[$time] = 'unusable';
+            }
+        }
+        return $timeSlotsForClient;
+    }
+
+    public function distributeOrderAmongMasters($order, $start_time)
+    {
+        $mastersList = $this->getMastersList($order);
+        $start_time = strtotime($start_time);
+        $orderDate = date('Y-m-d', $start_time);
+        $dayStartTime = $orderDate . ' ' . $this->settings->schedule_start;
+        $timeSlots = $this->getTimeSlots($order, $mastersList, $orderDate, $orderDate, $dayStartTime);
+        $mastersLoad = [];
+        foreach ($timeSlots as $timeSlot) {
+            foreach ($timeSlot as $master => $state) {
+                if (!isset($mastersLoad[$master])) {
+                    $mastersLoad[$master] = 0;
+                }
+                if ($state == 'used' || is_int($state)) {
+                    $mastersLoad[$master] += 1;
+                }
+            }
+        }
+        asort($mastersLoad);
+
+        $lessLoadedMasters = [];
+        foreach ($mastersLoad as $master => $load) {
+            if ($timeSlots[$start_time][$master] != 'free') {
+                continue;
+            }
+            if (!isset($minMasterLoad)) {
+                $minMasterLoad = $load;
+            }
+            if ($load == $minMasterLoad) {
+                $lessLoadedMasters[] = $master;
+            }
+            if ($load > $minMasterLoad) {
+                break;
+            }
+        }
+
+        return ($lessLoadedMasters[rand(0, count($lessLoadedMasters) - 1)]);
+    }
+
 }

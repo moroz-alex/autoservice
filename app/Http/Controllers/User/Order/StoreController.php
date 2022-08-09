@@ -14,6 +14,6 @@ class StoreController extends Controller
         $data = $request->validated();
         $order = OrderService::store($data);
 
-        return redirect()->route('user.orders.index', $user->id);
+        return redirect()->route('user.schedules.create', compact('user', 'order'));
     }
 }
