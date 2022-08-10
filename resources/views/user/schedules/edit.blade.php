@@ -1,10 +1,10 @@
-@extends('admin.layouts.main')
+@extends('layouts.main')
 
-@section('title', 'МойАвтосервис : Добавление заказа в расписание')
-@section('header', 'Добавить заказ в расписание')
-@section('breadcrumb', 'Добавление заказа в расписание')
+@section('title', 'МойАвтосервис : Редактирование расписания заказа')
+@section('header', 'Редактировать расписание заказа ' . $order->id)
+@section('breadcrumb', 'Редактирования расписания заказа')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.schedules.index') }}">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
 @endsection
 
 @section('scriptTop')
@@ -21,48 +21,51 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('admin.includes.header')
+            @include('includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('admin.schedules.store') }}" method="post" name="schedules">
+                    <form action="{{ route('user.schedules.update', ['user' => $user->id, 'order' => $order->id]) }}"
+                          method="post" name="schedules">
                         @csrf
+                        @method('patch')
                         <div class="mb-3">
                             <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
                                     class="text-danger">*</span></label>
                             <div class="fs-4 fw-bold mb-2">
-                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y') }}" readonly>
+                                Дата: <input type="text" id="pageInfoDate" name="date"
+                                             value="{{ isset($order->schedule) ? date('d.m.Y', strtotime($order->schedule->start_time)) : date('d.m.Y') }}"
+                                             readonly>
                             </div>
                             <table class="table compact hover cell-border" id="schedules">
                                 <thead>
                                 <tr>
                                     <th scope="col" style="width: 5em" hidden>Дата</th>
                                     <th scope="col" style="width: 5em">Время</th>
-                                    @foreach($mastersList as $master)
-                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
-                                    @endforeach
+                                    <th scope="col">Выберите</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($timeSlots as $time => $masters)
+                                @foreach($timeSlotsForClient as $time => $state)
                                     <tr>
                                         <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
                                         <td>{{ date('H:i', $time) }}</td>
-                                        @foreach($masters as $master => $state)
-                                            @if($state == 'unusable')
-                                                <td class="table-secondary text-muted protected">{{ date('H:i', $time) }}
-                                                    Недоступно
-                                                </td>
-                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }} Занято</td>
-                                            @else
-                                                <td><span hidden>{{ $master }}</span></td>
-                                            @endif
-                                        @endforeach
+                                        @if($state == 'unusable')
+                                            <td class="protected
+                                                @if(isset($order->schedule) && $time == strtotime($order->schedule->start_time))
+                                                bg-danger text-white">НЕКОРРЕКТНОЕ ВРЕМЯ
+                                                @else
+                                                    table-secondary text-muted">Недоступно
+                                                @endif
+                                            </td>
+                                        @else
+                                            <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) ? 'selected' : '' }}"></td>
+                                        @endif
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                            <input type="hidden" name="master_id" value="{{ $order->schedule->master_id ?? null }}">
                             <input type="hidden" name="order_id" value="{{ $order->id }}">
                             @error('order_id')
                             <div class="text-danger">{{ $message }}</div>
@@ -75,18 +78,13 @@
                             @error('duration')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
-                            <input type="hidden" name="master_id">
-                            @error('master_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Добавить</button>
-                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <button type="submit" class="btn btn-primary">Обновить</button>
+                                                <a href="{{ route('user.orders.edit', ['user' => $user->id , 'order' =>$order->id]) }}"
+                                                   class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             $(document).ready(function () {
@@ -146,18 +144,12 @@
                 });
 
                 function getTableData() {
-                    master = table.cell({selected: true}).data();
-                    if (master) {
-                        master = master.match(/>(\d+)</);
-                        master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
+                    date = table.cell(table.cell({selected: true}).index().row, 0).data();
 
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
-                    }
+                    $("input[name='start_time']").val(date);
                 }
             });
         </script>
     </main>
-    @include('admin.includes.footer')
+    @include('includes.footer')
 @endsection

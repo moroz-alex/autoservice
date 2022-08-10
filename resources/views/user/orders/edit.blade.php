@@ -120,6 +120,7 @@
                             Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить заказ</button>
+                        <a href="{{ route('user.schedules.edit', ['user' => $user->id , 'order' =>$order->id]) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i> Редактировать расписание</a>
                         <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>

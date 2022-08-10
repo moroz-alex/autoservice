@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 
-class CreateController extends Controller
+class EditController extends Controller
 {
     public function __invoke(User $user, Order $order)
     {
@@ -16,6 +16,6 @@ class CreateController extends Controller
         $timeSlotsNumber = ScheduleService::getTimeSlotsNumber();
         $disableDays = ScheduleService::getDisabledDays();
 
-        return view('user.schedules.create', compact('user', 'order', 'timeSlotsForClient', 'timeSlotsNumber', 'disableDays'));
+        return view('user.schedules.edit', compact('user', 'order', 'timeSlotsForClient', 'timeSlotsNumber', 'disableDays'));
     }
 }

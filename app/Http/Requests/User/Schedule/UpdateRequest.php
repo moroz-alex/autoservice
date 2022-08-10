@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Admin\Schedule;
+namespace App\Http\Requests\User\Schedule;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
 
     /**
@@ -28,7 +28,7 @@ class StoreRequest extends FormRequest
             'order_id' => 'required|integer|exists:orders,id',
             'start_time' => 'required|date_format:Y-m-d H:i',
             'duration' => 'required|integer',
-            'master_id' => 'required|integer|exists:masters,id',
+            'master_id' => 'nullable|integer|exists:masters,id',
         ];
     }
 
@@ -42,7 +42,6 @@ class StoreRequest extends FormRequest
             'start_time.date_format' => 'Некорректные дата и время начала работ',
             'duration.required' => 'Отсутствует длительность заказа',
             'duration.integer' => 'Некорректная длительность заказа',
-            'master_id.required' => 'Отсутствует ID мастера',
             'master_id.integer' => 'Некорректный ID мастера',
             'master_id.exists' => 'Несуществующий ID мастера',
         ];

@@ -4,7 +4,7 @@
 @section('header', 'Добавить заказ в расписание')
 @section('breadcrumb', 'Добавление заказа в расписание')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
 @endsection
 
 @section('scriptTop')
@@ -43,7 +43,6 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 @foreach($timeSlotsForClient as $time => $state)
                                     <tr>
                                         <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
@@ -69,10 +68,6 @@
                             @enderror
                             <input type="hidden" name="duration" value="{{ $order->duration }}">
                             @error('duration')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                            <input type="hidden" name="master_id">
-                            @error('master_id')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -126,15 +121,12 @@
                     },
                 });
 
+                table.cells('.selected').select();
+                getTableData();
+
                 table
                     .on('select', function () {
-                        master = table.cell({selected: true}).data();
-                        master = master.match(/>(\d+)</);
-                        if (master !== null) master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
-
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
+                        getTableData();
                     });
 
                 $('#schedules_filter').hide();
@@ -147,8 +139,12 @@
                     table.search(searchDate).draw();
                 });
 
-            });
+                function getTableData() {
+                    date = table.cell(table.cell({selected: true}).index().row, 0).data();
 
+                    $("input[name='start_time']").val(date);
+                }
+            });
         </script>
     </main>
     @include('includes.footer')

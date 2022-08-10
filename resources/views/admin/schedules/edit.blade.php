@@ -170,9 +170,7 @@
                         $("input[name='master_id']").val(master);
                     }
                 }
-
             });
-
         </script>
     </main>
     @include('admin.includes.footer')

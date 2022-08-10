@@ -135,11 +135,10 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
     });
 
     Route::group(['namespace' => 'Schedule', 'prefix' => '{user}/schedules'], function () {
-//        Route::get('/', 'IndexController')->name('user.schedules.index');
         Route::get('/create/{order}', 'CreateController')->name('user.schedules.create');
         Route::post('/', 'StoreController')->name('user.schedules.store');
-//        Route::get('/edit/{order}', 'EditController')->name('user.schedules.edit');
-//        Route::patch('/{order}', 'UpdateController')->name('user.schedules.update');
+        Route::get('/edit/{order}', 'EditController')->name('user.schedules.edit');
+        Route::patch('/{order}', 'UpdateController')->name('user.schedules.update');
     });
 
 });
