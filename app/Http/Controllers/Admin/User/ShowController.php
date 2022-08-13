@@ -13,8 +13,7 @@ class ShowController extends Controller
     {
         $roles = User::USER_ROLES;
         $userCarIds = $user->cars()->pluck('id')->toArray();
-        $orders = Order::whereIn('car_id', $userCarIds)->orderByDesc('id')->get();
-        $orders = OrderService::checkOrdersSchedule($orders);
+        $orders = Order::whereIn('car_id', $userCarIds)->with('states')->get();
 
         return view('admin.users.show', compact('user', 'roles', 'orders'));
     }

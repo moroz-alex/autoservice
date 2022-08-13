@@ -121,9 +121,6 @@
                     },
                 });
 
-                table.cells('.selected').select();
-                getTableData();
-
                 table
                     .on('select', function () {
                         getTableData();

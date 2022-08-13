@@ -33,4 +33,8 @@ class Order extends Model
     public function schedule() {
         return $this->hasOne(Schedule::class, 'order_id');
     }
+
+    public function states() {
+        return $this->belongsToMany(State::class, 'order_states', 'order_id', 'state_id')->using(StateUserPivot::class)->withPivot('created_at', 'user_id')->orderByDesc('order_states.created_at');
+    }
 }

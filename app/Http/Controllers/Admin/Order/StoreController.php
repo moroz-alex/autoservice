@@ -11,6 +11,12 @@ class StoreController extends Controller
     public function __invoke(StoreRequest $request)
     {
         $data = $request->validated();
+        $data['state'] = [
+            [
+                'state_id' => 2,
+                'user_id' => 2, // TODO Заменить на текущего менеджера
+            ]
+        ];
         $order = OrderService::store($data);
 
         return redirect()->route('admin.schedules.create', compact('order'));

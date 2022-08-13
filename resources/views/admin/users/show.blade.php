@@ -70,8 +70,9 @@
                     <th scope="col">Работы</th>
                     <th scope="col" style="width: 3em">Время, часов</th>
                     <th scope="col" style="width: 4em">Сумма, грн.</th>
-                    <th scope="col" style="width: 4em">Статус</th>
-                    <th scope="col" style="width: 4em">Действия</th>
+                    <th scope="col" style="width: 6em">Статус</th>
+                    <th scope="col" style="width: 1em">$</th>
+                    <th scope="col" style="width: 6em">Действия</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -91,11 +92,12 @@
                         <td>
                             {{ $order->price }}
                         </td>
+                        <td>
+                            <span class="badge state state-{{ $order->states->last()->id ?? '0' }}">
+                                {{ $order->states->last()->title ?? '' }}
+                            </span>
+                        </td>
                         <td style="color: #E0E0E0">
-                            <i class="fa-solid fa-calendar-check me-2 {{ isset($order->schedule->start_time) ? ($order->is_schedule_errors ? 'text-danger' : 'text-success') : '' }}"
-                               title="Заказ{{ isset($order->schedule->start_time) ? '' : ' не' }} добавлен в расписание{{ $order->is_schedule_errors ? '. Имеется ошибка!' : '' }}"></i>
-                            <i class="fa-solid fa-circle-check me-2 {{ $order->is_done ? 'text-success' : '' }}"
-                               title="Заказ{{ $order->is_done ? '' : ' не' }} выполен"></i>
                             <i class="fa-solid fa-sack-dollar {{ $order->is_paid ? 'text-success' : '' }}"
                                title="Заказ{{ $order->is_paid ? '' : ' не' }} оплачен"></i>
                         </td>
@@ -104,14 +106,12 @@
                                     class="fa-solid fa-eye link-dark"></i></a>
                             <a href="{{ route('admin.orders.edit', $order->id) }}" class="me-2"><i
                                     class="fa-solid fa-pen link-dark"></i></a>
-                            <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post"
-                                  style="display:inline">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-light" style="display: contents">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
+                            @if(!isset($order->schedule->start_time) || $order->schedule->has_error)
+                                <a href="{{ route('admin.schedules.edit', $order->id) }}" class="me-2"><i
+                                        class="fa-solid fa-calendar-check text-danger"
+                                        title="{{ !isset($order->schedule->start_time) ? 'Заказ не добавлен в расписание!' : 'Ошибка в расписании!' }}"></i></a>
+
+                            @endif
                         </td>
                     </tr>
                 @endforeach

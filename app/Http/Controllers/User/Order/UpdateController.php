@@ -13,11 +13,10 @@ class UpdateController extends Controller
     public function __invoke(UpdateRequest $request, User $user, Order $order)
     {
         $data = $request->validated();
-        dd($data);
         $order = OrderService::update($data, $order);
 
-        if ($order->tasksChanged || !isset($order->schedule->start_time)) {
-//            return redirect()->route('user.schedules.edit', compact('order'));
+        if ($order->tasksChanged || !isset($order->schedule->start_time) || $order->schedule->has_error) {
+            return redirect()->route('user.schedules.edit', compact('user', 'order'));
         } else {
             return redirect()->route('user.orders.index', $user->id);
         }

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Master;
 use App\Models\Schedule;
 use App\Models\Settings;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleService
 {
@@ -100,7 +101,9 @@ class ScheduleService
             if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
                 $timeSlots[$taskStart][$task->master_id] = $task->order_id;
                 for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
-                    $timeSlots[$time][$task->master_id] = 'used';
+                    if ($timeSlots[$time][$task->master_id] == 'unusable') {
+                        $timeSlots[$time][$task->master_id] = 'used';
+                    }
                 }
             }
         }
@@ -143,15 +146,19 @@ class ScheduleService
         return $timeSlots;
     }
 
-    public function checkOrderScheduleFit($order)
+    public function checkOrderScheduleFit($order, $startTime = null, $master = null)
     {
         if (!isset($order->schedule)) return 0;
-        $orderDate = date('Y-m-d', strtotime($order->schedule->start_time));
-        $mastersList[] = $order->schedule->master;
+
+        $startTime = $startTime ?? $order->schedule->start_time;
+        $orderDate = date('Y-m-d', strtotime($startTime));
+
+        $master = $master ?? $order->schedule->master;
+        $mastersList[] = $master;
 
         $scheduleTasks = Schedule::where('start_time', '<=', $orderDate . ' ' . $this->settings->schedule_end)
             ->where('start_time', '>=', $orderDate . ' ' . $this->settings->schedule_start)
-            ->where('master_id', $order->schedule->master->id)
+            ->where('master_id', $master->id)
             ->get();
 
         $timeSlots = $this->createTimeSlots($orderDate, $orderDate, $mastersList);
@@ -160,8 +167,8 @@ class ScheduleService
 
         $timeSlots = $this->getScheduleFreeTimeSlots($timeSlots, $mastersList, $order);
 
-        if ($timeSlots[strtotime($order->schedule->start_time)][$order->schedule->master_id] != 'free'
-            && isset($order->schedule) && $order->schedule->start_time > date('Y-m-d H:i:s')) {
+        if ($timeSlots[strtotime($startTime)][$master->id] != 'free'
+            && isset($order->schedule) && $startTime > date('Y-m-d H:i:s')) {
             return 1;
         } else {
             return 0;
@@ -227,4 +234,20 @@ class ScheduleService
         return ($lessLoadedMasters[rand(0, count($lessLoadedMasters) - 1)]);
     }
 
+    public function update($data, $order)
+    {
+        $schedule = Schedule::where('order_id', $order->id)->first();
+        $master = Master::find($data['master_id']);
+
+        if (isset($schedule)) {
+            if ($this->checkOrderScheduleFit($order, $data['start_time'], $master) == 0) {
+                $data['has_error'] = false;
+            } else {
+                $data['has_error'] = true;
+            }
+            $schedule->update($data);
+        } else {
+            Schedule::create($data);
+        }
+    }
 }

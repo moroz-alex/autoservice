@@ -22,8 +22,8 @@ class IndexController extends Controller
         $orders = Order::where('created_at', '>=', $dates['date_from'] . ' 00:00:00')
             ->where('created_at', '<=', $dates['date_to'] . ' 23:59:59')
             ->orderByDesc('id')
+            ->with('states')
             ->get();
-        $orders = OrderService::checkOrdersSchedule($orders);
 
         return view('admin.orders.index', compact('orders', 'dates'));
     }

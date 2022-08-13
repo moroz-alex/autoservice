@@ -11,63 +11,84 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-            <h3>Автомобиль</h3>
-            <table class="table mb-5">
-                <tbody>
-                <tr>
-                <th scope="col" style="width: 19em">Марка и модель</th>
-                <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year }}</td>
-                </tr>
-                <tr>
-                <th scope="col">Гос. номер</th>
-                <td>{{ $order->car->number }}</td>
-                </tr>
-                <tr>
-                <th scope="col">VIN-код</th>
-                <td>{{ $order->car->vin }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Клиент</th>
-                    <td>{{ $order->car->user->name . ' ' . $order->car->user->last_name }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Телефон клиента</th>
-                    <td>{{ $order->car->user->phone }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Менеджер</th>
-                    <td>{{ $order->user->name  . ' ' . $order->user->last_name}}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Мастер</th>
-                    <td>{{ isset($order->schedule) ? $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name : '' }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Дата и время начала работ</th>
-                    <td>{{ isset($order->schedule) ? date('d.m.Y H:i', strtotime($order->schedule->start_time)) : '' }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Длительность работ, часов</th>
-                    <td>{{ $order->duration / 60}}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Сумма заказа, грн.</th>
-                    <td>{{ $order->price }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Заказ выполнен</th>
-                    <td>{!! $order->is_done ? "<i class=\"fa-solid fa-square-check text-success\"></i>" : "<i class=\"fa-solid fa-square-xmark text-black-50\"></i>" !!}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Заказ оплачен</th>
-                    <td>{!! $order->is_paid ? "<i class=\"fa-solid fa-square-check text-success\"></i>" : "<i class=\"fa-solid fa-square-xmark text-black-50\"></i>" !!}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Отзыв клиента</th>
-                    <td></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="row">
+                <div class="col-lg-6 mb-5">
+                    <h3>Автомобиль</h3>
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th scope="col" style="width: 19em">Марка и модель</th>
+                            <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Гос. номер</th>
+                            <td>{{ $order->car->number }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">VIN-код</th>
+                            <td>{{ $order->car->vin }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Клиент</th>
+                            <td>{{ $order->car->user->name . ' ' . $order->car->user->last_name }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Телефон клиента</th>
+                            <td>{{ $order->car->user->phone }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Менеджер</th>
+                            <td>{{ $order->user->name  . ' ' . $order->user->last_name}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Мастер</th>
+                            <td>{{ isset($order->schedule) ? $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name : '' }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Дата и время начала работ</th>
+                            <td>{{ isset($order->schedule) ? date('d.m.Y H:i', strtotime($order->schedule->start_time)) : '' }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Длительность работ, часов</th>
+                            <td>{{ $order->duration / 60}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Сумма заказа, грн.</th>
+                            <td>{{ $order->price }}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Заказ оплачен</th>
+                            <td>{!! $order->is_paid ? "<i class=\"fa-solid fa-square-check text-success\"></i>" : "<i class=\"fa-solid fa-square-xmark text-black-50\"></i>" !!}</td>
+                        </tr>
+                        <tr>
+                            <th scope="col">Отзыв клиента</th>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-lg-6 mb-5">
+                    <h3>Статусы заказа</h3>
+                    <table class="table" id="states">
+                        <thead>
+                        <tr>
+                            <th scope="col">Статус</th>
+                            <th scope="col" style="width: 11em">Дата и время</th>
+                            <th scope="col" style="width: 15em">Автор</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($order->states as $key => $state)
+                            <tr {!! $key == last($order->states) ? "" : "class='text-black-50'" !!}>
+                                <td>{{ $state->title }}</td>
+                                <td>{{ $state->pivot->created_at }}</td>
+                                <td>{{ $state->pivot->user->name ?? '' }} {{ $state->pivot->user->last_name ?? '' }}</td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <h3>Перечень работ</h3>
             <table class="table mb-5">

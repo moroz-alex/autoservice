@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
 @endsection
 
 @section('content')
@@ -209,10 +210,14 @@
                         {data: 'quantity'},
                     ],
                     stateSave: true,
+                    keys: true,
                 });
 
                 table_tasks.rows('.selected').select();
                 getTableTasksData();
+
+                var selectedCell = table_tasks.row( '.selected' ).index();
+                table_tasks.cell( selectedCell, 0 ).focus();
 
                 table_tasks
                     .on('select', function (e, dt, type, indexes) {

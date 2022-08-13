@@ -59,7 +59,7 @@
                                                 @endif
                                             </td>
                                         @else
-                                            <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) ? 'selected' : '' }}"></td>
+                                            <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) ? 'selected' : '' }}">&nbsp</td>
                                         @endif
                                     </tr>
                                 @endforeach
@@ -128,6 +128,9 @@
                     },
                 });
 
+                table.cells('.selected').select();
+                getTableData();
+
                 table
                     .on('select', function () {
                         getTableData();
@@ -144,9 +147,11 @@
                 });
 
                 function getTableData() {
-                    date = table.cell(table.cell({selected: true}).index().row, 0).data();
+                    if (table.cell({selected: true}).data()) {
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
 
-                    $("input[name='start_time']").val(date);
+                        $("input[name='start_time']").val(date);
+                    }
                 }
             });
         </script>

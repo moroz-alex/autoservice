@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
 @endsection
 
 @section('content')
@@ -117,24 +118,58 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <h3>Статус заказа</h3>
-                        <div class="mb-5">
-                            <div class="form-check form-switch mt-2">
-                                <input type="hidden" name="is_done" value="0">
-                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_done ? 'checked' : '' }} id="is_done" name="is_done" value="1"/>
-                                <label for="is_done" class="form-check-label">Заказ выполен</label>
+                        <div class="row mb-5">
+                            <h3>Статусы заказа</h3>
+                            <div class="col-lg-6">
+                                <table class="table" id="states">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col" style="width: 11em">Дата и время</th>
+                                        <th scope="col" style="width: 15em">Автор</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($order->states as $key => $state)
+                                        <tr {!! $key == last($order->states) ? "" : "class='text-black-50'" !!}>
+                                            <td>{{ $state->title }}</td>
+                                            <td>{{ $state->pivot->created_at }}</td>
+                                            <td>{{ $state->pivot->user->name ?? '' }} {{ $state->pivot->user->last_name ?? '' }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="mb-3 pt-0">
+                                    <select class="form-select form-control" id="state" name="state">
+                                        <option value="">Обновить статус</option>
+                                        @foreach($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->title }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('state')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    <input type="hidden" name="is_paid" value="0">
+                                    <input type="checkbox" role="switch" class="form-check-input"
+                                           {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid"
+                                           value="1"/>
+                                    <label for="is_paid" class="form-check-label">Заказ оплачен</label>
+                                </div>
                             </div>
-                            <div class="form-check form-switch mt-2">
-                                <input type="hidden" name="is_paid" value="0">
-                                <input type="checkbox" role="switch" class="form-check-input" {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid" value="1"/>
-                                <label for="is_paid" class="form-check-label">Заказ оплачен</label>
+                            <div class="col-lg-6">
+
                             </div>
                         </div>
-                        <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert" style="display: none">
+
+                        <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert"
+                             style="display: none">
                             Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить заказ</button>
-                        <a href="{{ route('admin.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
+                        <a href="{{ route('admin.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2"
+                           title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
@@ -223,10 +258,14 @@
                         {data: 'quantity'},
                     ],
                     stateSave: true,
+                    keys: true,
                 });
 
                 table_tasks.rows('.selected').select();
                 getTableTasksData();
+
+                var selectedCell = table_tasks.row( '.selected' ).index();
+                table_tasks.cell( selectedCell, 0 ).focus();
 
                 $('#tasks tbody').on('change', 'td', function () {
                     var data = table_tasks.cell(this).data();

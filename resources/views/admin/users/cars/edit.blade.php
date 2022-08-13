@@ -135,8 +135,8 @@
                 });
 
                 table.row( '.selected' ).select();
-                var selectedCell = table.row( '.selected' ).data();
-                table.cell( selectedCell[0] - 2, 0 ).focus();
+                var selectedCell = table.row( '.selected' ).index();
+                table.cell( selectedCell, 0 ).focus();
 
                 table
                     .on('select', function (e, dt, type, indexes) {

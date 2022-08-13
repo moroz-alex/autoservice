@@ -26,17 +26,16 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'car_id'=>'required|integer|exists:cars,id',
-            'is_done'=>'boolean',
-            'is_paid'=>'boolean',
-            'task_ids'=>['array', 'required', new HasMaster],
-            'task_ids.*'=>'integer|exists:tasks,id',
-            'task_qts'=>'array|required',
-            'task_qts.*'=>'integer|min:1',
-            'task_prs'=>'array|required',
-            'task_prs.*'=>'integer|min:1',
-            'task_drs'=>'array|required',
-            'task_drs.*'=>'integer|min:1',
+            'car_id' => 'required|integer|exists:cars,id',
+            'is_paid' => 'boolean',
+            'task_ids' => ['array', 'required', new HasMaster],
+            'task_ids.*' => 'integer|exists:tasks,id',
+            'task_qts' => 'array|required',
+            'task_qts.*' => 'integer|min:1',
+            'task_prs' => 'array|required',
+            'task_prs.*' => 'integer|min:1',
+            'task_drs' => 'array|required',
+            'task_drs.*' => 'integer|min:1',
         ];
     }
 
@@ -46,6 +45,7 @@ class UpdateRequest extends FormRequest
             'car_id.required' => 'Необходимо выбрать автомобиль',
             'car_id.integer' => 'Некорректный ID автомобиля',
             'car_id.exists' => 'Несуществующий ID автомобиля',
+            'is_paid' => 'Некорректный статус оплаты',
             'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
             'task_ids.*.exists' => 'Некорректный ID работы',
             'task_ids.*.integer' => 'Некорректный ID работы',

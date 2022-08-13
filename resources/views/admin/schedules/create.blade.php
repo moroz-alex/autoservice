@@ -31,7 +31,7 @@
                             <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
                                     class="text-danger">*</span></label>
                             <div class="fs-4 fw-bold mb-2">
-                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y') }}" readonly>
+                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y', array_key_first($timeSlots)) }}" readonly>
                             </div>
                             <table class="table compact hover cell-border" id="schedules">
                                 <thead>

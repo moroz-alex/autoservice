@@ -31,13 +31,6 @@
                         <td>
                             <a href="{{ route('admin.categories.show', $category->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
                             <a href="{{ route('admin.categories.edit', $category->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
-                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="post" style="display:inline">
-                                @csrf
-                                @method('delete')
-                                <button class="btn btn-light" style="display: contents">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </form>
                         </td>
                     </tr>
                 @endforeach

@@ -26,15 +26,15 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'car_id'=>'required|integer|exists:cars,id',
-            'task_ids'=>['array', 'required', new HasMaster],
-            'task_ids.*'=>'integer|exists:tasks,id',
-            'task_qts'=>'array|required',
-            'task_qts.*'=>'integer|min:1',
-            'task_prs'=>'array|required',
-            'task_prs.*'=>'integer|min:1',
-            'task_drs'=>'array|required',
-            'task_drs.*'=>'integer|min:1',
+            'car_id' => 'required|integer|exists:cars,id',
+            'task_ids' => ['array', 'required', new HasMaster],
+            'task_ids.*' => 'integer|exists:tasks,id',
+            'task_qts' => 'array|required',
+            'task_qts.*' => 'integer|min:1',
+            'task_prs' => 'array|required',
+            'task_prs.*' => 'integer|min:1',
+            'task_drs' => 'array|required',
+            'task_drs.*' => 'integer|min:1',
         ];
     }
 

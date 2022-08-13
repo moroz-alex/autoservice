@@ -12,7 +12,10 @@ class IndexController extends Controller
     public function __invoke(User $user)
     {
         $userCarIds = $user->cars()->pluck('id')->toArray();
-        $orders = Order::whereIn('car_id', $userCarIds)->orderByDesc('id')->paginate(10);
+        $orders = Order::whereIn('car_id', $userCarIds)
+            ->orderByDesc('id')
+            ->with('states')
+            ->paginate(10);
 
         return view('user.orders.index', compact( 'user', 'orders'));
     }

@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use App\Facades\ScheduleService;
 use App\Models\Order;
 use App\Models\OrderTask;
+use App\Models\Schedule;
 use App\Models\Task;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Facades\ScheduleService;
 
 class OrderService
 {
@@ -43,8 +43,13 @@ class OrderService
             $orderData = $this->createOrderData($data);
 
             $order = Order::create($orderData);;
+
             if (isset($data['orderTasks'])) {
                 $order->tasks()->attach($data['orderTasks']);
+            }
+
+            if (isset($data['state'])) {
+                $order->states()->attach($data['state']);
             }
 
             DB::commit();
@@ -73,7 +78,20 @@ class OrderService
             $order->tasksChanged = $this->checkOrderTasksChanges($data, $order);
 
             $order->update($orderData);
-            $order->tasks()->sync($data['orderTasks']);
+
+            if ($order->tasksChanged) {
+                $order->tasks()->sync($data['orderTasks']);
+                $schedule = Schedule::where('order_id', $order->id)->first();
+                $schedule_errors = ScheduleService::checkOrderScheduleFit($order);
+                $schedule->update([
+                    'duration' => $order->duration,
+                    'has_error' => $schedule_errors,
+                ]);
+            }
+
+            if (isset($data['state'])) {
+                $order->states()->attach($data['state']);
+            }
 
             DB::commit();
 
@@ -92,8 +110,7 @@ class OrderService
             'duration' => $data['orderDuration'],
             'price' => $data['orderPrice'],
             'is_confirmed' => '0',
-            'user_id' => '2',  // Заменить на текущего менеджера
-            'is_done' => $data['is_done'] ?? '0',
+            'user_id' => '2',  // TODO Заменить на текущего менеджера
             'is_paid' => $data['is_paid'] ?? '0',
         ];
     }
@@ -117,13 +134,13 @@ class OrderService
     public function checkOrderTasksChanges($data, $order)
     {
         $orderOldData = OrderTask::select('task_id', 'quantity', 'duration', 'price')->where('order_id', $order->id)->get()->toArray();
-        foreach ($data['orderTasks'] as $id =>$task) {
+        foreach ($data['orderTasks'] as $id => $task) {
             $tasks[] = [
                 'task_id' => $id,
                 'quantity' => (int)$task['quantity'],
                 'duration' => (int)$task['duration'],
                 'price' => (int)$task['price'],
-                ];
+            ];
         }
         sort($tasks);
         sort($orderOldData);
@@ -131,11 +148,4 @@ class OrderService
         return $tasks != $orderOldData;
     }
 
-    public function checkOrdersSchedule($orders)
-    {
-        foreach ($orders as $order) {
-            $order->is_schedule_errors = ScheduleService::checkOrderScheduleFit($order);
-        }
-        return $orders;
-    }
 }
