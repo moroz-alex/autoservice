@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Master;
 use App\Models\Schedule;
 use App\Models\Settings;
-use Illuminate\Support\Facades\DB;
 
 class ScheduleService
 {
@@ -45,7 +44,7 @@ class ScheduleService
 
     public function getMastersList($order)
     {
-        $mastersListAll = Master::all();
+        $mastersListAll = Master::where('is_available', true)->get();
         $orderTasksIds = $order->tasks()->pluck('task_id')->toArray();
         foreach ($mastersListAll as $master) {
             if (empty(array_diff($orderTasksIds, $master->tasks->pluck('id')->toArray()))) {
@@ -57,7 +56,7 @@ class ScheduleService
 
     public function getAllMasters()
     {
-        $mastersList = Master::all();
+        $mastersList = Master::where('is_available', true)->get();
         foreach ($mastersList as $master) {
             $mastersListArray[] = $master;
         }

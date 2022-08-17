@@ -43,6 +43,15 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-3">
+                            <label for="function" class="form-label">Должность</label>
+                            <input type="text" class="form-control" name="function" id="function"
+                                   placeholder="Введите должность мастера"
+                                   value="{{ !empty(old('function')) ? old('function') : $master->function }}">
+                            @error('function')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="form-check form-switch mt-2 mb-5">
                             <input type="hidden" name="is_available" value="0">
                             <input type="checkbox" role="switch" class="form-check-input"

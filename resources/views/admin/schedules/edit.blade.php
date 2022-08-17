@@ -42,7 +42,7 @@
                                     <th scope="col" style="width: 5em" hidden>Дата</th>
                                     <th scope="col" style="width: 5em">Время</th>
                                     @foreach($mastersList as $master)
-                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
+                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}<br><span class="text-black-50 fw-normal">{{ $master->function }}</span></th>
                                     @endforeach
                                 </tr>
                                 </thead>
