@@ -73,6 +73,10 @@
                         @endforeach
                         </tbody>
                     </table>
+                    @if($order->states->first()->id == 1)
+                        <a href="{{ route('user.orders.cancel', ['user' => $user->id, 'order' => $order->id]) }}"
+                           class="btn btn-danger">Отменить заказ</a>
+                    @endif
                 </div>
             </div>
             <h3>Перечень работ</h3>
