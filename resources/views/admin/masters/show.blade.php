@@ -33,6 +33,10 @@
                     <th scope="col">Фамилия</th>
                     <td>{{ $master->last_name }}</td>
                 </tr>
+                <tr>
+                    <th scope="col">Доступность</th>
+                    <td><span class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span></td>
+                </tr>
                 </tbody>
             </table>
 

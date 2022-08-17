@@ -21,6 +21,7 @@
                     <th scope="col" style="width: 3em">ID.</th>
                     <th scope="col" style="width: 14em">Имя</th>
                     <th scope="col">Фамилия</th>
+                    <th scope="col" style="width: 10em">Доступность</th>
                     <th scope="col" style="width: 3em">Действия</th>
                 </tr>
                 </thead>
@@ -30,6 +31,7 @@
                         <td>{{ $master->id }}</td>
                         <td><a href="{{ route('admin.masters.show', $master->id) }}" class="link-dark text-decoration-none">{{ $master->first_name }}</a></td>
                         <td><a href="{{ route('admin.masters.show', $master->id) }}" class="link-dark text-decoration-none">{{ $master->last_name }}</a></td>
+                        <td><span class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span></td>
                         <td>
                             <a href="{{ route('admin.masters.show', $master->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
                             <a href="{{ route('admin.masters.edit', $master->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>

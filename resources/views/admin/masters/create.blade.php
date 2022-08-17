@@ -42,6 +42,16 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="form-check form-switch mt-2 mb-5">
+                            <input type="hidden" name="is_available" value="0">
+                            <input type="checkbox" role="switch" class="form-check-input" checked id="is_available"
+                                   name="is_available"
+                                   value="1"/>
+                            <label for="is_available" class="form-check-label">Мастер доступен</label>
+                            @error('is_available')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="mb-3">
                             <label for="tasks" class="form-label">Выполняемые работы</label>
                             <table class="table" id="tasks">
@@ -110,7 +120,7 @@
                     ]
                 });
 
-                table.rows( '.selected' ).select();
+                table.rows('.selected').select();
 
                 table
                     .on('select', function (e, dt, type, indexes) {
@@ -122,7 +132,7 @@
             });
             $("form").submit(function () {
                 var res = "";
-                taskIds.forEach(function(item, i, taskIds) {
+                taskIds.forEach(function (item, i, taskIds) {
                     res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
                 });
                 document.getElementById('taskId').innerHTML = res;

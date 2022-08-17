@@ -43,8 +43,18 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="form-check form-switch mt-2 mb-5">
+                            <input type="hidden" name="is_available" value="0">
+                            <input type="checkbox" role="switch" class="form-check-input"
+                                   {{ $master->is_available ? 'checked' : '' }} id="is_available" name="is_available"
+                                   value="1"/>
+                            <label for="is_available" class="form-check-label">Мастер доступен</label>
+                            @error('is_available')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <div class="mb-3">
-                            <label for="tasks" class="form-label">Выполняемые работы</label>
+                            <h3>Выполняемые работы</h3>
                             <table class="table" id="tasks">
                                 <thead>
                                 <tr>
@@ -110,19 +120,24 @@
                     ]
                 });
 
-                table.rows( '.selected' ).select();
+                table.rows('.selected').select();
+                getTableTasksData();
 
                 table
                     .on('select', function (e, dt, type, indexes) {
-                        taskIds = table.rows('.selected').data().pluck('id').toArray();
+                        getTableTasksData();
                     })
                     .on('deselect', function (e, dt, type, indexes) {
-                        taskIds = table.rows('.selected').data().pluck('id').toArray();
+                        getTableTasksData();
                     });
+
+                function getTableTasksData() {
+                    taskIds = table.rows('.selected').data().pluck('id').toArray();
+                }
             });
             $("form").submit(function () {
                 var res = "";
-                taskIds.forEach(function(item, i, taskIds) {
+                taskIds.forEach(function (item, i, taskIds) {
                     res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
                 });
                 document.getElementById('taskId').innerHTML = res;
