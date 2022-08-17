@@ -14,8 +14,6 @@ class Schedule extends Model
     protected $table = 'schedules';
     protected $guarded = false;
 
-    protected $with = ['master'];
-
     const TIME_SLOT_SIZE = 15;
 
     public static function getTimeSlotSize() {

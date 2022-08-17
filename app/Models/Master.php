@@ -14,8 +14,6 @@ class Master extends Model
     protected $table = 'masters';
     protected $guarded = false;
 
-    protected $with = ['tasks'];
-
     public function tasks() {
         return $this->belongsToMany(Task::class, 'master_tasks', 'master_id', 'task_id');
     }

@@ -9,8 +9,6 @@ class ShowController extends Controller
 {
     public function __invoke(Order $order)
     {
-        $order = Order::with('states')->find($order->id);
-
         return view('admin.orders.show', compact('order'));
     }
 }
