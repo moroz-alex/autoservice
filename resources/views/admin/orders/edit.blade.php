@@ -206,10 +206,14 @@
                             rows: ""
                         },
                     },
+                    keys: true,
                 });
 
                 table_cars.rows('.selected').select();
                 getTableCarsData();
+
+                var selectedCell = table_cars.row( '.selected' ).index();
+                table_cars.cell( selectedCell, 0 ).focus();
 
                 table_cars
                     .on('select', function (e, dt, type, indexes) {

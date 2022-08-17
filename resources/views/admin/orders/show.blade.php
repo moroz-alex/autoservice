@@ -18,31 +18,31 @@
                         <tbody>
                         <tr>
                             <th scope="col" style="width: 19em">Марка и модель</th>
-                            <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year }}</td>
+                            <td>{{ isset($order->car) && isset($order->car->model) && isset($order->car->model->brand) ? $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year : '' }}</td>
                         </tr>
                         <tr>
                             <th scope="col">Гос. номер</th>
-                            <td>{{ $order->car->number }}</td>
+                            <td>{{ isset($order->car) ? $order->car->number : '' }}</td>
                         </tr>
                         <tr>
                             <th scope="col">VIN-код</th>
-                            <td>{{ $order->car->vin }}</td>
+                            <td>{{ isset($order->car) ? $order->car->vin : '' }}</td>
                         </tr>
                         <tr>
                             <th scope="col">Клиент</th>
-                            <td>{{ $order->car->user->name . ' ' . $order->car->user->last_name }}</td>
+                            <td>{{ isset($order->car) && isset($order->car->user) ? $order->car->user->name . ' ' . $order->car->user->last_name : ''}}</td>
                         </tr>
                         <tr>
                             <th scope="col">Телефон клиента</th>
-                            <td>{{ $order->car->user->phone }}</td>
+                            <td>{{ isset($order->car) && isset($order->car->user) ? $order->car->user->phone : '' }}</td>
                         </tr>
                         <tr>
                             <th scope="col">Менеджер</th>
-                            <td>{{ $order->user->name  . ' ' . $order->user->last_name}}</td>
+                            <td>{{ isset($order->car) && isset($order->car->user) ? $order->user->name  . ' ' . $order->user->last_name : ''}}</td>
                         </tr>
                         <tr>
                             <th scope="col">Мастер</th>
-                            <td>{{ isset($order->schedule) ? $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name : '' }}</td>
+                            <td>{{ isset($order->schedule) && isset($order->schedule->master) ? $order->schedule->master->first_name . ' ' . $order->schedule->master->last_name : '' }}</td>
                         </tr>
                         <tr>
                             <th scope="col">Дата и время начала работ</th>

@@ -30,6 +30,7 @@ class StoreRequest extends FormRequest
             'year' => 'integer|nullable|between:1940,' . date('Y'),
             'number' => 'string|nullable',
             'vin' => 'string|nullable',
+            'quickOrder' => 'nullable|boolean',
         ];
     }
 

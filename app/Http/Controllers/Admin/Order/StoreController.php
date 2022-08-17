@@ -18,6 +18,7 @@ class StoreController extends Controller
             ]
         ];
         $order = OrderService::store($data);
+        $request->session()->forget('carId');
 
         return redirect()->route('admin.schedules.create', compact('order'));
     }

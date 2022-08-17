@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
 @endsection
 
 @section('content')
@@ -24,6 +25,8 @@
                     <form action="{{ route('admin.orders.store') }}" method="post" name="orders">
                         @csrf
                         <h3>Автомобиль</h3>
+                        <a id="add_car" href="#" class="btn btn-secondary mb-3 float-end" style="display: none" title="Добавить новый автомобиль выбранному клиенту">Добавить авто клиенту</a>
+                        <a href="{{ route('admin.users.create', ['quickOrder' => true]) }}" class="btn btn-secondary mb-3 me-3 float-end">Добавить клиента</a>
                         <div class="mb-3">
                             <label for="cars" class="form-label">Выберите автомобиль <span class="text-danger">*</span></label>
                             <table class="table" id="cars">
@@ -34,16 +37,18 @@
                                     <th scope="col" style="width: 8em">Номер</th>
                                     <th scope="col" style="width: 25em">Владелец</th>
                                     <th scope="col" style="width: 9em">Телефон владельца</th>
+                                    <th hidden></th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($cars as $car)
-                                    <tr class="{{ old('car_id') == $car->id ? ' selected' : '' }}">
+                                    <tr class="{{ old('car_id') == $car->id || $car->id == $carId ? ' selected' : '' }}">
                                         <td>{{ $car->id }}</td>
                                         <td>{{ $car->model->brand->title . ' ' . $car->model->title . ' ' . $car->year }}</td>
                                         <td>{{ $car->number }}</td>
                                         <td>{{ $car->user->name . ' ' . $car->user->last_name }}</td>
                                         <td>{{ $car->user->phone }}</td>
+                                        <td hidden>{{ $car->user->id }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -141,9 +146,16 @@
                             rows: ""
                         },
                     },
+                    keys: true,
                 });
 
                 table_cars.rows('.selected').select();
+                var selectedCell = table_cars.row( '.selected' ).index();
+
+                table_cars.cell( selectedCell, 0 ).focus();
+
+                var addCarHref = '{{ route('admin.users.cars.create', 'user_id_template') }}' + '?quickOrder=1';
+
                 getTableCarsData();
 
                 table_cars
@@ -153,11 +165,14 @@
                     .on('deselect', function (e, dt, type, indexes) {
                         $("input[name='car_id']").val('');
                     });
-
                 function getTableCarsData() {
                     var rowData = table_cars.rows('.selected').data().toArray();
                     if (rowData.length > 0) {
                         $("input[name='car_id']").val(rowData[0][0]);
+                        userId = rowData[0][5];
+                        href = addCarHref.replace('user_id_template', userId);
+                        $("#add_car").attr('href', href);
+                        $("#add_car").show('slow');
                     }
                 }
 

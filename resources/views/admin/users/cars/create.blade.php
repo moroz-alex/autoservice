@@ -25,7 +25,7 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
 
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-12">
                     <form action="{{ route('admin.users.cars.store', $user->id) }}" method="post">
                         @csrf
@@ -95,7 +95,6 @@
                         </div>
 
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-
                         <button type="submit" class="btn btn-primary">Добавить</button>
                         <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>

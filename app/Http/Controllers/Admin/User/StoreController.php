@@ -13,8 +13,9 @@ class StoreController extends Controller
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
-        User::create($data);
+        $user = User::create($data);
+        // TODO Автогенерация пароля при добавлении клиента менеджером (только в случае указания email?)
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.cars.create', compact('user'));
     }
 }

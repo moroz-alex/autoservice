@@ -31,10 +31,11 @@ class StoreRequest extends FormRequest
         return [
             'name' => 'required|string',
             'last_name' => 'string|nullable',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'nullable|email|unique:users,email',
             'password' => 'required|string', // можно ограничить регуляркой
             'phone' => 'required|string|unique:users,phone', // можно проверить регуляркой
             'role' => 'required|in:' . $roles,
+            'quickOrder' => 'nullable|boolean',
         ];
     }
 
@@ -42,7 +43,6 @@ class StoreRequest extends FormRequest
     {
         return [
             'name.required' => 'Необходимо указать имя пользователя',
-            'email.required' => 'Необходимо указать емейл',
             'email.email' => 'Указан некорректный емейл',
             'email.unique' => 'Пользователь с данным емейл-ом уже существует',
             'password.required' => 'Необходимо указать пароль',

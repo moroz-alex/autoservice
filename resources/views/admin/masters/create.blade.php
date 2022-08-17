@@ -20,7 +20,7 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
 
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-12">
                     <form action="{{ route('admin.masters.store') }}" method="post" name="masters">
                         @csrf

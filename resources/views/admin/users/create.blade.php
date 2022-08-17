@@ -40,7 +40,7 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" id="email"
                                    placeholder="Введите емейл пользователя"
                                    value="{{ old('email') }}">

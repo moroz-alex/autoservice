@@ -11,6 +11,13 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
+
+            @if(!empty(session()->get('error')))
+                <div class="alert alert-danger mt-3" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
+
             <div class="row mb-5">
                 <div class="col">
                     <table class="table">
@@ -62,14 +69,18 @@
                             <tr>
                                 <td>{{ $task->id }}</td>
                                 <td>{{ $task->category->title }}</td>
-                                <td><a href="{{ route('admin.tasks.show', $task->id) }}" class="link-dark text-decoration-none">{{ $task->title }}</a></td>
+                                <td><a href="{{ route('admin.tasks.show', $task->id) }}"
+                                       class="link-dark text-decoration-none">{{ $task->title }}</a></td>
                                 <td>{{ $task->duration / 60 }}</td>
                                 <td>{{ $task->price }} <span class="text-secondary">грн.</span></td>
-                                <td>{{ $task->price * $task->duration / 60 }} <span class="text-secondary">грн.</span></td>
+                                <td>{{ $task->price * $task->duration / 60 }} <span class="text-secondary">грн.</span>
+                                </td>
                                 <td>{!! $task->is_available_to_customer ? "<i class=\"fa-solid fa-circle-check\"></i>" : "" !!}</td>
                                 <td>
-                                    <a href="{{ route('admin.tasks.show', $task->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                                    <a href="{{ route('admin.tasks.edit', $task->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                                    <a href="{{ route('admin.tasks.show', $task->id) }}" class="me-2"><i
+                                            class="fa-solid fa-eye link-dark"></i></a>
+                                    <a href="{{ route('admin.tasks.edit', $task->id) }}" class="me-2"><i
+                                            class="fa-solid fa-pen link-dark"></i></a>
                                 </td>
                             </tr>
                         @endforeach

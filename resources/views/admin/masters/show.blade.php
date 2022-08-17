@@ -11,6 +11,13 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
+
+            @if(!empty(session()->get('error')))
+                <div class="alert alert-danger mt-3" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
+
             <h3>Данные мастера</h3>
             <table class="table mb-5">
                 <tbody>
@@ -49,7 +56,7 @@
                 @endforeach
                 </tbody>
             </table>
-            <div class="col-12">
+            <div class="col-12 mb-5">
                 <a href="{{ route('admin.masters.index') }}" class="btn btn-secondary me-2">Назад</a>
                 <a href="{{ route('admin.masters.edit', $master->id) }}" class="btn btn-warning me-2"><i
                         class="fa-solid fa-pen"></i></a>

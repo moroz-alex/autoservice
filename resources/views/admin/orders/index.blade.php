@@ -33,7 +33,7 @@
                 @enderror
             </form>
 
-            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary mb-3">Добавить заказ</a>
+            <a href="{{ route('admin.orders.create') }}" class="btn btn-primary mb-3 me-3">Добавить заказ</a>
             <table class="table" id="orders">
                 <thead>
                 <tr>
@@ -53,7 +53,7 @@
                     <tr>
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->created_at }}</td>
-                        <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year }}</td>
+                        <td>{{ isset($order->car) && isset($order->car->model) && isset($order->car->model->brand) ? $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year : 'Ошибка!' }}</td>
                         <td>
                             @foreach($order->tasks->sortBy('category.title') as $task)
                                 <span class="text-black-50">{{ $task->category->title }}: </span>{{ $task->title }} <br>

@@ -16,6 +16,13 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
+
+            @if(!empty(session()->get('error')))
+                <div class="alert alert-danger mt-3" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
+
             <table class="table">
                 <tbody>
                 <tr>
@@ -60,6 +67,7 @@
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </form>
+                <a href="{{ route('admin.orders.create', ['carId' => $car->id]) }}" class="btn btn-primary ms-2">Добавить заказ</a>
             </div>
         </div>
     </main>

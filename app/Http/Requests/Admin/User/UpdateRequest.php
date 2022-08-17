@@ -31,7 +31,7 @@ class UpdateRequest extends FormRequest
             'id' => 'required|integer|exists:users,id',
             'name' => 'required|string',
             'last_name' => 'string|nullable',
-            'email' => 'required|email|unique:users,email,' . $this->id,
+            'email' => 'nullable|email|unique:users,email,' . $this->id,
             'phone' => 'required|string',
             'role' => 'required|in:' . $roles,
         ];
@@ -41,7 +41,6 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name.required' => 'Необходимо указать имя пользователя',
-            'email.required' => 'Необходимо указать емейл',
             'email.email' => 'Указан некорректный емейл',
             'email.unique' => 'Пользователь с данным емейл-ом уже существует',
             'phone.required' => 'Необходимо указать номер телефона',

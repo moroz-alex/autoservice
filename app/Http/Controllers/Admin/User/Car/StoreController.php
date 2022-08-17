@@ -14,8 +14,16 @@ class StoreController extends Controller
     {
         $data = $request->validated();
         $data['vin'] = strtoupper($data['vin']);
-        Car::create($data);  // Уникальность авто не контролируем
-        $user = User::find($data['user_id']);
-        return redirect()->route('admin.users.cars.index', compact('user'));
+
+        $car = Car::create($data);  // Уникальность авто не контролируем
+
+        if (session('quickOrder')) {
+            $request->session()->forget('quickOrder');
+            session(['carId' => $car->id]);
+            return redirect()->route('admin.orders.create');
+        } else {
+            $user = User::find($data['user_id']);
+            return redirect()->route('admin.users.cars.index', compact('user'));
+        }
     }
 }

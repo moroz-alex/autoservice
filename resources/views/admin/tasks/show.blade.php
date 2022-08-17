@@ -12,6 +12,12 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
 
+            @if(!empty(session()->get('error')))
+                <div class="alert alert-danger mt-3" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
+
             <table class="table">
                 <tbody>
                 <tr>
