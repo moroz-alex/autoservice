@@ -26,7 +26,28 @@ class ScheduleService
     {
         $startDate = $startDate ?? date('Y-m-d');
         $endDate = $endDate ?? date('Y-m-d', strtotime('+1 month'));
-        $scheduleTasks = Schedule::where('start_time', '<=', $endDate . ' ' . $this->settings->schedule_end)->where('start_time', '>=', $startDate . ' ' . $this->settings->schedule_start)->get();
+
+// Вариант "простой"
+//        $scheduleTasks = Schedule::where('start_time', '<=', $endDate . ' ' . $this->settings->schedule_end)
+//            ->where('start_time', '>=', $startDate . ' ' . $this->settings->schedule_start)
+//            ->with('order.states')
+//            ->get();
+//  -----
+
+// Вариант с лучшей скоростью и меньшим (в 20-25 раз) потреблением памяти  -----
+        $scheduleTasks = Schedule::select('schedules.*', 'order_states.state_id as state_id')
+            ->leftjoin('order_states', 'schedules.order_id', '=', 'order_states.order_id')
+            ->where('order_states.created_at', function ($query) {
+                $query->from('order_states')
+                    ->whereRaw('`order_states`.`order_id` = `schedules`.`order_id`')
+                    ->selectRaw('max(`created_at`)')
+                    ->orWhereNull('order_states.state_id');
+            })
+            ->whereNotIn('order_states.state_id', [4,5])
+            ->where('start_time', '>=', $startDate . ' ' . $this->settings->schedule_start)
+            ->where('start_time', '<=', $endDate . ' ' . $this->settings->schedule_end)
+            ->get();
+//  -----
 
         $timeSlots = $this->createTimeSlots($startDate, $endDate, $mastersList);
 
@@ -94,18 +115,28 @@ class ScheduleService
     {
         $orderId = $order->id ?? 0;
         $mastersListIds = array_column($mastersList, 'id');
+
         foreach ($scheduleTasks as $task) {
-            $taskStart = strtotime($task->start_time);
-            $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
-            if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
-                $timeSlots[$taskStart][$task->master_id] = $task->order_id;
-                for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
-                    if ($timeSlots[$time][$task->master_id] == 'unusable') {
-                        $timeSlots[$time][$task->master_id] = 'used';
+// Вариант "простой" -----
+//            if (isset($task->order->states->first()->id) && !in_array($task->order->states->first()->id, [4, 5])) {
+//  -----
+
+                $taskStart = strtotime($task->start_time);
+                $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
+                if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
+                    $timeSlots[$taskStart][$task->master_id] = $task->order_id;
+                    for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
+                        if ($timeSlots[$time][$task->master_id] == 'unusable') {
+                            $timeSlots[$time][$task->master_id] = 'used';
+                        }
                     }
                 }
-            }
+// Вариант "простой" -----
+//            }
+//  -----
         }
+
+//        dd(111);
         return $timeSlots;
     }
 
