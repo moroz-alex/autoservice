@@ -113,6 +113,10 @@ class ScheduleService
 
     private function fillScheduleUsedTimeSlots($timeSlots, $scheduleTasks, $mastersList, $order)
     {
+        if (empty($timeSlots)) {
+            return $timeSlots;
+        };
+
         $orderId = $order->id ?? 0;
         $mastersListIds = array_column($mastersList, 'id');
 
@@ -142,6 +146,10 @@ class ScheduleService
 
     private function getScheduleFreeTimeSlots($timeSlots, $mastersList, $order, $startTime = null)
     {
+        if (empty($timeSlots)) {
+            return $timeSlots;
+        };
+
         $orderDuration = $order->duration ?? $this->timeSlotSize;
         $orderTimeSlotsNumber = $orderDuration / $this->timeSlotSize;
         $timeNow = $startTime ? strtotime($startTime) : strtotime('now');
