@@ -27,6 +27,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'car_id' => 'required|integer|exists:cars,id',
+            'note' => 'string|max:1000|nullable',
             'task_ids' => ['array', 'required', new HasMaster],
             'task_ids.*' => 'integer|exists:tasks,id',
             'task_qts' => 'array|required',
@@ -44,6 +45,8 @@ class StoreRequest extends FormRequest
             'car_id.required' => 'Необходимо выбрать автомобиль',
             'car_id.integer' => 'Некорректный ID автомобиля',
             'car_id.exists' => 'Несуществующий ID автомобиля',
+            'note.string' => 'Некорректный комментарий',
+            'note.max' => 'Максимальная длина комментария 1000 символов',
             'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
             'task_ids.*.exists' => 'Некорректный ID работы',
             'task_ids.*.integer' => 'Некорректный ID работы',

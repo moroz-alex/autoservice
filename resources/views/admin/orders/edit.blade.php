@@ -119,8 +119,8 @@
                             @enderror
                         </div>
                         <div class="row mb-5">
-                            <h3>Статусы заказа</h3>
                             <div class="col-lg-6">
+                                <h3>Статусы заказа</h3>
                                 <table class="table" id="states">
                                     <thead>
                                     <tr>
@@ -159,7 +159,11 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-
+                                <h3>Комментарий менеджера</h3>
+                                <textarea class="form-control" name="note" id="note" rows="7" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note', $order->note) }}</textarea>
+                                @error('note')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 

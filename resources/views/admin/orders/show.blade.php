@@ -68,6 +68,13 @@
                     </table>
                 </div>
                 <div class="col-lg-6 mb-5">
+                    <h3>Комментарий менеджера</h3>
+                    <div class="card mt-3 mb-4" style="min-height: 8em">
+                        <div class="card-body">
+                            {{ $order->note }}
+                        </div>
+                    </div>
+
                     <h3>Статусы заказа</h3>
                     <table class="table" id="states">
                         <thead>

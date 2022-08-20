@@ -112,6 +112,7 @@ class OrderService
             'is_confirmed' => '0',
             'user_id' => '2',  // TODO Заменить на текущего менеджера
             'is_paid' => $data['is_paid'] ?? '0',
+            'note' => $data['note'],
         ];
     }
 

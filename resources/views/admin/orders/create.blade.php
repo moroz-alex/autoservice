@@ -109,6 +109,13 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
+                        <h3>Комментарий менеджера</h3>
+                        <div class="mb-5">
+                            <textarea class="form-control" name="note" id="note" rows="3" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note') }}</textarea>
+                            @error('note')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
                         <button type="submit" class="btn btn-primary">Добавить</button>
                         <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
