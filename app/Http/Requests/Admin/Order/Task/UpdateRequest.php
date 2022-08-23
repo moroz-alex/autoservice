@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin\Order;
+namespace App\Http\Requests\Admin\Order\Task;
 
 use App\Rules\Order\HasMaster;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
 
     /**
@@ -26,8 +26,6 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'car_id' => 'required|integer|exists:cars,id',
-            'note' => 'string|max:1000|nullable',
             'task_ids' => ['array', 'required', new HasMaster],
             'task_ids.*' => 'integer|exists:tasks,id',
             'task_qts' => 'array|required',
@@ -36,25 +34,12 @@ class StoreRequest extends FormRequest
             'task_prs.*' => 'integer|min:1',
             'task_drs' => 'array|required',
             'task_drs.*' => 'integer|min:1',
-            'parts_codes' => 'array',
-            'parts_codes.*' => 'string|nullable',
-            'parts_titles' => 'array',
-            'parts_titles.*' => 'string|nullable',
-            'parts_prices' => 'array',
-            'parts_prices.*' => 'integer|nullable',
-            'parts_qts' => 'array',
-            'parts_qts.*' => 'integer|nullable',
         ];
     }
 
     public function messages()
     {
         return [
-            'car_id.required' => 'Необходимо выбрать автомобиль',
-            'car_id.integer' => 'Некорректный ID автомобиля',
-            'car_id.exists' => 'Несуществующий ID автомобиля',
-            'note.string' => 'Некорректный комментарий',
-            'note.max' => 'Максимальная длина комментария 1000 символов',
             'task_ids.required' => 'Необходимо выбрать хотя бы одну работу',
             'task_ids.*.exists' => 'Некорректный ID работы',
             'task_ids.*.integer' => 'Некорректный ID работы',
@@ -67,10 +52,6 @@ class StoreRequest extends FormRequest
             'task_drs.required' => 'Необходимо указать продолжительность работы',
             'task_drs.*.integer' => 'Некорректная продолжительность работы',
             'task_drs.*.min' => 'Некорректная продолжительность работы',
-            'parts_codes.*.string' => 'Некорректный код материала',
-            'parts_titles.*.string' => 'Некорректное название материала',
-            'parts_prices.*.integer' => 'Некорректная цена материала',
-            'parts_qts.*.integer' => 'Некорректное количество материалов',
         ];
     }
 }

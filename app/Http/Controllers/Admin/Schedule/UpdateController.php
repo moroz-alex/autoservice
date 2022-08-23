@@ -14,6 +14,6 @@ class UpdateController extends Controller
         $data = $request->validated();
         ScheduleService::update($data, $order);
 
-        return  redirect()->route('admin.orders.index');
+        return  redirect()->route('admin.orders.show', $order->id);
     }
 }

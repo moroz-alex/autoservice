@@ -109,184 +109,298 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <h3>Комментарий менеджера</h3>
-                        <div class="mb-5">
-                            <textarea class="form-control" name="note" id="note" rows="3" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note') }}</textarea>
-                            @error('note')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <button type="submit" class="btn btn-primary">Добавить</button>
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
-                    </form>
-                </div>
-            </div>
-            <!-- /.row -->
+                        <h3>Детали и материалы</h3>
+                        <table class="table" id="parts">
+                            <thead>
+                            <tr>
+                                <th scope="col" style="width: 14em">Код</th>
+                                <th scope="col">Наименование</th>
+                                <th scope="col" style="width: 7em">Цена, грн.</th>
+                                <th scope="col" style="width: 5em">Кол-во</th>
+                                <th scope="col" style="width: 2em" class="text-center"><i class="fa-solid fa-trash"></i></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if(is_array(old('parts_titles')))
+                                @foreach(old('parts_titles') as $index => $part)
+                                    <tr>
+                                        <td>
+                                            <input id="code-{{ $index }}" type="text" class="form-control"
+                                                   name="parts_codes[]"
+                                                   value="{{ old('parts_codes')[$index] }}">
+                                        </td>
+                                        <td>
+                                            <input id="title-{{ $index }}" type="text" class="form-control"
+                                                   name="parts_titles[]"
+                                                   value="{{ old('parts_titles')[$index] }}">
+                                        </td>
+                                        <td>
+                                            <input id="price-{{ $index }}" type="text" class="form-control"
+                                                   name="parts_prices[]"
+                                                   value="{{ old('parts_prices')[$index] }}">
+                                        </td>
+                                        <td>
+                                            <input id="qty-{{ $index }}" type="text" class="form-control"
+                                                   name="parts_qts[]"
+                                                   value="{{ old('parts_qts')[$index] }}">
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-link del" id="{{ $index }}"><i
+                                                    class="fa-solid fa-square-xmark link-dark"></i></button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+    </tbody>
+</table>
+<div class="col mb-5">
+    <button type="button" class="btn btn-secondary ms-2" id="add-row"><i
+            class="fa-solid fa-plus"></i>
+    </button>
+</div>
 
-        </div>
-        <script>
-            var taskIds;
-            var taskQts;
-            var taskPrs;
-            var taskDrs;
-            var table_tasks;
-            $(document).ready(function () {
-                var events = $('#events');
-                var table_cars = $('#cars').DataTable({
-                    select: {
-                        style: 'single',
-                        toggleable: false,
-                    },
+@error('codes')
+<div class="text-danger">{{ $message }}</div>
+@enderror
+@error('titles')
+<div class="text-danger">{{ $message }}</div>
+@enderror
+@error('prices')
+<div class="text-danger">{{ $message }}</div>
+@enderror
+@error('qts')
+<div class="text-danger">{{ $message }}</div>
+@enderror
+<div class="alert alert-danger" role="alert" id="parts_errors"
+     style="display: none">
+    Форма заполнена с ошибками!
+</div>
+<h3>Комментарий менеджера</h3>
+<div class="mb-5">
+    <textarea class="form-control" name="note" id="note" rows="3" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note') }}</textarea>
+    @error('note')
+    <div class="text-danger">{{ $message }}</div>
+    @enderror
+</div>
+<button type="submit" class="btn btn-primary">Добавить</button>
+<a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
+</form>
+</div>
+</div>
+</div>
+<script>
+var taskIds;
+var taskQts;
+var taskPrs;
+var taskDrs;
+var table_tasks;
+$(document).ready(function () {
+var table_cars = $('#cars').DataTable({
+select: {
+style: 'single',
+toggleable: false,
+},
 
-                    language: {
-                        lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Автомобилей не найдено',
-                        info: 'Страница _PAGE_ из _PAGES_',
-                        infoEmpty: 'Автомобилей не найдено',
-                        infoFiltered: '(отфильтровано из _MAX_ авто)',
-                        search: 'Поиск авто ',
-                        paginate: {
-                            "next": "Вперед",
-                            "previous": "Назад"
-                        },
-                        select: {
-                            rows: ""
-                        },
-                    },
-                    keys: true,
-                });
+language: {
+lengthMenu: 'Показать _MENU_ строк',
+zeroRecords: 'Автомобилей не найдено',
+info: 'Страница _PAGE_ из _PAGES_',
+infoEmpty: 'Автомобилей не найдено',
+infoFiltered: '(отфильтровано из _MAX_ авто)',
+search: 'Поиск авто ',
+paginate: {
+    "next": "Вперед",
+    "previous": "Назад"
+},
+select: {
+    rows: ""
+},
+},
+keys: true,
+});
 
-                table_cars.rows('.selected').select();
-                var selectedCell = table_cars.row( '.selected' ).index();
+table_cars.rows('.selected').select();
+var selectedCell = table_cars.row( '.selected' ).index();
 
-                table_cars.cell( selectedCell, 0 ).focus();
+table_cars.cell( selectedCell, 0 ).focus();
 
-                var addCarHref = '{{ route('admin.users.cars.create', 'user_id_template') }}' + '?quickOrder=1';
+var addCarHref = '{{ route('admin.users.cars.create', 'user_id_template') }}' + '?quickOrder=1';
 
-                getTableCarsData();
+getTableCarsData();
 
-                table_cars
-                    .on('select', function (e, dt, type, indexes) {
-                        getTableCarsData();
-                    })
-                    .on('deselect', function (e, dt, type, indexes) {
-                        $("input[name='car_id']").val('');
-                    });
-                function getTableCarsData() {
-                    var rowData = table_cars.rows('.selected').data().toArray();
-                    if (rowData.length > 0) {
-                        $("input[name='car_id']").val(rowData[0][0]);
-                        userId = rowData[0][5];
-                        href = addCarHref.replace('user_id_template', userId);
-                        $("#add_car").attr('href', href);
-                        $("#add_car").show('slow');
-                    }
-                }
+table_cars
+.on('select', function (e, dt, type, indexes) {
+getTableCarsData();
+})
+.on('deselect', function (e, dt, type, indexes) {
+$("input[name='car_id']").val('');
+});
+function getTableCarsData() {
+var rowData = table_cars.rows('.selected').data().toArray();
+if (rowData.length > 0) {
+$("input[name='car_id']").val(rowData[0][0]);
+userId = rowData[0][5];
+href = addCarHref.replace('user_id_template', userId);
+$("#add_car").attr('href', href);
+$("#add_car").show('slow');
+}
+}
 
-                var table_tasks = $('#tasks').DataTable({
-                    select: {
-                        style: 'multi+shift',
-                        selector: 'td:nth-child(1), td:nth-child(2), td:nth-child(3)',
-                    },
+var table_tasks = $('#tasks').DataTable({
+select: {
+style: 'multi+shift',
+selector: 'td:nth-child(1), td:nth-child(2), td:nth-child(3)',
+},
 
-                    order: [[1, 'asc']],
+order: [[1, 'asc']],
 
-                    language: {
-                        lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Работ не найдено',
-                        info: 'Страница _PAGE_ из _PAGES_',
-                        infoEmpty: 'Работ не найдено',
-                        infoFiltered: '(отфильтровано из _MAX_ работ)',
-                        search: 'Поиск работы или категории ',
-                        paginate: {
-                            "next": "Вперед",
-                            "previous": "Назад"
-                        },
-                        select: {
-                            rows: ""
-                        },
-                    },
-                    columns: [
-                        {data: 'id'},
-                        {data: 'category'},
-                        {data: 'title'},
-                        {data: 'duration'},
-                        {data: 'price'},
-                        {data: 'quantity'},
-                    ],
-                    stateSave: true,
-                });
+language: {
+lengthMenu: 'Показать _MENU_ строк',
+zeroRecords: 'Работ не найдено',
+info: 'Страница _PAGE_ из _PAGES_',
+infoEmpty: 'Работ не найдено',
+infoFiltered: '(отфильтровано из _MAX_ работ)',
+search: 'Поиск работы или категории ',
+paginate: {
+    "next": "Вперед",
+    "previous": "Назад"
+},
+select: {
+    rows: ""
+},
+},
+columns: [
+{data: 'id'},
+{data: 'category'},
+{data: 'title'},
+{data: 'duration'},
+{data: 'price'},
+{data: 'quantity'},
+],
+stateSave: true,
+});
 
-                getTableTasksData();
+getTableTasksData();
 
-                $('#tasks tbody').on('change', 'td', function () {
-                    var data = table_tasks.cell(this).data();
-                    var name = data.match(/name="(\S+)"/);
-                    if (name !== null) name = name[1];
-                    if (name == 'task_prs' || name == 'task_qts') {
-                        var value = table_tasks.cell(this).$("input[name='" + name + "']", this).val();
-                        data = "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" style=\"width: 5em\">";
-                        table_tasks.cell(this).data(data);
-                    } else if (name == 'task_drs') {
-                        var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val();
-                        data = data.replace(" selected", "");
-                        data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
-                        table_tasks.cell(this).data(data);
-                    }
-                    getTableTasksData();
-                });
+$('#tasks tbody').on('change', 'td', function () {
+var data = table_tasks.cell(this).data();
+var name = data.match(/name="(\S+)"/);
+if (name !== null) name = name[1];
+if (name == 'task_prs' || name == 'task_qts') {
+var value = table_tasks.cell(this).$("input[name='" + name + "']", this).val();
+data = "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" style=\"width: 5em\">";
+table_tasks.cell(this).data(data);
+} else if (name == 'task_drs') {
+var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val();
+data = data.replace(" selected", "");
+data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
+table_tasks.cell(this).data(data);
+}
+getTableTasksData();
+});
 
-                table_tasks.rows('.selected').select();
+table_tasks.rows('.selected').select();
 
-                table_tasks
-                    .on('select', function (e, dt, type, indexes) {
-                        getTableTasksData();
-                    })
-                    .on('deselect', function (e, dt, type, indexes) {
-                        getTableTasksData();
-                    })
+table_tasks
+.on('select', function (e, dt, type, indexes) {
+getTableTasksData();
+})
+.on('deselect', function (e, dt, type, indexes) {
+getTableTasksData();
+})
 
-                function getTableTasksData() {
-                    taskIds = table_tasks.rows('.selected').data().pluck('id').toArray();
-                    taskQts = table_tasks.rows('.selected').data().pluck('quantity').toArray();
-                    taskPrs = table_tasks.rows('.selected').data().pluck('price').toArray();
-                    taskDrs = table_tasks.rows('.selected').data().pluck('duration').toArray();
-                };
-            });
+function getTableTasksData() {
+taskIds = table_tasks.rows('.selected').data().pluck('id').toArray();
+taskQts = table_tasks.rows('.selected').data().pluck('quantity').toArray();
+taskPrs = table_tasks.rows('.selected').data().pluck('price').toArray();
+taskDrs = table_tasks.rows('.selected').data().pluck('duration').toArray();
+};
+});
 
 
-            $("form").submit(function () {
-                var res = "";
-                taskIds.forEach(function (item, i, taskIds) {
-                    res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
-                });
-                document.getElementById('taskId').innerHTML = res;
+$("form").submit(function () {
+var res = "";
+taskIds.forEach(function (item, i, taskIds) {
+res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
+});
+document.getElementById('taskId').innerHTML = res;
 
-                var res = "";
-                taskDrs.forEach(function (item, i, taskDrs) {
-                    item = item.replace('task_drs', 'task_drs[' + i + ']');
-                    item = item.replace('select', 'select hidden');
-                    res = res + item;
-                });
-                document.getElementById('taskDuration').innerHTML = res;
+var res = "";
+taskDrs.forEach(function (item, i, taskDrs) {
+item = item.replace('task_drs', 'task_drs[' + i + ']');
+item = item.replace('select', 'select hidden');
+res = res + item;
+});
+document.getElementById('taskDuration').innerHTML = res;
 
-                var res = "";
-                taskPrs.forEach(function (item, i, taskPrs) {
-                    item = item.replace('task_prs', 'task_prs[' + i + ']');
-                    item = item.replace('text', 'hidden');
-                    res = res + item;
-                });
-                document.getElementById('taskPrice').innerHTML = res;
+var res = "";
+taskPrs.forEach(function (item, i, taskPrs) {
+item = item.replace('task_prs', 'task_prs[' + i + ']');
+item = item.replace('text', 'hidden');
+res = res + item;
+});
+document.getElementById('taskPrice').innerHTML = res;
 
-                var res = "";
-                taskQts.forEach(function (item, i, taskQts) {
-                    item = item.replace('task_qts', 'task_qts[' + i + ']');
-                    item = item.replace('text', 'hidden');
-                    res = res + item;
-                });
-                document.getElementById('taskQty').innerHTML = res;
-            });
-        </script>
-    </main>
-    @include('admin.includes.footer')
+var res = "";
+taskQts.forEach(function (item, i, taskQts) {
+item = item.replace('task_qts', 'task_qts[' + i + ']');
+item = item.replace('text', 'hidden');
+res = res + item;
+});
+document.getElementById('taskQty').innerHTML = res;
+});
+
+$('#parts').on('click', '.del', function () {
+$(this).parent().parent().remove();
+});
+
+var i = {{ $index ?? 0}};
+$('#add-row').click(function () {
+i++;
+$('#parts').append(
+"<tr><td><input id='code-" + i + "' type='text' class='form-control' name='parts_codes[]'></td>" +
+"<td><input id='title-" + i + "' type='text' class='form-control' name='parts_titles[]'></td>" +
+"<td><input id='price-" + i + "' type='text' class='form-control' name='parts_prices[]'></td>" +
+"<td><input id='qty-" + i + "' type='text' class='form-control' name='parts_qts[]'</td>" +
+"<td><button type='button' class='btn btn-link del' id='" + i + "'><i class='fa-solid fa-square-xmark link-dark'></i></button></td></tr>");
+});
+
+$('#parts').on('change', ':input', function () {
+id = $(this).attr('id').match(/\d+/)[0];
+if ($('#title-' + id).val() == '') {
+$('#title-' + id).addClass('is-invalid');
+} else {
+$('#title-' + id).removeClass('is-invalid');
+}
+if ($('#price-' + id).val() == '' || /^\d+$/.test($('#price-' + id).val()) == false) {
+$('#price-' + id).addClass('is-invalid');
+} else {
+$('#price-' + id).removeClass('is-invalid');
+}
+if ($('#qty-' + id).val() == '' || /^\d+$/.test($('#qty-' + id).val()) == false) {
+$('#qty-' + id).addClass('is-invalid');
+} else {
+$('#qty-' + id).removeClass('is-invalid');
+}
+});
+
+$('form').submit(function (event) {
+var err = false;
+$(':input').each(function () {
+if ($(this).hasClass('is-invalid')) {
+err = true;
+return false;
+}
+});
+if (err == false) {
+return;
+} else {
+$('#parts_errors').show('fast');
+event.preventDefault();
+}
+});
+
+</script>
+</main>
+@include('admin.includes.footer')
 @endsection

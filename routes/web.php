@@ -95,6 +95,33 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::get('/{order}/edit', 'EditController')->name('admin.orders.edit');
         Route::patch('/{order}', 'UpdateController')->name('admin.orders.update');
         Route::delete('/{order}', 'DestroyController')->name('admin.orders.destroy');
+
+        Route::group(['namespace' => 'Part', 'prefix' => '{order}/parts'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.parts.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.parts.update');
+        });
+
+        Route::group(['namespace' => 'Car', 'prefix' => '{order}/car'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.car.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.car.update');
+        });
+
+        Route::group(['namespace' => 'Task', 'prefix' => '{order}/tasks'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.tasks.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.tasks.update');
+        });
+
+        Route::group(['namespace' => 'Note', 'prefix' => '{order}/note'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.note.update');
+        });
+
+        Route::group(['namespace' => 'State', 'prefix' => '{order}/state'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.state.update');
+        });
+
+        Route::group(['namespace' => 'Payment', 'prefix' => '{order}/payment'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.payment.update');
+        });
     });
 
     Route::group(['namespace' => 'Schedule', 'prefix' => 'schedules'], function () {

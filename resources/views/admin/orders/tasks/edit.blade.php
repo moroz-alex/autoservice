@@ -1,11 +1,12 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование заказа')
-@section('header', 'Редактировать заказ ' . $order->id)
+@section('title', 'МойАвтосервис : Редактирование работ')
+@section('header', 'Редактировать работы заказа ' . $order->id)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a href="{{ route('admin.orders.index') }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.orders.show', $order->id) }}">Заказ {{ $order->id }}</a></li>
 @endsection
-@section('breadcrumb', 'Редактирование заказа')
+@section('breadcrumb', 'Редактирование работ')
 
 @section('scriptTop')
     <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -22,45 +23,9 @@
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('admin.orders.update', $order->id) }}" method="post" name="orders">
+                    <form action="{{ route('admin.orders.tasks.update', $order->id) }}" method="post" name="orders">
                         @csrf
                         @method('patch')
-                        <h3>Автомобиль</h3>
-                        <div class="mb-3">
-                            <label for="cars" class="form-label">Выберите автомобиль <span class="text-danger">*</span></label>
-                            <table class="table" id="cars">
-                                <thead>
-                                <tr>
-                                    <th scope="col" style="width: 3em">ID</th>
-                                    <th scope="col">Модель</th>
-                                    <th scope="col" style="width: 8em">Номер</th>
-                                    <th scope="col" style="width: 25em">Владелец</th>
-                                    <th scope="col" style="width: 9em">Телефон владельца</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($cars as $car)
-                                    <tr
-                                        @if(!is_null(old('car_id')) && old('car_id') == $car->id)
-                                        class="selected"
-                                        @elseif(is_null(old('car_id')) && $car->id == $order->car->id)
-                                        class="selected"
-                                        @endif>
-                                        <td>{{ $car->id }}</td>
-                                        <td>{{ $car->model->brand->title . ' ' . $car->model->title . ' ' . $car->year }}</td>
-                                        <td>{{ $car->number }}</td>
-                                        <td>{{ $car->user->name . ' ' . $car->user->last_name }}</td>
-                                        <td>{{ $car->user->phone }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-
-                            <input type="hidden" name="car_id" value="{{ $order->car->id }}">
-                            @error('car_id')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
                         <h3>Работы</h3>
                         <div class="mb-3">
                             <label for="tasks" class="form-label">Выберите работы <span
@@ -118,62 +83,11 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div class="row mb-5">
-                            <div class="col-lg-6">
-                                <h3>Статусы заказа</h3>
-                                <table class="table" id="states">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Статус</th>
-                                        <th scope="col" style="width: 11em">Дата и время</th>
-                                        <th scope="col" style="width: 15em">Автор</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($order->states as $key => $state)
-                                        <tr {!! $key == last($order->states) ? "" : "class='text-black-50'" !!}>
-                                            <td>{{ $state->title }}</td>
-                                            <td>{{ $state->pivot->created_at }}</td>
-                                            <td>{{ $state->pivot->user->name ?? '' }} {{ $state->pivot->user->last_name ?? '' }}</td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-                                <div class="mb-3 pt-0">
-                                    <select class="form-select form-control" id="state" name="state">
-                                        <option value="">Обновить статус</option>
-                                        @foreach($states as $state)
-                                            <option value="{{ $state->id }}">{{ $state->title }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('state')
-                                    <div class="text-danger">{{ $message }}</div>
-                                    @enderror
-                                </div>
-                                <div class="form-check form-switch mt-2">
-                                    <input type="hidden" name="is_paid" value="0">
-                                    <input type="checkbox" role="switch" class="form-check-input"
-                                           {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid"
-                                           value="1"/>
-                                    <label for="is_paid" class="form-check-label">Заказ оплачен</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <h3>Комментарий менеджера</h3>
-                                <textarea class="form-control" name="note" id="note" rows="7" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note', $order->note) }}</textarea>
-                                @error('note')
-                                <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
                         <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert"
                              style="display: none">
                             Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить заказ</button>
-                        <a href="{{ route('admin.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2"
-                           title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
                         <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
@@ -186,52 +100,6 @@
             var taskDrs;
             var table_tasks;
             $(document).ready(function () {
-                var events = $('#events');
-                var table_cars = $('#cars').DataTable({
-                    select: {
-                        style: 'single',
-                        toggleable: false,
-                    },
-
-                    language: {
-                        lengthMenu: 'Показать _MENU_ строк',
-                        zeroRecords: 'Автомобилей не найдено',
-                        info: 'Страница _PAGE_ из _PAGES_',
-                        infoEmpty: 'Автомобилей не найдено',
-                        infoFiltered: '(отфильтровано из _MAX_ авто)',
-                        search: 'Поиск авто ',
-                        paginate: {
-                            "next": "Вперед",
-                            "previous": "Назад"
-                        },
-                        select: {
-                            rows: ""
-                        },
-                    },
-                    keys: true,
-                });
-
-                table_cars.rows('.selected').select();
-                getTableCarsData();
-
-                var selectedCell = table_cars.row( '.selected' ).index();
-                table_cars.cell( selectedCell, 0 ).focus();
-
-                table_cars
-                    .on('select', function (e, dt, type, indexes) {
-                        getTableCarsData();
-                    })
-                    .on('deselect', function (e, dt, type, indexes) {
-                        $("input[name='car_id']").val('');
-                    });
-
-                function getTableCarsData() {
-                    var rowData = table_cars.rows('.selected').data().toArray();
-                    if (rowData.length > 0) {
-                        $("input[name='car_id']").val(rowData[0][0]);
-                    }
-                }
-
                 var table_tasks = $('#tasks').DataTable({
                     select: {
                         style: 'multi+shift',
@@ -270,8 +138,8 @@
                 table_tasks.rows('.selected').select();
                 getTableTasksData();
 
-                var selectedCell = table_tasks.row( '.selected' ).index();
-                table_tasks.cell( selectedCell, 0 ).focus();
+                var selectedCell = table_tasks.row('.selected').index();
+                table_tasks.cell(selectedCell, 0).focus();
 
                 $('#tasks tbody').on('change', 'td', function () {
                     var data = table_tasks.cell(this).data();

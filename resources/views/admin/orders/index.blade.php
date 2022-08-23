@@ -34,7 +34,7 @@
             </form>
 
             <a href="{{ route('admin.orders.create') }}" class="btn btn-primary mb-3 me-3">Добавить заказ</a>
-            <table class="table" id="orders">
+            <table class="table table-hover" id="orders">
                 <thead>
                 <tr>
                     <th scope="col" style="width: 4em">№ заказа</th>
@@ -43,14 +43,14 @@
                     <th scope="col">Работы</th>
                     <th scope="col" style="width: 3em">Время, часов</th>
                     <th scope="col" style="width: 4em">Сумма, грн.</th>
-                    <th scope="col" style="width: 6em">Статус</th>
-                    <th scope="col" style="width: 1em">$</th>
+                    <th scope="col" style="width: 5em">Статус</th>
+                    <th scope="col" style="width: 5em">Оплата</th>
                     <th scope="col" style="width: 4em">Действия</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($orders as $order)
-                    <tr>
+                    <tr id="{{ $order->id }}">
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->created_at }}</td>
                         <td>{{ isset($order->car) && isset($order->car->model) && isset($order->car->model->brand) ? $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year : 'Ошибка!' }}</td>
@@ -70,15 +70,12 @@
                                 {{ $order->states->first()->title ?? '' }}
                             </span>
                         </td>
-                        <td style="color: #E0E0E0">
-                            <i class="fa-solid fa-sack-dollar {{ $order->is_paid ? 'text-success' : '' }}"
-                               title="Заказ{{ $order->is_paid ? '' : ' не' }} оплачен"></i>
-                        </td>
                         <td>
+                            {!! $order->is_paid ? "<span class='badge bg-success state'>Оплачен</span>" : "<span class='badge bg-secondary state'>Нет оплаты</span>" !!}
+                        </td>
+                        <td class="actions">
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="me-2"><i
                                     class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('admin.orders.edit', $order->id) }}" class="me-2"><i
-                                    class="fa-solid fa-pen link-dark"></i></a>
                             @if(!isset($order->schedule->start_time) || $order->schedule->has_error)
                                 <a href="{{ route('admin.schedules.edit', $order->id) }}" class="me-2"><i
                                         class="fa-solid fa-calendar-check text-danger"
@@ -109,6 +106,11 @@
                     },
                     stateSave: true,
                 });
+            });
+            var url = "{{ route('admin.orders.show', 'orderId') }}";
+            $('#orders tbody tr').click(function () {
+                id = $(this).attr('id').match(/\d+/)[0];
+                window.location.href = url.replace('orderId', id);
             });
         </script>
     </main>

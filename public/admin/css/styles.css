@@ -11724,3 +11724,7 @@ body {
 .state-5 {
     background-color: lightgrey;
 }
+
+#orders {
+    cursor: pointer;
+}

@@ -37,4 +37,9 @@ class Order extends Model
     public function states() {
         return $this->belongsToMany(State::class, 'order_states', 'order_id', 'state_id')->using(StateUserPivot::class)->withPivot('created_at', 'user_id')->orderByDesc('order_states.created_at');
     }
+
+    public function parts()
+    {
+        return $this->hasMany(Part::class, 'order_id', 'id');
+    }
 }
