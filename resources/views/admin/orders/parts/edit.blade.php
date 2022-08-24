@@ -25,9 +25,9 @@
                             <thead>
                             <tr>
                                 <th scope="col" style="width: 14em">Код</th>
-                                <th scope="col">Наименование</th>
-                                <th scope="col" style="width: 7em">Цена, грн.</th>
-                                <th scope="col" style="width: 5em">Кол-во</th>
+                                <th scope="col">Наименование <span class="text-danger">*</span></th>
+                                <th scope="col" style="width: 8em">Цена, грн. <span class="text-danger">*</span></th>
+                                <th scope="col" style="width: 6em">Кол-во <span class="text-danger">*</span></th>
                                 <th scope="col" style="width: 2em" class="text-center"><i class="fa-solid fa-trash"></i>
                                 </th>
                             </tr>
@@ -39,7 +39,7 @@
                                         <td>
                                             <input id="code-{{ $index }}" type="text" class="form-control"
                                                    name="parts_codes[]"
-                                                   value="{{ $part->code ?? '' }}">
+                                                   value="{{ $part->code ?? '' }}" maxlength="20">
                                         </td>
                                         <td>
                                             <input id="title-{{ $index }}" type="text" class="form-control"
@@ -103,7 +103,7 @@
             $('#add-row').click(function () {
                 i++;
                 $('#parts').append(
-                    "<tr><td><input id='code-" + i + "' type='text' class='form-control' name='parts_codes[]'></td>" +
+                    "<tr><td><input id='code-" + i + "' type='text' class='form-control' name='parts_codes[]' maxlength='20'></td>" +
                     "<td><input id='title-" + i + "' type='text' class='form-control' name='parts_titles[]'></td>" +
                     "<td><input id='price-" + i + "' type='text' class='form-control' name='parts_prices[]'></td>" +
                     "<td><input id='qty-" + i + "' type='text' class='form-control' name='parts_qts[]'</td>" +

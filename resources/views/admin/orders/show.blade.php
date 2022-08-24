@@ -178,7 +178,7 @@
                     </tr>
                 @endforeach
                 <tr class="fw-bolder">
-                    <td colspan="5">Итого, стоимость работ, грн.:</td>
+                    <td colspan="6">Итого, стоимость работ, грн.:</td>
                     <td>
                         {{ $totalTasks }}
                     </td>

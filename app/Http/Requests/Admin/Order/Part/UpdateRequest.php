@@ -26,7 +26,7 @@ class UpdateRequest extends FormRequest
     {
         return [
             'parts_codes' => 'array',
-            'parts_codes.*' => 'string|nullable',
+            'parts_codes.*' => 'string|max:20|nullable',
             'parts_titles' => 'array',
             'parts_titles.*' => 'string|nullable',
             'parts_prices' => 'array',
