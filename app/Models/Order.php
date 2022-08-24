@@ -42,4 +42,9 @@ class Order extends Model
     {
         return $this->hasMany(Part::class, 'order_id', 'id');
     }
+
+    public function feedback()
+    {
+        return $this->hasOne(Feedback::class, 'order_id', 'id');
+    }
 }

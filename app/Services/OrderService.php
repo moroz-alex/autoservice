@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Facades\ScheduleService;
+use App\Models\Feedback;
 use App\Models\Order;
 use App\Models\OrderTask;
 use App\Models\Part;
@@ -277,6 +278,24 @@ class OrderService
         } catch (\Exception $exception) {
             DB::rollBack();
             abort(500, 'Ошибка обновления оплаты заказа');
+        }
+    }
+
+    public function storeOrderFeedback($order, $data)
+    {
+        try {
+            DB::beginTransaction();
+
+            $data['order_id'] = $order->id;
+            Feedback::firstOrCreate(['order_id' => $order->id], $data);
+
+            DB::commit();
+
+            return $order;
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            abort(500, 'Ошибка сохранения отзыва клиента');
         }
     }
 

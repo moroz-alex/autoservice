@@ -71,7 +71,9 @@
                         <tr>
                             <th scope="col">Заказ оплачен</th>
                             <td>{!! $order->is_paid ? "<span class='badge bg-success state me-4'>Оплачен</span>" : "<span class='badge bg-secondary state me-4'>Не оплачен</span>" !!}
-                                <form id="is_paid_form" style="display:inline" action="{{ route('admin.orders.payment.update', $order->id) }}" method="post" class="mt-3">
+                                <form id="is_paid_form" style="display:inline"
+                                      action="{{ route('admin.orders.payment.update', $order->id) }}" method="post"
+                                      class="mt-3">
                                     @csrf
                                     @method('patch')
                                     <div class="form-check form-switch" style="display: table-cell">
@@ -88,7 +90,16 @@
                         </tr>
                         <tr>
                             <th scope="col">Отзыв клиента</th>
-                            <td></td>
+                            <td>
+                                @if(isset($order->feedback->rating))
+                                    <h5 class="rating-header">Оценка:
+                                        @for($i=1;$i<=5; $i++)
+                                            {!! $i <= $order->feedback->rating ? "<span class='star'>★</span>" : "<span class='star-empty'>☆</span>" !!}
+                                        @endfor
+                                    </h5>
+                                    <span style="word-break: break-word;">{{ $order->feedback->review }}</span>
+                                @endif
+                            </td>
                         </tr>
                         </tbody>
                     </table>
@@ -224,25 +235,25 @@
 
             <div class="col-12 mb-5 d-flex justify-content-between">
                 <div>
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary me-2"
-                   title="Перейти к списку заказов">Назад</a>
-                <a href="{{ route('admin.orders.print', $order->id) }}" class="btn btn-warning me-2"
-                   title="Распечатать заказ-наряд"><i class="fa-solid fa-print"></i> Заказ-наряд</a>
+                    <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary me-2"
+                       title="Перейти к списку заказов">Назад</a>
+                    <a href="{{ route('admin.orders.print', $order->id) }}" class="btn btn-warning me-2"
+                       title="Распечатать заказ-наряд"><i class="fa-solid fa-print"></i> Заказ-наряд</a>
                 </div>
                 <div>
-                <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post" style="display:inline">
-                    @csrf
-                    @method('delete')
-                    <button class="btn btn-danger" title="Удалить заказ">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>
+                    <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post" style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger" title="Удалить заказ">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </main>
     <script>
-        $('#is_paid').change(function() {
+        $('#is_paid').change(function () {
             $('#is_paid_form').submit();
         });
     </script>

@@ -46,11 +46,7 @@
                         </tr>
                         <tr>
                             <th scope="col">Заказ оплачен</th>
-                            <td>{!! $order->is_paid ? "<i class=\"fa-solid fa-square-check text-success\"></i>" : "<i class=\"fa-solid fa-square-xmark text-black-50\"></i>" !!}</td>
-                        </tr>
-                        <tr>
-                            <th scope="col">Отзыв клиента</th>
-                            <td><a href="#" class="btn btn-secondary btn-sm">Добавить отзыв</a></td>
+                            <td>{!! $order->is_paid ? "<span class='badge bg-success state me-4'>Оплачен</span>" : "<span class='badge bg-secondary state me-4'>Не оплачен</span>" !!}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -77,6 +73,57 @@
                         <a href="{{ route('user.orders.cancel', ['user' => $user->id, 'order' => $order->id]) }}"
                            class="btn btn-danger">Отменить заказ</a>
                     @endif
+                    <div class="mt-5">
+                        <h3 class="mb-3">Отзыв</h3>
+                        @if(isset($order->feedback->rating))
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Оценка:
+                                        @for($i=1;$i<=5; $i++)
+                                            {!! $i <= $order->feedback->rating ? "<span class='star'>★</span>" : "<span class='star-empty'>☆</span>" !!}
+                                        @endfor
+                                    </h5>
+                                    {{ $order->feedback->review }}
+                                </div>
+                            </div>
+                        @else
+                            <a class="btn btn-secondary btn-sm {{ isset($order->states->first()->id) && $order->states->first()->id == 3 ? '' : 'disabled' }}"
+                               data-bs-toggle="collapse" href="#collapseFeedback"
+                               role="button" aria-expanded="false" aria-controls="collapseFeedback">Добавить отзыв</a>
+                            <div class="collapse mt-3" id="collapseFeedback">
+                                <div class="card card-body">
+                                    <form
+                                        action="{{ route('user.orders.feedbacks.store', ['user' => $user->id, 'order' => $order->id]) }}"
+                                        method="post">
+                                        @csrf
+                                        <textarea class="form-control" name="review" id="review" rows="5"
+                                                  maxlength="999"
+                                                  placeholder="Текст отзыва">{{ old('review', $order->review) }}</textarea>
+                                        @error('review')
+                                        <div class="text-danger">{{ $message }}</div>
+                                        @enderror
+                                        <label class="rating">Оценка</label>
+                                        <span class="star-cb-group">
+                                        <input type="radio" id="rating-5" name="rating" value="5"/><label
+                                                for="rating-5">5</label>
+                                        <input type="radio" id="rating-4" name="rating" value="4"
+                                               checked="checked"/><label
+                                                for="rating-4">4</label>
+                                        <input type="radio" id="rating-3" name="rating" value="3"/><label
+                                                for="rating-3">3</label>
+                                        <input type="radio" id="rating-2" name="rating" value="2"/><label
+                                                for="rating-2">2</label>
+                                        <input type="radio" id="rating-1" name="rating" value="1"/><label
+                                                for="rating-1">1</label>
+{{--                                        <input type="radio" id="rating-0" name="rating" value="0" class="star-cb-clear"/><label for="rating-0">0</label>--}}
+                                    </span>
+                                        <button type="submit" class="btn btn-secondary btn-sm mt-3 float-end">Добавить
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
             <h3>Перечень работ</h3>
@@ -107,18 +154,11 @@
             </table>
             <div class="col-12 mb-5">
                 <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary me-2">Назад</a>
-                @if(!isset($order->schedule->start_time))
+                @if(isset($order->states->first()->id) && $order->states->first()->id == 1)
                     <a href="{{ route('user.orders.edit', ['user' => $user->id, 'order' => $order->id]) }}"
                        class="btn btn-warning me-2"><i
                             class="fa-solid fa-pen"></i></a>
                 @endif
-                {{--                <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post" style="display:inline">--}}
-                {{--                    @csrf--}}
-                {{--                    @method('delete')--}}
-                {{--                    <button class="btn btn-danger">--}}
-                {{--                        <i class="fa-solid fa-trash"></i>--}}
-                {{--                    </button>--}}
-                {{--                </form>--}}
             </div>
         </div>
     </main>

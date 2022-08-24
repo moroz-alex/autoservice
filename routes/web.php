@@ -159,6 +159,10 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
         Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
         Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
         Route::get('/{order}/cancel', 'CancelController')->name('user.orders.cancel');
+
+        Route::group(['namespace' => 'Feedback', 'prefix' => '{order}/feedback'], function () {
+            Route::post('/', 'StoreController')->name('user.orders.feedbacks.store');
+        });
     });
 
     Route::group(['namespace' => 'Schedule', 'prefix' => '{user}/schedules'], function () {

@@ -4,12 +4,16 @@
 @section('header', 'Заказы' )
 @section('breadcrumb', 'Заказы клиента')
 
+@section('scriptTop')
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@endsection
+
 @section('content')
     <main>
         <div class="container-fluid px-4">
             @include('includes.header')
             <a href="{{ route('user.orders.create', $user->id) }}" class="btn btn-primary mb-3">Добавить заказ</a>
-            <table class="table" id="orders">
+            <table class="table table-hover" id="orders">
                 <thead>
                 <tr>
                     <th scope="col" style="width: 4em">№ заказа</th>
@@ -25,7 +29,7 @@
                 </thead>
                 <tbody>
                 @foreach($orders as $order)
-                    <tr>
+                    <tr id="{{ $order->id }}">
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->schedule->start_time ?? '' }}</td>
                         <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year}}
@@ -70,6 +74,13 @@
             </table>
             {{ $orders->links() }}
         </div>
+        <script>
+            var url = "{{ route('user.orders.show', ['user' => $user->id, 'order' => 'orderId']) }}";
+            $('#orders tbody tr').click(function () {
+                id = $(this).attr('id').match(/\d+/)[0];
+                window.location.href = url.replace('orderId', id);
+            });
+        </script>
     </main>
     @include('includes.footer')
 @endsection
