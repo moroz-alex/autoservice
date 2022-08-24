@@ -95,6 +95,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::get('/{order}/edit', 'EditController')->name('admin.orders.edit');
         Route::patch('/{order}', 'UpdateController')->name('admin.orders.update');
         Route::delete('/{order}', 'DestroyController')->name('admin.orders.destroy');
+        Route::get('/{order}/print', 'PrintController')->name('admin.orders.print');
 
         Route::group(['namespace' => 'Part', 'prefix' => '{order}/parts'], function () {
             Route::get('/edit', 'EditController')->name('admin.orders.parts.edit');

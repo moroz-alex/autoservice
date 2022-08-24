@@ -221,8 +221,13 @@
                     class="fa-solid fa-pen"></i> Редактировать детали</a>
 
             <div class="col-12 mb-5 d-flex justify-content-between">
+                <div>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary me-2"
                    title="Перейти к списку заказов">Назад</a>
+                <a href="{{ route('admin.orders.print', $order->id) }}" class="btn btn-warning me-2"
+                   title="Распечатать заказ-наряд"><i class="fa-solid fa-print"></i> Заказ-наряд</a>
+                </div>
+                <div>
                 <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post" style="display:inline">
                     @csrf
                     @method('delete')
@@ -230,6 +235,7 @@
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </form>
+                </div>
             </div>
         </div>
     </main>
