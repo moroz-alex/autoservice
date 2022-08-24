@@ -169,7 +169,7 @@
         @foreach($order->tasks->sortBy('category.title') as $task)
             <tr>
                 <td class="center">{{ $loop->index + 1 }}</td>
-                <td>{{ $task->id }}</td>
+                <td>{{ $task->code }}</td>
                 <td>{{ $task->title }}</td>
                 <td class="center">{{ $task->pivot->quantity }}</td>
                 <td class="center">{{ $task->pivot->duration / 60 }}</td>

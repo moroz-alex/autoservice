@@ -21,8 +21,8 @@
             <table class="table">
                 <tbody>
                 <tr>
-                    <th scope="col" style="width: 15em">Артикул</th>
-                    <td>{{ $task->id }}</td>
+                    <th scope="col" style="width: 15em">Код работы</th>
+                    <td>{{ $task->code }}</td>
                 </tr>
                 <tr>
                     <th scope="col">Категория работы</th>
@@ -43,6 +43,10 @@
                 <tr>
                     <th scope="col">Цена работы, гривен</th>
                     <td>{{ $task->price * $task->duration / 60 }}</td>
+                </tr>
+                <tr>
+                    <th scope="col">Доступно для заказа клиентом</th>
+                    <td>{!! $task->is_available_to_customer ? "<i class=\"fa-solid fa-circle-check\"></i>" : "" !!}</td>
                 </tr>
                 </tbody>
             </table>

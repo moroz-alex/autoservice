@@ -25,6 +25,7 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
+            'code' => 'string|max:20|nullable',
             'title'=>'required|string',
             'duration'=>'required|integer',
             'price'=>'required|integer',
@@ -36,6 +37,7 @@ class UpdateRequest extends FormRequest
     public function messages()
     {
         return [
+            'code.max' => 'Максимальная длина кода 20 символов',
             'title.required' => 'Необходимо указать название работы',
             'duration.required' => 'Необходимо указать продолжительность работы',
             'duration.integer' => 'Продолжительность работы должна быть целым числом (количество минут)',

@@ -18,20 +18,20 @@
             <table class="table" id="tasks">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 4em">Арт.</th>
-                    <th scope="col" style="width: 15em">Категория работ</th>
+                    <th scope="col" style="width: 10em">Код</th>
+                    <th scope="col" style="width: 10em">Категория работ</th>
                     <th scope="col">Наименование работы</th>
                     <th scope="col" style="width: 4em">Нормо-часы</th>
-                    <th scope="col" style="width: 6em">Цена нормочаса</th>
-                    <th scope="col" style="width: 6em">Цена работы</th>
-                    <th scope="col" style="width: 3em">Доступно клиенту</th>
-                    <th scope="col" style="width: 3em">Действия</th>
+                    <th scope="col" style="width: 5em">Цена н-часа</th>
+                    <th scope="col" style="width: 5em">Цена работы</th>
+                    <th scope="col" style="width: 3em">Дост. клиенту</th>
+                    <th scope="col" style="width: 3em">Дейст-вия</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($tasks as $task)
                     <tr>
-                        <td>{{ $task->id }}</td>
+                        <td>{{ $task->code }}</td>
                         <td>{{ $task->category->title }}</td>
                         <td><a href="{{ route('admin.tasks.show', $task->id) }}" class="link-dark text-decoration-none">{{ $task->title }}</a></td>
                         <td>{{ $task->duration / 60 }}</td>
@@ -50,6 +50,7 @@
         <script>
             $(document).ready(function () {
                 $('#tasks').DataTable({
+                    order: [[1, 'asc']],
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
                         zeroRecords: 'Работ не найдено',

@@ -156,7 +156,8 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 15em">Категория работ</th>
+                    <th scope="col" style="width: 12em">Код</th>
+                    <th scope="col" style="width: 12em">Категория работ</th>
                     <th scope="col">Наименование работы</th>
                     <th scope="col" style="width: 5em">Время, ч.</th>
                     <th scope="col" style="width: 7em">Цена нч, грн.</th>
@@ -167,6 +168,7 @@
                 <tbody>
                 @foreach($order->tasks->sortBy('category.title') as $task)
                     <tr>
+                        <td>{{ $task->code }}</td>
                         <td>{{ $task->category->title }}</td>
                         <td>{{ $task->title }}</td>
                         <td>{{ $task->pivot->duration / 60 }}</td>
@@ -191,7 +193,7 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 15em">Код</th>
+                    <th scope="col" style="width: 12em">Код</th>
                     <th scope="col">Наименование</th>
                     <th scope="col" style="width: 7em">Цена, грн.</th>
                     <th scope="col" style="width: 5em">Кол-во</th>

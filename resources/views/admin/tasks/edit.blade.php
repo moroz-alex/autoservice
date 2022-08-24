@@ -18,6 +18,14 @@
                         @csrf
                         @method('patch')
                         <div class="mb-3">
+                            <label for="code" class="form-label">Код работы</label>
+                            <input type="text" class="form-control" name="code" id="code" placeholder="Введите код работы"
+                                   value="{{ old('code', $task->code) }}" maxlength="20">
+                            @error('code')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
                             <label for="title" class="form-label">Название работы <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="title" id="title"
                                    placeholder="Введите название работы"
