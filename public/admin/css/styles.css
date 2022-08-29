@@ -11748,3 +11748,7 @@ body {
 .rating-header {
     margin-top: -14px;
 }
+
+#schedules td {
+    text-align: center;
+}

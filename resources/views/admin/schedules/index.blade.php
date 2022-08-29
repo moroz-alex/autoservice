@@ -62,7 +62,8 @@
                                 <th scope="col" style="width: 5em" hidden>Дата</th>
                                 <th scope="col" style="width: 5em">Время</th>
                                 @foreach($mastersList as $master)
-                                    <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}<br><span class="text-black-50 fw-normal">{{ $master->function }}</span></th>
+                                    <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}<br><span
+                                            class="text-black-50 fw-normal">{{ $master->function }}</span></th>
                                 @endforeach
                             </tr>
                             </thead>
@@ -72,9 +73,8 @@
                                     <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
                                     <td>{{ date('H:i', $time) }}</td>
                                     @foreach($masters as $master => $state)
-                                        <td align="center"
-                                            class="{{ $state == 'used' || $state != 'unusable' && $state != 'free' ? 'table-warning' : '' }}"
-                                            style="{{ $state == 'used' ? 'border-top:none; border-bottom-width:0px;' : '' }}">
+                                        <td {!! $state == 'used' || $state != 'unusable' && $state != 'free' ? "class='table-warning'" : "" !!}
+                                            {!! $state == 'used' ? "style='border-top:none; border-bottom-width:0px;'" : "" !!}>
                                             @if($state != 'used' && $state != 'unusable' && $state != 'free')
                                                 <a href="{{ route('admin.orders.show', $state) }}"
                                                    class="link-dark text-decoration-none">Заказ {{$state}}</a>

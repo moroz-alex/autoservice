@@ -12,8 +12,8 @@ class IndexController extends Controller
     {
         $dates = $request->validated();
         if (empty($dates)) {
-            $dates['date_from'] = date('Y-m-d', strtotime('-1 month'));
-            $dates['date_to'] = date('Y-m-d', strtotime('+1 month'));
+            $dates['date_from'] = date('Y-m-d', strtotime('now'));
+            $dates['date_to'] = date('Y-m-d', strtotime('+2 weeks'));
         }
 
         $mastersList = ScheduleService::getAllMasters();
