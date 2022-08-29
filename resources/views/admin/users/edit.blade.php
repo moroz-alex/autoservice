@@ -63,18 +63,22 @@
                             </script>
                         </div>
                         <div class="mb-3">
-                            <label for="role">Роль <span class="text-danger">*</span></label>
-                            <select class="form-select form-control" id="role" name="role">
-                                @foreach($userRoles as $id => $role)
-                                    <option value="{{ $id }}"
+                            @if(auth()->user()->role == 1)
+                                <input type="hidden" name="role" value="0">
+                            @else
+                                <label for="role">Роль <span class="text-danger">*</span></label>
+                                <select class="form-select form-control" id="role" name="role">
+                                    @foreach($userRoles as $id => $role)
+                                        <option value="{{ $id }}"
                                         @if(!empty(old('role')))
-                                        {{ $id == old('role') ? ' selected' : '' }}
-                                        @else
-                                        {{ $id == $user->role ? ' selected' : '' }}
-                                        @endif
-                                    >{{ $role }}</option>
-                                @endforeach
-                            </select>
+                                            {{ $id == old('role') ? ' selected' : '' }}
+                                            @else
+                                            {{ $id == $user->role ? ' selected' : '' }}
+                                            @endif
+                                        >{{ $role }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                             @error('role')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror

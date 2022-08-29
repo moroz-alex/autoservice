@@ -34,23 +34,28 @@
                     </table>
                     <div class="col-12">
                         <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary me-2">Назад</a>
-                        <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-warning me-2"><i
-                                class="fa-solid fa-pen"></i></a>
-                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="post"
-                              style="display:inline">
-                            @csrf
-                            @method('delete')
-                            <button class="btn btn-danger">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
+                        @can('view', auth()->user())
+                            <a href="{{ route('admin.categories.edit', $category->id) }}"
+                               class="btn btn-warning me-2"><i
+                                    class="fa-solid fa-pen"></i></a>
+                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="post"
+                                  style="display:inline">
+                                @csrf
+                                @method('delete')
+                                <button class="btn btn-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        @endcan
                     </div>
                 </div>
             </div>
             <div class="row mb-5">
                 <div class="col">
                     <h3>Работы в категории</h3>
-                    <a href="{{ route('admin.tasks.create') }}" class="btn btn-primary mb-3">Добавить работу</a>
+                    @can('view', auth()->user())
+                        <a href="{{ route('admin.tasks.create') }}" class="btn btn-primary mb-3">Добавить работу</a>
+                    @endcan
                     <table class="table" id="tasks">
                         <thead>
                         <tr>
@@ -79,8 +84,10 @@
                                 <td>
                                     <a href="{{ route('admin.tasks.show', $task->id) }}" class="me-2"><i
                                             class="fa-solid fa-eye link-dark"></i></a>
-                                    <a href="{{ route('admin.tasks.edit', $task->id) }}" class="me-2"><i
-                                            class="fa-solid fa-pen link-dark"></i></a>
+                                    @can('view', auth()->user())
+                                        <a href="{{ route('admin.tasks.edit', $task->id) }}" class="me-2"><i
+                                                class="fa-solid fa-pen link-dark"></i></a>
+                                    @endcan
                                 </td>
                             </tr>
                         @endforeach

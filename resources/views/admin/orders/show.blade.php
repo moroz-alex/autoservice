@@ -56,7 +56,8 @@
                             <th scope="col">Начало работ</th>
                             <td>{!! isset($order->schedule) ? "<span class='me-2'>" . date('d.m.Y H:i', strtotime($order->schedule->start_time)) . "</span>" : '' !!}
                                 <a href="{{ route('admin.schedules.edit', $order->id) }}"
-                                   class="btn btn-{{ !isset($order->schedule->start_time) || $order->schedule->has_error ? 'danger' : 'secondary' }} btn-sm" title="Изменить расписание"><i
+                                   class="btn btn-{{ !isset($order->schedule->start_time) || $order->schedule->has_error ? 'danger' : 'secondary' }} btn-sm"
+                                   title="Изменить расписание"><i
                                         class="fa-solid fa-calendar-days"></i></a>
                             </td>
                         </tr>
@@ -241,13 +242,16 @@
                        title="Распечатать заказ-наряд"><i class="fa-solid fa-print"></i> Заказ-наряд</a>
                 </div>
                 <div>
-                    <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post" style="display:inline">
-                        @csrf
-                        @method('delete')
-                        <button class="btn btn-danger" title="Удалить заказ">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>
+                    @can('view', auth()->user())
+                        <form action="{{ route('admin.orders.destroy', $order->id) }}" method="post"
+                              style="display:inline">
+                            @csrf
+                            @method('delete')
+                            <button class="btn btn-danger" title="Удалить заказ">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    @endcan
                 </div>
             </div>
         </div>

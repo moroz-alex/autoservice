@@ -12,9 +12,11 @@
 
 @section('content')
     <main>
-        <div class="container-fluid px-4">
+        <div class="container-fluid px-4 mb-5">
             @include('admin.includes.header')
-            <a href="{{ route('admin.categories.create') }}" class="btn btn-primary mb-3">Добавить категорию</a>
+            @can('view', auth()->user())
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-primary mb-3">Добавить категорию</a>
+            @endcan
             <table class="table" id="categories">
                 <thead>
                 <tr>
@@ -27,10 +29,15 @@
                 @foreach($categories as $category)
                     <tr>
                         <td>{{ $category->id }}</td>
-                        <td><a href="{{ route('admin.categories.show', $category->id) }}" class="link-dark text-decoration-none">{{ $category->title }}</a></td>
+                        <td><a href="{{ route('admin.categories.show', $category->id) }}"
+                               class="link-dark text-decoration-none">{{ $category->title }}</a></td>
                         <td>
-                            <a href="{{ route('admin.categories.show', $category->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                            <a href="{{ route('admin.categories.show', $category->id) }}" class="me-2"><i
+                                    class="fa-solid fa-eye link-dark"></i></a>
+                            @can('view', auth()->user())
+                                <a href="{{ route('admin.categories.edit', $category->id) }}" class="me-2"><i
+                                        class="fa-solid fa-pen link-dark"></i></a>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

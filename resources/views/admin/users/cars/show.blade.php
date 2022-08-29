@@ -58,16 +58,22 @@
             </table>
             <div class="col-12">
                 <a href="{{ route('admin.users.cars.index', $car->user->id) }}" class="btn btn-secondary me-2">Назад</a>
-                <a href="{{ route('admin.users.cars.edit',['user' => $car->user->id, 'car' => $car->id]) }}" class="btn btn-warning me-2"><i
+                <a href="{{ route('admin.users.cars.edit',['user' => $car->user->id, 'car' => $car->id]) }}"
+                   class="btn btn-warning me-2"><i
                         class="fa-solid fa-pen"></i></a>
-                <form action="{{ route('admin.users.cars.destroy', ['user' => $car->user->id, 'car' => $car->id]) }}" method="post" style="display:inline">
-                    @csrf
-                    @method('delete')
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>
-                <a href="{{ route('admin.orders.create', ['carId' => $car->id]) }}" class="btn btn-primary ms-2">Добавить заказ</a>
+                @can('view', auth()->user())
+                    <form
+                        action="{{ route('admin.users.cars.destroy', ['user' => $car->user->id, 'car' => $car->id]) }}"
+                        method="post" class="me-2" style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                @endcan
+                <a href="{{ route('admin.orders.create', ['carId' => $car->id]) }}" class="btn btn-primary">Добавить
+                    заказ</a>
             </div>
         </div>
     </main>

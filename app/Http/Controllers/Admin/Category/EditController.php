@@ -9,6 +9,8 @@ class EditController extends Controller
 {
     public function __invoke(Category $category)
     {
+        $this->authorize('view', auth()->user());
+
         return  view('admin.categories.edit', compact('category'));
     }
 }

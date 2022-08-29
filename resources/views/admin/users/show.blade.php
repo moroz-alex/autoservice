@@ -56,15 +56,19 @@
             </table>
             <div class="col-12 mb-5">
                 <a href="{{ route('admin.users.index') }}" class="btn btn-secondary me-2">Назад</a>
-                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning me-2"><i
-                        class="fa-solid fa-pen"></i></a>
-                <form action="{{ route('admin.users.destroy', $user->id) }}" method="post" style="display:inline">
-                    @csrf
-                    @method('delete')
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>
+                @if(!(auth()->user()->role == 1 && $user->role != 0))
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-warning me-2"><i
+                            class="fa-solid fa-pen"></i></a>
+                @endif
+                @can('view', auth()->user())
+                    <form action="{{ route('admin.users.destroy', $user->id) }}" method="post" style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                @endcan
             </div>
             <h3>Заказы клиента</h3>
             <table class="table mb-5" id="orders">
@@ -86,7 +90,8 @@
                     <tr>
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->schedule->start_time ?? '' }}</td>
-                        <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year}}<br>VIN: {{ $order->car->vin ?? '-' }}<br>г/н: {{ $order->car->number ?? '-' }}</td>
+                        <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year}}
+                            <br>VIN: {{ $order->car->vin ?? '-' }}<br>г/н: {{ $order->car->number ?? '-' }}</td>
                         <td>
                             @foreach($order->tasks->sortBy('category.title') as $task)
                                 <span class="text-black-50">{{ $task->category->title }}: </span>{{ $task->title }} <br>

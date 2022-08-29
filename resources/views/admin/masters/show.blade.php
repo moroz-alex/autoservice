@@ -39,7 +39,9 @@
                 </tr>
                 <tr>
                     <th scope="col">Доступность</th>
-                    <td><span class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span></td>
+                    <td><span
+                            class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -66,15 +68,18 @@
             </table>
             <div class="col-12 mb-5">
                 <a href="{{ route('admin.masters.index') }}" class="btn btn-secondary me-2">Назад</a>
-                <a href="{{ route('admin.masters.edit', $master->id) }}" class="btn btn-warning me-2"><i
-                        class="fa-solid fa-pen"></i></a>
-                <form action="{{ route('admin.masters.destroy', $master->id) }}" method="post" style="display:inline">
-                    @csrf
-                    @method('delete')
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>
+                @can('view', auth()->user())
+                    <a href="{{ route('admin.masters.edit', $master->id) }}" class="btn btn-warning me-2"><i
+                            class="fa-solid fa-pen"></i></a>
+                    <form action="{{ route('admin.masters.destroy', $master->id) }}" method="post"
+                          style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                @endcan
             </div>
         </div>
     </main>

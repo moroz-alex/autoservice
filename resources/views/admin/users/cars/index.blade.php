@@ -32,7 +32,7 @@
                 @foreach($cars as $car)
                     <tr>
                         <td>{{ $car->id }}</td>
-                        <td>{{ $car->model->brand->title}}</td>
+                        <td><a href="{{ route('admin.users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="link-dark text-decoration-none">{{ $car->model->brand->title}}</a></td>
                         <td><a href="{{ route('admin.users.cars.show',['user' => $user->id, 'car' => $car->id]) }}" class="link-dark text-decoration-none">{{ $car->model->title }}</a></td>
                         <td>{{ $car->year}}</td>
                         <td>{{ $car->number }}</td>

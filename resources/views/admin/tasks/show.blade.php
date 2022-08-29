@@ -51,15 +51,18 @@
                 </tbody>
             </table>
             <div class="col-12">
-            <a href="{{ route('admin.tasks.index') }}" class="btn btn-secondary me-2">Назад</a>
-            <a href="{{ route('admin.tasks.edit', $task->id) }}" class="btn btn-warning me-2"><i class="fa-solid fa-pen"></i></a>
-            <form action="{{ route('admin.tasks.destroy', $task->id) }}" method="post" style="display:inline">
-                @csrf
-                @method('delete')
-                <button class="btn btn-danger">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            </form>
+                <a href="{{ route('admin.tasks.index') }}" class="btn btn-secondary me-2">Назад</a>
+                @can('view', auth()->user())
+                    <a href="{{ route('admin.tasks.edit', $task->id) }}" class="btn btn-warning me-2"><i
+                            class="fa-solid fa-pen"></i></a>
+                    <form action="{{ route('admin.tasks.destroy', $task->id) }}" method="post" style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                @endcan
             </div>
         </div>
     </main>

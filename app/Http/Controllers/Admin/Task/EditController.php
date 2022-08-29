@@ -11,6 +11,8 @@ class EditController extends Controller
 {
     public function __invoke(Task $task)
     {
+        $this->authorize('view', auth()->user());
+
         $categories = Category::all();
         $timeIntervals = Task::getTimeIntervals();
         return  view('admin.tasks.edit', compact('task','categories', 'timeIntervals'));

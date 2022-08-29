@@ -12,9 +12,11 @@
 
 @section('content')
     <main>
-        <div class="container-fluid px-4">
+        <div class="container-fluid px-4 mb-5">
             @include('admin.includes.header')
-            <a href="{{ route('admin.masters.create') }}" class="btn btn-primary mb-3">Добавить мастера</a>
+            @can('view', auth()->user())
+                <a href="{{ route('admin.masters.create') }}" class="btn btn-primary mb-3">Добавить мастера</a>
+            @endcan
             <table class="table" id="masters">
                 <thead>
                 <tr>
@@ -30,13 +32,22 @@
                 @foreach($masters as $master)
                     <tr>
                         <td>{{ $master->id }}</td>
-                        <td><a href="{{ route('admin.masters.show', $master->id) }}" class="link-dark text-decoration-none">{{ $master->first_name }}</a></td>
-                        <td><a href="{{ route('admin.masters.show', $master->id) }}" class="link-dark text-decoration-none">{{ $master->last_name }}</a></td>
-                        <td><a href="{{ route('admin.masters.show', $master->id) }}" class="link-dark text-decoration-none">{{ $master->function }}</a></td>
-                        <td><span class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span></td>
+                        <td><a href="{{ route('admin.masters.show', $master->id) }}"
+                               class="link-dark text-decoration-none">{{ $master->first_name }}</a></td>
+                        <td><a href="{{ route('admin.masters.show', $master->id) }}"
+                               class="link-dark text-decoration-none">{{ $master->last_name }}</a></td>
+                        <td><a href="{{ route('admin.masters.show', $master->id) }}"
+                               class="link-dark text-decoration-none">{{ $master->function }}</a></td>
+                        <td><span
+                                class="badge {{ $master->is_available ? 'bg-success' : 'bg-danger' }}">{{ $master->is_available ? 'Доступен' : 'Недоступен' }}</span>
+                        </td>
                         <td>
-                            <a href="{{ route('admin.masters.show', $master->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('admin.masters.edit', $master->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                            <a href="{{ route('admin.masters.show', $master->id) }}" class="me-2"><i
+                                    class="fa-solid fa-eye link-dark"></i></a>
+                            @can('view', auth()->user())
+                                <a href="{{ route('admin.masters.edit', $master->id) }}" class="me-2"><i
+                                        class="fa-solid fa-pen link-dark"></i></a>
+                            @endcan
                         </td>
                     </tr>
                 @endforeach

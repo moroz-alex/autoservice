@@ -11,6 +11,8 @@ class IndexController extends Controller
 {
     public function __invoke()
     {
+        $this->authorize('view', auth()->user());
+
         $brands = Brand::paginate(50);
         $settings = Settings::first();
         $lastUpdate = $settings->models_updated_at;

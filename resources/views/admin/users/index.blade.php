@@ -30,13 +30,19 @@
                 @foreach($users as $user)
                     <tr>
                         <td>{{ $user->id }}</td>
-                        <td><a href="{{ route('admin.users.show', $user->id) }}" class="link-dark text-decoration-none">{{ $user->name . ' ' . $user->last_name }}</a></td>
+                        <td><a href="{{ route('admin.users.show', $user->id) }}"
+                               class="link-dark text-decoration-none">{{ $user->name . ' ' . $user->last_name }}</a>
+                        </td>
                         <td>{{ $user->email}}</td>
                         <td>{{ $user->phone }}</td>
                         <td>{{ $roles[$user->role] }}</td>
                         <td>
-                            <a href="{{ route('admin.users.show', $user->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('admin.users.edit', $user->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                            <a href="{{ route('admin.users.show', $user->id) }}" class="me-2"><i
+                                    class="fa-solid fa-eye link-dark"></i></a>
+                            @if(!(auth()->user()->role == 1 && $user->role != 0))
+                                <a href="{{ route('admin.users.edit', $user->id) }}" class="me-2"><i
+                                        class="fa-solid fa-pen link-dark"></i></a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
