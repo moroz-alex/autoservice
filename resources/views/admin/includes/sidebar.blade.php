@@ -41,6 +41,6 @@
     </div>
     <div class="sb-sidenav-footer">
         <div class="small">Вы вошли как:</div>
-        Start Bootstrap
+        {{ auth()->user()->name . ' ' . auth()->user()->last_name }}
     </div>
 </nav>

@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Редактирование клиента ' . $user->name . ' ' . $user->last_name)
 @section('header', 'Редактирование клиента')
 @section('breadcrumb', 'Редактирование данных клиента')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.show', $user->id) }}">Данные клиента</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.show') }}">Данные клиента</a></li>
 @endsection
 
 @section('scriptTop')
@@ -15,10 +15,10 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
             <div class="row">
                 <div class="col-12">
-                    <form action="{{ route('user.update', $user->id) }}" method="post">
+                    <form action="{{ route('user.update') }}" method="post">
                         @csrf
                         @method('patch')
                         <div class="mb-3">
@@ -64,12 +64,12 @@
                         </div>
                         <input type="hidden" name="id" value="{{ $user->id }}">
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('user.show', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.show') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
 
         </div>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

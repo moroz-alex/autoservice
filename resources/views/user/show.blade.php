@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Клиент ' . $user->name . ' ' . $user->last_name)
 @section('header', $user->name . ' ' . $user->last_name )
@@ -7,7 +7,7 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
             <table class="table">
                 <tbody>
                 <tr>
@@ -33,10 +33,10 @@
                 </tbody>
             </table>
             <div class="col-12 mb-5">
-                <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning me-2"><i class="fa-solid fa-pen"></i></a>
-                <a href="#" class="btn btn-warning me-2">Изменить пароль</a>
+                <a href="{{ route('user.edit') }}" class="btn btn-warning me-2"><i class="fa-solid fa-pen"></i></a>
+                <a href="{{ route('user.password.edit') }}" class="btn btn-warning me-2">Изменить пароль</a>
             </div>
         </div>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

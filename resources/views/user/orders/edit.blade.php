@@ -1,9 +1,9 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Редактирование заказа')
 @section('header', 'Редактировать заказ ' . $order->id)
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index') }}">Заказы</a></li>
 @endsection
 @section('breadcrumb', 'Редактирование заказа')
 
@@ -18,11 +18,11 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('user.orders.update', ['user' => $user->id, 'order' => $order->id]) }}"
+                    <form action="{{ route('user.orders.update', $order->id) }}"
                           method="post" name="orders">
                         @csrf
                         @method('patch')
@@ -121,13 +121,11 @@
                             Внимание! После изменения работ в заказе обязательно проверьте расписание!
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить заказ</button>
-                        <a href="{{ route('user.schedules.edit', ['user' => $user->id , 'order' =>$order->id]) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i> Редактировать расписание</a>
-                        <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2" title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i> Редактировать расписание</a>
+                        <a href="{{ route('user.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             var taskIds;
@@ -270,5 +268,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

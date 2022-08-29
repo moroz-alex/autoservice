@@ -49,15 +49,6 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Пароль <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="password" id="password"
-                                   placeholder="Придумайте пароль"
-                                   value="{{ old('password') }}">
-                            @error('password')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
                             <label for="phone" class="form-label">Телефон <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="phone" id="phone"
                                    placeholder="Введите номер телефона"

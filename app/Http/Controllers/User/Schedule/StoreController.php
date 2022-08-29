@@ -11,7 +11,7 @@ use App\Models\User;
 
 class StoreController extends Controller
 {
-    public function __invoke(UpdateRequest $request, User $user)
+    public function __invoke(UpdateRequest $request)
     {
         $data = $request->validated();
         $order = Order::find($data['order_id']);
@@ -19,6 +19,6 @@ class StoreController extends Controller
 
         Schedule::create($data);
 
-        return redirect()->route('user.orders.index', $user->id);
+        return redirect()->route('user.orders.index');
     }
 }

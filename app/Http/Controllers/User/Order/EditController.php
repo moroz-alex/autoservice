@@ -9,8 +9,9 @@ use App\Models\User;
 
 class EditController extends Controller
 {
-    public function __invoke(User $user, Order $order)
+    public function __invoke(Order $order)
     {
+        $user = auth()->user();
         if (isset($order->states->first()->id) && $order->states->first()->id != 1) {
             return redirect()->route('user.orders.index', $user->id);
         }

@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Заказы клиента ' . $user->name . ' ' . $user->last_name)
 @section('header', 'Заказы' )
@@ -11,8 +11,8 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
-            <a href="{{ route('user.orders.create', $user->id) }}" class="btn btn-primary mb-3">Добавить заказ</a>
+            @include('user.includes.header')
+            <a href="{{ route('user.orders.create') }}" class="btn btn-primary mb-3">Добавить заказ</a>
             <table class="table table-hover" id="orders">
                 <thead>
                 <tr>
@@ -55,14 +55,14 @@
                                title="Заказ{{ $order->is_paid ? '' : ' не' }} оплачен"></i>
                         </td>
                         <td>
-                            <a href="{{ route('user.orders.show', ['user' => $user->id, 'order' => $order->id]) }}"
+                            <a href="{{ route('user.orders.show', $order->id) }}"
                                class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
                             @if(isset($order->states->first()->id) && $order->states->first()->id == 1)
-                                <a href="{{ route('user.orders.edit', ['user' => $user->id, 'order' => $order->id]) }}"
+                                <a href="{{ route('user.orders.edit', $order->id) }}"
                                    class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
                             @endif
                             @if(isset($order->states->first()->id) && $order->states->first()->id == 1 && (!isset($order->schedule->start_time) || $order->schedule->has_error))
-                                <a href="{{ route('user.schedules.edit', ['user' => $user->id, 'order' => $order->id]) }}" class="me-2"><i
+                                <a href="{{ route('user.schedules.edit', $order->id) }}" class="me-2"><i
                                         class="fa-solid fa-calendar-check text-danger"
                                         title="{{ !isset($order->schedule->start_time) ? 'Заказ не добавлен в расписание!' : 'Ошибка в расписании!' }}"></i></a>
 
@@ -75,12 +75,12 @@
             {{ $orders->links() }}
         </div>
         <script>
-            var url = "{{ route('user.orders.show', ['user' => $user->id, 'order' => 'orderId']) }}";
+            var url = "{{ route('user.orders.show', 'orderId') }}";
             $('#orders tbody tr').click(function () {
                 id = $(this).attr('id').match(/\d+/)[0];
                 window.location.href = url.replace('orderId', id);
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

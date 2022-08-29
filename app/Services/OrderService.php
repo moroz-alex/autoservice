@@ -33,7 +33,7 @@ class OrderService
         return $tasks;
     }
 
-    public function store($data)
+    public function store($data, $state)
     {
         try {
             DB::beginTransaction();
@@ -52,8 +52,8 @@ class OrderService
 
             $data['state'] = [
                 [
-                    'state_id' => 2,
-                    'user_id' => 2, // TODO Заменить на текущего менеджера
+                    'state_id' => $state,
+                    'user_id' => auth()->user()->id,
                 ]
             ];
             $order->states()->attach($data['state']);
@@ -100,7 +100,7 @@ class OrderService
                 $data['state'] = [
                     [
                         'state_id' => $data['state'],
-                        'user_id' => 2, // TODO Заменить на текущего менеджера
+                        'user_id' => auth()->user()->id,
                     ]
                 ];
                 $order->states()->attach($data['state']);
@@ -122,10 +122,9 @@ class OrderService
             'car_id' => $data['car_id'],
             'duration' => $data['orderDuration'],
             'price' => $data['orderPrice'],
-            'is_confirmed' => '0',
-            'user_id' => '2',  // TODO Заменить на текущего менеджера
+            'user_id' => auth()->user()->id,
             'is_paid' => $data['is_paid'] ?? '0',
-            'note' => $data['note'],
+            'note' => $data['note'] ?? '',
         ];
     }
 
@@ -247,7 +246,7 @@ class OrderService
                 $data['state'] = [
                     [
                         'state_id' => $data['state'],
-                        'user_id' => 2, // TODO Заменить на текущего менеджера
+                        'user_id' => auth()->user()->id,
                     ]
                 ];
                 $order->states()->attach($data['state']);

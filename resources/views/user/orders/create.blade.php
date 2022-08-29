@@ -1,9 +1,9 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Добавление нового заказа')
 @section('header', 'Добавить заказ')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index') }}">Заказы</a></li>
 @endsection
 @section('breadcrumb', 'Добавление заказа')
 
@@ -17,11 +17,11 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('user.orders.store', $user->id ) }}" method="post" name="orders">
+                    <form action="{{ route('user.orders.store' ) }}" method="post" name="orders">
                         @csrf
                         <h3>Автомобиль</h3>
                         <div class="mb-3">
@@ -101,7 +101,7 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Добавить</button>
-                        <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
@@ -245,5 +245,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

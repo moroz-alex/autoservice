@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Добавление заказа в расписание')
 @section('header', 'Добавить заказ в расписание')
 @section('breadcrumb', 'Добавление заказа в расписание')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index') }}">Заказы</a></li>
 @endsection
 
 @section('scriptTop')
@@ -21,11 +21,11 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('user.schedules.store', $user->id) }}" method="post" name="schedules">
+                    <form action="{{ route('user.schedules.store') }}" method="post" name="schedules">
                         @csrf
                         <div class="mb-3">
                             <label for="schedules" class="form-label">Выберите желаемую дату и время<span
@@ -72,7 +72,7 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Добавить</button>
-                        <a href="{{ route('user.orders.edit', ['user' => $user->id , 'order' =>$order->id]) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
@@ -144,5 +144,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

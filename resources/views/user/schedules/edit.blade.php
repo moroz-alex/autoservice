@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Редактирование расписания заказа')
 @section('header', 'Редактировать расписание заказа ' . $order->id)
 @section('breadcrumb', 'Редактирования расписания заказа')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index') }}">Заказы</a></li>
 @endsection
 
 @section('scriptTop')
@@ -21,11 +21,11 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
-                    <form action="{{ route('user.schedules.update', ['user' => $user->id, 'order' => $order->id]) }}"
+                    <form action="{{ route('user.schedules.update', $order->id) }}"
                           method="post" name="schedules">
                         @csrf
                         @method('patch')
@@ -80,7 +80,7 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                                                <a href="{{ route('user.orders.edit', ['user' => $user->id , 'order' =>$order->id]) }}"
+                                                <a href="{{ route('user.orders.edit', $order->id) }}"
                                                    class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
@@ -156,5 +156,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

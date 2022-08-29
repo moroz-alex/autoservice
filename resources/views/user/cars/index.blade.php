@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Автомобили клиента ' . $user->name . ' ' . $user->last_name)
 @section('header', 'Автомобили' )
@@ -7,7 +7,8 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
+            <a href="{{ route('user.cars.create') }}" class="btn btn-primary">Добавить автомобиль</a>
             <table class="table">
                 <thead>
                 <tr>
@@ -23,15 +24,15 @@
                 @foreach($cars as $car)
                     <tr>
                         <td>{{ $car->id }}</td>
-                        <td>{{ $car->model->brand->title}}</td>
-                        <td><a href="{{ route('user.cars.show', ['user' => $car->user->id, 'car' => $car->id]) }}" class="link-dark text-decoration-none">{{ $car->model->title }}</a></td>
+                        <td><a href="{{ route('user.cars.show', $car->id) }}" class="link-dark text-decoration-none">{{ $car->model->brand->title}}</a></td>
+                        <td><a href="{{ route('user.cars.show', $car->id) }}" class="link-dark text-decoration-none">{{ $car->model->title }}</a></td>
                         <td>{{ $car->year}}</td>
                         <td>{{ $car->number }}</td>
                         <td>
-                            <a href="{{ route('user.cars.show', ['user' => $car->user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('user.cars.edit', ['user' => $car->user->id, 'car' => $car->id]) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
+                            <a href="{{ route('user.cars.show', $car->id) }}" class="me-2"><i class="fa-solid fa-eye link-dark"></i></a>
+                            <a href="{{ route('user.cars.edit', $car->id) }}" class="me-2"><i class="fa-solid fa-pen link-dark"></i></a>
                             @if(!$car->hasOrders)
-                            <form action="{{ route('user.cars.destroy', ['user' => $user->id, 'car' => $car->id]) }}" method="post" style="display:inline">
+                            <form action="{{ route('user.cars.destroy', $car->id) }}" method="post" style="display:inline">
                                 @csrf
                                 @method('delete')
                                 <button class="btn btn-light" style="display: contents">
@@ -47,8 +48,7 @@
                 </tbody>
             </table>
             {{ $cars->links() }}
-            <a href="{{ route('user.cars.create', $user->id) }}" class="btn btn-primary">Добавить автомобиль</a>
         </div>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

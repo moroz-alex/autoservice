@@ -5,21 +5,23 @@ namespace App\Http\Controllers\User\Order;
 use App\Facades\OrderService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Order\StoreRequest;
-use App\Models\User;
+use App\Models\Settings;
+use App\Notifications\NewOrderAdminNotification;
+use App\Notifications\NewOrderUserNotification;
+use Illuminate\Notifications\Notifiable;
 
 class StoreController extends Controller
 {
-    public function __invoke(StoreRequest $request, User $user)
+    use Notifiable;
+
+    public function __invoke(StoreRequest $request)
     {
         $data = $request->validated();
-        $data['state'] = [
-            [
-                'state_id' => 1,
-                'user_id' => $user->id,
-            ]
-        ];
-        $order = OrderService::store($data);
+        $order = OrderService::store($data, 1);
+        $settings = Settings::first();
+        $settings->notify(new NewOrderAdminNotification($order->id));
+        $order->user->notify(new NewOrderUserNotification($order->id));
 
-        return redirect()->route('user.schedules.create', compact('user', 'order'));
+        return redirect()->route('user.schedules.create', compact('order'));
     }
 }

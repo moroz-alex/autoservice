@@ -3,25 +3,12 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['namespace' => 'App\Http\Controllers\Main'], function () {
+    Route::get('/', 'IndexController')->name('main.index');
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'], function () {
-//    Route::group(['namespace' => 'Main'], function () {
-//        Route::get('/', 'IndexController')->name('admin.main.index');
-//    });
+Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
 
     Route::group(['namespace' => 'Task', 'prefix' => 'tasks'], function () {
         Route::get('/', 'IndexController')->name('admin.tasks.index');
@@ -134,14 +121,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
     });
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], function () {
-//    Route::get('/create', 'CreateController')->name('user.create');
-//    Route::post('/', 'StoreController')->name('user.store');
-    Route::get('/{user}', 'ShowController')->name('user.show');
-    Route::get('/{user}/edit', 'EditController')->name('user.edit');
-    Route::patch('/{user}', 'UpdateController')->name('user.update');
+Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', 'ShowController')->name('user.show');
+    Route::get('/edit', 'EditController')->name('user.edit');
+    Route::patch('/', 'UpdateController')->name('user.update');
 
-    Route::group(['namespace' => 'Car', 'prefix' => '{user}/cars'], function () {
+    Route::group(['namespace' => 'Password', 'prefix' => '/password'], function () {
+        Route::get('/', 'EditController')->name('user.password.edit');
+        Route::patch('/', 'UpdateController')->name('user.password.update');
+    });
+
+    Route::group(['namespace' => 'Car', 'prefix' => 'cars'], function () {
         Route::get('/', 'IndexController')->name('user.cars.index');
         Route::get('/create', 'CreateController')->name('user.cars.create');
         Route::post('/', 'StoreController')->name('user.cars.store');
@@ -151,7 +141,7 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
         Route::delete('/{car}', 'DestroyController')->name('user.cars.destroy');
     });
 
-    Route::group(['namespace' => 'Order', 'prefix' => '{user}/orders'], function () {
+    Route::group(['namespace' => 'Order', 'prefix' => 'orders'], function () {
         Route::get('/', 'IndexController')->name('user.orders.index');
         Route::get('/create', 'CreateController')->name('user.orders.create');
         Route::post('/', 'StoreController')->name('user.orders.store');
@@ -165,7 +155,7 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
         });
     });
 
-    Route::group(['namespace' => 'Schedule', 'prefix' => '{user}/schedules'], function () {
+    Route::group(['namespace' => 'Schedule', 'prefix' => 'schedules'], function () {
         Route::get('/create/{order}', 'CreateController')->name('user.schedules.create');
         Route::post('/', 'StoreController')->name('user.schedules.store');
         Route::get('/edit/{order}', 'EditController')->name('user.schedules.edit');
@@ -174,5 +164,5 @@ Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user'], f
 
 });
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 

@@ -1,10 +1,10 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Автомобиль ' . $car->model->title)
 @section('header', 'Автомобиль ' . $car->model->brand->title . ' ' . $car->model->title)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('user.cars.index', $car->user->id) }}">Автомобили клиента</a>
+            href="{{ route('user.cars.index') }}">Автомобили клиента</a>
     </li>
 @endsection
 @section('breadcrumb', $car->model->title)
@@ -12,7 +12,7 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
             <table class="table">
                 <tbody>
                 <tr>
@@ -47,12 +47,12 @@
                 </tbody>
             </table>
             <div class="col-12">
-                <a href="{{ route('user.cars.index', $car->user->id) }}" class="btn btn-secondary me-2">Назад</a>
-                <a href="{{ route('user.cars.edit',['user' => $car->user->id, 'car' => $car->id]) }}"
+                <a href="{{ route('user.cars.index') }}" class="btn btn-secondary me-2">Назад</a>
+                <a href="{{ route('user.cars.edit', $car->id) }}"
                    class="btn btn-warning me-2"><i
                         class="fa-solid fa-pen"></i></a>
                 @if(!$hasOrders)
-                    <form action="{{ route('user.cars.destroy', ['user' => $car->user->id, 'car' => $car->id]) }}"
+                    <form action="{{ route('user.cars.destroy', $car->id) }}"
                           method="post" style="display:inline">
                         @csrf
                         @method('delete')
@@ -64,5 +64,5 @@
             </div>
         </div>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

@@ -54,9 +54,9 @@
                         </tr>
                         <tr>
                             <th scope="col">Начало работ</th>
-                            <td>{{ isset($order->schedule) ? date('d.m.Y H:i', strtotime($order->schedule->start_time)) : '' }}
+                            <td>{!! isset($order->schedule) ? "<span class='me-2'>" . date('d.m.Y H:i', strtotime($order->schedule->start_time)) . "</span>" : '' !!}
                                 <a href="{{ route('admin.schedules.edit', $order->id) }}"
-                                   class="btn btn-secondary btn-sm ms-2" title="Изменить расписание"><i
+                                   class="btn btn-{{ !isset($order->schedule->start_time) || $order->schedule->has_error ? 'danger' : 'secondary' }} btn-sm" title="Изменить расписание"><i
                                         class="fa-solid fa-calendar-days"></i></a>
                             </td>
                         </tr>
@@ -97,7 +97,7 @@
                                             {!! $i <= $order->feedback->rating ? "<span class='star'>★</span>" : "<span class='star-empty'>☆</span>" !!}
                                         @endfor
                                     </h5>
-                                    <span style="word-break: break-word;">{{ $order->feedback->review }}</span>
+                                    <span class="text-break">{{ $order->feedback->review }}</span>
                                 @endif
                             </td>
                         </tr>

@@ -11,8 +11,10 @@ use function view;
 
 class EditController extends Controller
 {
-    public function __invoke(User $user, Car $car)
+    public function __invoke(Car $car)
     {
+        $user = auth()->user();
+
         $models = CarModel::with('brand')->get();
         $hasOrders = CarService::hasOrders($car);
 

@@ -1,11 +1,11 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Редактирование автомобиля ' . $car->model->title)
 @section('header', 'Редактирование автомобиля пользователя')
 @section('breadcrumb', 'Редактирование авто ' . $car->model->brand->title . ' ' . $car->model->title)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('user.cars.index', $user->id) }}">{{ 'Автомобили клиента' }}</a>
+            href="{{ route('user.cars.index') }}">{{ 'Автомобили клиента' }}</a>
     </li>
 @endsection
 
@@ -21,7 +21,7 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
                 <div class="col-12 mb-5">
@@ -30,7 +30,7 @@
                             По данному автомобилю найдены заказы, поэтому не все поля доступны для редактирования!
                         </div>
                     @endif
-                    <form action="{{ route('user.cars.update', ['user' => $car->user->id, 'car' => $car->id]) }}" method="post">
+                    <form action="{{ route('user.cars.update', $car->id) }}" method="post">
                         @csrf
                         @method('patch')
                         <div class="mb-3">
@@ -102,13 +102,11 @@
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
 
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('user.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.cars.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
 
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             $(document).ready(function () {
@@ -155,5 +153,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

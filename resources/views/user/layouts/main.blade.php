@@ -14,11 +14,11 @@
 </head>
 <body class="sb-nav-fixed">
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-    @include('includes.navbar')
+    @include('user.includes.navbar')
 </nav>
 <div id="layoutSidenav">
     <div id="layoutSidenav_nav">
-        @include('includes.sidebar')
+        @include('user.includes.sidebar')
     </div>
     <div id="layoutSidenav_content">
         @yield('content')

@@ -45,7 +45,7 @@
                     <th scope="col" style="width: 4em">Сумма, грн.</th>
                     <th scope="col" style="width: 5em">Статус</th>
                     <th scope="col" style="width: 5em">Оплата</th>
-                    <th scope="col" style="width: 4em">Действия</th>
+                    <th scope="col" style="width: 3em">Дейст-вия</th>
                 </tr>
                 </thead>
                 <tbody>

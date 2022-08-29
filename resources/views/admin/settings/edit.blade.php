@@ -47,6 +47,15 @@
                             @enderror
                         </div>
                         <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" name="email" id="email"
+                                   placeholder="Введите адрес электронной почты"
+                                   value="{{ !empty(old('email')) ? old('email') : $settings->email }}">
+                            @error('email')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
                             <label for="work_days" class="form-label">Рабочие дни <span
                                     class="text-danger">*</span></label>
                             <select multiple size="7" class="form-select form-control" id="work_days"

@@ -1,11 +1,11 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Добавление автомобиля клиента')
 @section('header', 'Добавить авто клиента ' . $user->last_name . ' ' . $user->name)
 @section('breadcrumb', 'Добавление авто клиента')
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('user.cars.index', $user->id) }}">{{ 'Автомобили клиента' }}</a>
+            href="{{ route('user.cars.index') }}">{{ 'Автомобили клиента' }}</a>
     </li>
 @endsection
 
@@ -20,11 +20,11 @@
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
 
             <div class="row">
-                <div class="col-12">
-                    <form action="{{ route('user.cars.store', $user->id) }}" method="post">
+                <div class="col-12 mb-5">
+                    <form action="{{ route('user.cars.store') }}" method="post">
                         @csrf
                         <div class="mb-3">
                             <label for="models" class="form-label">Выберите модель <span class="text-danger">*</span></label>
@@ -94,17 +94,14 @@
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
 
                         <button type="submit" class="btn btn-primary">Добавить</button>
-                        <a href="{{ route('user.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('user.cars.index') }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
 
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             $(document).ready(function () {
-                var events = $('#events');
                 var table = $('#models').DataTable({
                     select: {
                         style: 'single'
@@ -138,5 +135,5 @@
             });
         </script>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection

@@ -1,16 +1,16 @@
-@extends('layouts.main')
+@extends('user.layouts.main')
 
 @section('title', 'МойАвтосервис : Заказ ' . $order->id)
 @section('header', 'Заказ ' . $order->id )
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('user.orders.index', $user->id) }}">Заказы</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('user.orders.index') }}">Заказы</a></li>
 @endsection
 @section('breadcrumb', 'Заказ')
 
 @section('content')
     <main>
         <div class="container-fluid px-4">
-            @include('includes.header')
+            @include('user.includes.header')
             <div class="row">
                 <div class="col-lg-6 mb-5">
                     <h3>Автомобиль</h3>
@@ -70,7 +70,7 @@
                         </tbody>
                     </table>
                     @if($order->states->first()->id == 1)
-                        <a href="{{ route('user.orders.cancel', ['user' => $user->id, 'order' => $order->id]) }}"
+                        <a href="{{ route('user.orders.cancel', $order->id) }}"
                            class="btn btn-danger">Отменить заказ</a>
                     @endif
                     <div class="mt-5">
@@ -93,7 +93,7 @@
                             <div class="collapse mt-3" id="collapseFeedback">
                                 <div class="card card-body">
                                     <form
-                                        action="{{ route('user.orders.feedbacks.store', ['user' => $user->id, 'order' => $order->id]) }}"
+                                        action="{{ route('user.orders.feedbacks.store', $order->id) }}"
                                         method="post">
                                         @csrf
                                         <textarea class="form-control" name="review" id="review" rows="5"
@@ -153,14 +153,14 @@
                 </tbody>
             </table>
             <div class="col-12 mb-5">
-                <a href="{{ route('user.orders.index', $user->id) }}" class="btn btn-secondary me-2">Назад</a>
+                <a href="{{ route('user.orders.index') }}" class="btn btn-secondary me-2">Назад</a>
                 @if(isset($order->states->first()->id) && $order->states->first()->id == 1)
-                    <a href="{{ route('user.orders.edit', ['user' => $user->id, 'order' => $order->id]) }}"
+                    <a href="{{ route('user.orders.edit', $order->id) }}"
                        class="btn btn-warning me-2"><i
                             class="fa-solid fa-pen"></i></a>
                 @endif
             </div>
         </div>
     </main>
-    @include('includes.footer')
+    @include('user.includes.footer')
 @endsection
