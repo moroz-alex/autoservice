@@ -91,7 +91,7 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
                         <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
