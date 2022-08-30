@@ -1,8 +1,8 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Пользователи')
-@section('header', 'Пользователи')
-@section('breadcrumb', 'Пользователи')
+@section('title', 'МойАвтосервис : ' . ( auth()->user()->role == 2 ? 'пользователи' : 'клиенты'))
+@section('header', auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты')
+@section('breadcrumb', auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты')
 
 @section('scriptTop')
     <link href="https://cdn.datatables.net/1.12.0/css/jquery.dataTables.min.css" rel="stylesheet"/>
@@ -14,7 +14,7 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-            <a href="{{ route('admin.users.create') }}" class="btn btn-primary mb-3">Добавить пользователя</a>
+            <a href="{{ route('admin.users.create') }}" class="btn btn-primary mb-3">Добавить {{ auth()->user()->role == 2 ? 'пользователя' : 'клиента' }}</a>
             <table class="table" id="users">
                 <thead>
                 <tr>
@@ -28,23 +28,23 @@
                 </thead>
                 <tbody>
                 @foreach($users as $user)
-                    <tr>
-                        <td>{{ $user->id }}</td>
-                        <td><a href="{{ route('admin.users.show', $user->id) }}"
-                               class="link-dark text-decoration-none">{{ $user->name . ' ' . $user->last_name }}</a>
-                        </td>
-                        <td>{{ $user->email}}</td>
-                        <td>{{ $user->phone }}</td>
-                        <td>{{ $roles[$user->role] }}</td>
-                        <td>
-                            <a href="{{ route('admin.users.show', $user->id) }}" class="me-2"><i
-                                    class="fa-solid fa-eye link-dark"></i></a>
-                            @if(!(auth()->user()->role == 1 && $user->role != 0))
+                    @if(auth()->user()->role == 2 || (auth()->user()->role == 1 && $user->role == 0))
+                        <tr>
+                            <td>{{ $user->id }}</td>
+                            <td><a href="{{ route('admin.users.show', $user->id) }}"
+                                   class="link-dark text-decoration-none">{{ $user->name . ' ' . $user->last_name }}</a>
+                            </td>
+                            <td>{{ $user->email}}</td>
+                            <td>{{ $user->phone }}</td>
+                            <td>{{ $roles[$user->role] }}</td>
+                            <td>
+                                <a href="{{ route('admin.users.show', $user->id) }}" class="me-2"><i
+                                        class="fa-solid fa-eye link-dark"></i></a>
                                 <a href="{{ route('admin.users.edit', $user->id) }}" class="me-2"><i
                                         class="fa-solid fa-pen link-dark"></i></a>
-                            @endif
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
                 </tbody>
             </table>

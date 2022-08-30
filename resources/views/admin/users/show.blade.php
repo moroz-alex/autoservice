@@ -1,9 +1,9 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Пользователь ' . $user->name . ' ' . $user->last_name)
-@section('header', 'Пользователь' )
+@section('title', 'МойАвтосервис : ' . ( auth()->user()->role == 2 ? 'пользователь ' : 'клиент ') . $user->name . ' ' . $user->last_name)
+@section('header', auth()->user()->role == 2 ? 'Пользователь' : 'Клиент')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Пользователи</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a></li>
 @endsection
 @section('breadcrumb', $user->name . ' ' . $user->last_name)
 
@@ -87,7 +87,7 @@
                 </thead>
                 <tbody>
                 @foreach($orders as $order)
-                    <tr>
+                    <tr id="{{ $order->id }}">
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->schedule->start_time ?? '' }}</td>
                         <td>{{ $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year}}
@@ -115,8 +115,6 @@
                         <td>
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="me-2"><i
                                     class="fa-solid fa-eye link-dark"></i></a>
-                            <a href="{{ route('admin.orders.edit', $order->id) }}" class="me-2"><i
-                                    class="fa-solid fa-pen link-dark"></i></a>
                             @if(!isset($order->schedule->start_time) || $order->schedule->has_error)
                                 <a href="{{ route('admin.schedules.edit', $order->id) }}" class="me-2"><i
                                         class="fa-solid fa-calendar-check text-danger"
@@ -146,6 +144,11 @@
                         },
                     },
                 });
+            });
+            var url = "{{ route('admin.orders.show', 'orderId') }}";
+            $('#orders tbody tr').click(function () {
+                id = $(this).attr('id').match(/\d+/)[0];
+                window.location.href = url.replace('orderId', id);
             });
         </script>
     </main>

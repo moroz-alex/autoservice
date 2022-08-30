@@ -1,14 +1,14 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Автомобили пользователя')
-@section('header', 'Автомобили пользователя ' . $user->last_name . ' ' . $user->name)
-@section('breadcrumb', 'Автомобили пользователя')
+@section('title', 'МойАвтосервис : Автомобили ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('header', 'Автомобили ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->last_name . ' ' . $user->name)
+@section('breadcrumb', 'Автомобили ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
     </li>
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $user->id) }}">{{ 'Пользователь ' . $user->last_name . ' ' . $user->name }}</a>
+            href="{{ route('admin.users.show', $user->id) }}">{{ (auth()->user()->role == 2 ? 'Пользователь ' : 'Клиент ') . $user->last_name . ' ' . $user->name }}</a>
     </li>
 @endsection
 

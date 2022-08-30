@@ -1,10 +1,12 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Добавление нового пользователя')
-@section('header', 'Добавить нового пользователя')
-@section('breadcrumb', 'Добавление пользователя')
+@section('title', 'МойАвтосервис : Добавление нового ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('header', 'Добавить нового ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('breadcrumb', 'Добавление ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Пользователи</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
+    </li>
 @endsection
 
 @section('scriptTop')
@@ -57,7 +59,7 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                             <script>
-                                $(document).ready(function() {
+                                $(document).ready(function () {
                                     $("#phone").mask("+38 (999) 999-99-99");
                                 });
                             </script>
@@ -72,9 +74,7 @@
                                         <option value="{{ $id }}"
                                         @if(!empty(old('role')))
                                             {{ $id == old('role') ? ' selected' : '' }}
-                                            @else
-                                            {{ $id == $user->role ? ' selected' : '' }}
-                                            @endif
+                                        @endif
                                         >{{ $role }}</option>
                                     @endforeach
                                 </select>

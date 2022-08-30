@@ -24,6 +24,7 @@
                     <form action="{{ route('user.orders.store' ) }}" method="post" name="orders">
                         @csrf
                         <h3>Автомобиль</h3>
+                        <a id="add_car" href="{{ route('user.cars.create', ['quickOrder' => 1]) }}" class="btn btn-secondary mb-3 float-end" title="Добавить новый автомобиль выбранному клиенту">Добавить автомобиль</a>
                         <div class="mb-3">
                             <label for="cars" class="form-label">Выберите автомобиль <span class="text-danger">*</span></label>
                             <table class="table" id="cars">
@@ -36,7 +37,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach($cars as $car)
-                                    <tr class="{{ old('car_id') == $car->id ? ' selected' : '' }}">
+                                    <tr class="{{ old('car_id') == $car->id || $car->id == $carId ? ' selected' : '' }}">
                                         <td>{{ $car->id }}</td>
                                         <td>{{ $car->model->brand->title . ' ' . $car->model->title . ' ' . $car->year }}</td>
                                         <td>{{ $car->number }}</td>

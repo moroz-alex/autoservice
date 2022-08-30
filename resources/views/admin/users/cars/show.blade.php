@@ -4,10 +4,10 @@
 @section('header', 'Автомобиль ' . $car->model->title)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
     </li>
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $car->user->id) }}">{{ 'Пользователь ' . $car->user->last_name . ' ' . $car->user->name }}</a>
+            href="{{ route('admin.users.show', $car->user->id) }}">{{ ( auth()->user()->role == 2 ? 'Пользователь ' : 'Клиент ') . $car->user->last_name . ' ' . $car->user->name }}</a>
     </li>
 @endsection
 @section('breadcrumb', $car->model->title)

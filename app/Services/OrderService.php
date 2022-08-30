@@ -90,10 +90,12 @@ class OrderService
                 $order->tasks()->sync($data['orderTasks']);
                 $schedule = Schedule::where('order_id', $order->id)->first();
                 $schedule_errors = ScheduleService::checkOrderScheduleFit($order);
-                $schedule->update([
-                    'duration' => $order->duration,
-                    'has_error' => $schedule_errors,
-                ]);
+                if ($schedule) {
+                    $schedule->update([
+                        'duration' => $order->duration,
+                        'has_error' => $schedule_errors,
+                    ]);
+                }
             }
 
             if (isset($data['state'])) {

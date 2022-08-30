@@ -22,7 +22,6 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-
             <div class="row">
                 <div class="col-12 mb-5">
                     <form action="{{ route('admin.schedules.store') }}" method="post" name="schedules">
@@ -54,9 +53,9 @@
                                                     Недоступно
                                                 </td>
                                             @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }} Занято</td>
+                                                <td class="table-info protected">{{ date('H:i', $time) }} Занято</td>
                                             @else
-                                                <td><span hidden>{{ $master }}</span></td>
+                                                <td {!! isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? "class='table-warning'>Пересечение" : ">" !!}<span hidden>{{ $master }}</span></td>
                                             @endif
                                         @endforeach
                                     </tr>

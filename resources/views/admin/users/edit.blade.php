@@ -1,10 +1,10 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование пользователя ' . $user->name . ' ' . $user->last_name)
-@section('header', 'Редактирование пользователя')
-@section('breadcrumb', 'Редактирование пользователя ' . $user->name . ' ' . $user->last_name)
+@section('title', 'МойАвтосервис : Редактирование ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->name . ' ' . $user->last_name)
+@section('header', 'Редактирование ' . (auth()->user()->role == 2 ? 'пользователя' : 'клиента'))
+@section('breadcrumb', 'Редактирование ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->name . ' ' . $user->last_name)
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Пользователи</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a></li>
 @endsection
 
 @section('scriptTop')
@@ -89,8 +89,6 @@
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
     </main>
     @include('admin.includes.footer')

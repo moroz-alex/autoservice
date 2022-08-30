@@ -127,31 +127,69 @@
                 </div>
             </div>
             <h3>Перечень работ</h3>
-            <table class="table mb-5">
+            <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col" style="width: 4em">Арт.</th>
-                    <th scope="col" style="width: 15em">Категория работ</th>
+                    <th scope="col" style="width: 12em">Код</th>
+                    <th scope="col" style="width: 12em">Категория работ</th>
                     <th scope="col">Наименование работы</th>
-                    <th scope="col">Время, ч.</th>
-                    <th scope="col">Цена нч, грн.</th>
-                    <th scope="col">Кол-во</th>
+                    <th scope="col" style="width: 5em">Время, ч.</th>
+                    <th scope="col" style="width: 7em">Цена нч, грн.</th>
+                    <th scope="col" style="width: 5em">Кол-во</th>
+                    <th scope="col" style="width: 7em">Стоимость, грн.</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($order->tasks->sortBy('category.title') as $task)
                     <tr>
-
-                        <td>{{ $task->id }}</td>
+                        <td>{{ $task->code }}</td>
                         <td>{{ $task->category->title }}</td>
                         <td>{{ $task->title }}</td>
                         <td>{{ $task->pivot->duration / 60 }}</td>
                         <td>{{ $task->pivot->price }}</td>
                         <td>{{ $task->pivot->quantity }}</td>
+                        <td>{{ $task->pivot->price * $task->pivot->quantity * ($task->pivot->duration / 60) }}</td>
                     </tr>
                 @endforeach
+                <tr class="fw-bolder">
+                    <td colspan="6">Итого, стоимость работ, грн.:</td>
+                    <td>
+                        {{ $totalTasks }}
+                    </td>
+                </tr>
                 </tbody>
             </table>
+
+            <h3>Перечень деталей и материалов</h3>
+            <table class="table mb-5">
+                <thead>
+                <tr>
+                    <th scope="col" style="width: 12em">Код</th>
+                    <th scope="col">Наименование</th>
+                    <th scope="col" style="width: 7em">Цена, грн.</th>
+                    <th scope="col" style="width: 5em">Кол-во</th>
+                    <th scope="col" style="width: 7em">Сумма, грн.</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($order->parts as $part)
+                    <tr>
+                        <td>{{ $part->code }}</td>
+                        <td>{{ $part->title }}</td>
+                        <td>{{ $part->price }}</td>
+                        <td>{{ $part->quantity }}</td>
+                        <td>{{ $part->price * $part->quantity }}</td>
+                    </tr>
+                @endforeach
+                <tr class="fw-bolder">
+                    <td colspan="4">Итого, стоимость деталей и материалов, грн.:</td>
+                    <td>
+                        {{ $totalParts }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
             <div class="col-12 mb-5">
                 <a href="{{ route('user.orders.index') }}" class="btn btn-secondary me-2">Назад</a>
                 @if(isset($order->states->first()->id) && $order->states->first()->id == 1)

@@ -56,7 +56,7 @@
                                     заказ</a>
                             </div>
                         </div>
-                        <table class="table compact hover cell-border" id="schedules">
+                        <table class="table table-sm compact hover cell-border" id="schedules">
                             <thead>
                             <tr>
                                 <th scope="col" style="width: 5em" hidden>Дата</th>
@@ -73,8 +73,8 @@
                                     <td hidden>{{ date('Y-m-d H:i', $time) }}</td>
                                     <td>{{ date('H:i', $time) }}</td>
                                     @foreach($masters as $master => $state)
-                                        <td {!! $state == 'used' || $state != 'unusable' && $state != 'free' ? "class='table-warning'" : "" !!}
-                                            {!! $state == 'used' ? "style='border-top:none; border-bottom-width:0px;'" : "" !!}>
+                                        <td {!! $state == 'used' || $state != 'unusable' && $state != 'free' ? "class='table-info'" : "" !!}
+                                            {!! $state == 'used' ? "style='border-top:none; border-bottom:0px;'" : "" !!}>
                                             @if($state != 'used' && $state != 'unusable' && $state != 'free')
                                                 <a href="{{ route('admin.orders.show', $state) }}"
                                                    class="link-dark text-decoration-none">Заказ {{$state}}</a>

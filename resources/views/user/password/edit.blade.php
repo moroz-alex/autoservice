@@ -28,7 +28,7 @@
                         <div class="mb-3">
                             <label for="new_password" class="form-label">Новый пароль <span class="text-danger">*</span></label>
                             <input type="password" class="form-control" name="new_password" id="new_password"
-                                   placeholder="Старый пароль"
+                                   placeholder="Новый пароль"
                                    value="">
                             @error('new_password')
                             <div class="text-danger">{{ $message }}</div>
@@ -37,7 +37,7 @@
                         <div class="mb-3">
                             <label for="password_confirmation" class="form-label">Подтверждение пароля <span class="text-danger">*</span></label>
                             <input type="password" class="form-control" name="new_password_confirmation" id="password_confirmation"
-                                   placeholder="Старый пароль"
+                                   placeholder="Подтверждение пароля"
                                    value="">
                             @error('password_confirmation')
                             <div class="text-danger">{{ $message }}</div>

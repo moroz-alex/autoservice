@@ -63,11 +63,11 @@
                                                     @endif
                                                 </td>
                                             @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }}
+                                                <td class="table-info protected">{{ date('H:i', $time) }}
                                                     Занято
                                                 </td>
                                             @else
-                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }}"><span hidden>{{ $master }}</span></td>
+                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }} {{ isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? 'table-warning' : '' }}">{{ isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? 'Пересечение' : '' }}<span hidden>{{ $master }}</span></td>
                                             @endif
                                         @endforeach
                                     </tr>
@@ -92,11 +92,10 @@
                             @enderror
                         </div>
                         <button type="submit" class="btn btn-primary">Сохранить</button>
-                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
 
         </div>
         <script>

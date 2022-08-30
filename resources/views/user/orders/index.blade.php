@@ -50,9 +50,8 @@
                                 {{ $order->states->first()->title ?? '' }}
                             </span>
                         </td>
-                        <td style="color: #E0E0E0">
-                            <i class="fa-solid fa-sack-dollar {{ $order->is_paid ? 'text-success' : '' }}"
-                               title="Заказ{{ $order->is_paid ? '' : ' не' }} оплачен"></i>
+                        <td>
+                            {!! $order->is_paid ? "<span class='badge bg-success state'>Оплачен</span>" : "<span class='badge bg-secondary state'>Нет оплаты</span>" !!}
                         </td>
                         <td>
                             <a href="{{ route('user.orders.show', $order->id) }}"

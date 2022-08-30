@@ -106,7 +106,6 @@
                     </table>
                 </div>
                 <div class="col-lg-6 mb-5">
-                    <div class="row">
                         <h3>Комментарий менеджера</h3>
                         <form action="{{ route('admin.orders.note.update', $order->id) }}" method="post" class="mt-3">
                             @csrf
@@ -119,8 +118,7 @@
                             <button type="submit" class="btn btn-secondary btn-sm mt-3 float-end">Обновить комментарий
                             </button>
                         </form>
-                    </div>
-                    <div class="row">
+                    <div class="mt-5">
                         <h3>Статусы заказа</h3>
                         <table class="table" id="states">
                             <thead>

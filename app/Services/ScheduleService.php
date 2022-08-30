@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Master;
+use App\Models\Order;
 use App\Models\Schedule;
 use App\Models\Settings;
 
@@ -43,7 +44,7 @@ class ScheduleService
                     ->selectRaw('max(`created_at`)')
                     ->orWhereNull('order_states.state_id');
             })
-            ->whereNotIn('order_states.state_id', [4,5])
+            ->whereNotIn('order_states.state_id', [4, 5])
             ->where('start_time', '>=', $startDate . ' ' . $this->settings->schedule_start)
             ->where('start_time', '<=', $endDate . ' ' . $this->settings->schedule_end)
             ->get();
@@ -119,28 +120,27 @@ class ScheduleService
 
         $orderId = $order->id ?? 0;
         $mastersListIds = array_column($mastersList, 'id');
-
+//        dd($scheduleTasks);
         foreach ($scheduleTasks as $task) {
 // Вариант "простой" -----
 //            if (isset($task->order->states->first()->id) && !in_array($task->order->states->first()->id, [4, 5])) {
 //  -----
 
-                $taskStart = strtotime($task->start_time);
-                $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
-                if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
-                    $timeSlots[$taskStart][$task->master_id] = $task->order_id;
-                    for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
-                        if ($timeSlots[$time][$task->master_id] == 'unusable') {
-                            $timeSlots[$time][$task->master_id] = 'used';
-                        }
+            $taskStart = strtotime($task->start_time);
+            $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
+            if (array_key_exists($taskStart, $timeSlots) && in_array($task->master_id, $mastersListIds) && $task->order_id != $orderId) {
+                $timeSlots[$taskStart][$task->master_id] = $task->order_id;
+                for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
+                    if ($timeSlots[$time][$task->master_id] == 'unusable') {
+                        $timeSlots[$time][$task->master_id] = 'used';
                     }
                 }
+            }
 // Вариант "простой" -----
 //            }
 //  -----
         }
 
-//        dd(111);
         return $timeSlots;
     }
 
@@ -217,6 +217,8 @@ class ScheduleService
     {
         $startDate = strtotime('now') < strtotime($this->settings->schedule_end) ? date('Y-m-d') : date('Y-m-d', strtotime('+1 day'));
         $timeSlots = $this->getTimeSlots($order, $mastersList, $startDate);
+        $carScheduleTasks = $this->getCarScheduleTasks($order);
+
         foreach ($timeSlots as $time => $masters) {
             foreach ($masters as $master => $state) {
                 $hasFreeSlot = 0;
@@ -230,7 +232,52 @@ class ScheduleService
                 $timeSlotsForClient[$time] = 'unusable';
             }
         }
+
+        foreach ($carScheduleTasks as $task) {
+            $taskStart = strtotime($task->start_time);
+            $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
+            if (array_key_exists($taskStart, $timeSlots)) {
+                $timeSlotsForClient[$taskStart] = 'unusable';
+                for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
+                    if ($timeSlotsForClient[$time] == 'free') {
+                        $timeSlotsForClient[$time] = 'unusable';
+                    }
+                }
+            }
+        }
+
         return $timeSlotsForClient;
+    }
+
+    private function getCarScheduleTasks($order)
+    {
+        return Schedule::select('schedules.*')
+            ->leftjoin('orders', 'schedules.order_id', '=', 'orders.id')
+            ->leftjoin('order_states', 'schedules.order_id', '=', 'order_states.order_id')
+            ->where('orders.car_id', $order->car->id)
+            ->where('order_states.created_at', function ($query) {
+                $query->from('order_states')
+                    ->whereRaw('`order_states`.`order_id` = `schedules`.`order_id`')
+                    ->selectRaw('max(`created_at`)')
+                    ->orWhereNull('order_states.state_id');
+            })
+            ->whereNotIn('order_states.state_id', [4, 5])
+            ->where('start_time', '>=', date('Y-m-d') . ' ' . $this->settings->schedule_start)
+            ->get();
+    }
+
+    public function getUnsafeTimeSlots($order)
+    {
+        $carScheduleTasks = $this->getCarScheduleTasks($order);
+        foreach ($carScheduleTasks as $task) {
+            $taskStart = strtotime($task->start_time);
+            $taskEnd = strtotime('+' . $task->duration . ' minutes', $taskStart);
+            $unsafeTimeSlots[$taskStart] = 'unsafe';
+            for ($time = strtotime('+' . $this->timeSlotSize . ' minutes', $taskStart); $time < $taskEnd; $time = strtotime('+' . $this->timeSlotSize . ' minutes', $time)) {
+                $unsafeTimeSlots[$time] = 'unsafe';
+            }
+        }
+        return $unsafeTimeSlots;
     }
 
     public function distributeOrderAmongMasters($order, $start_time)
