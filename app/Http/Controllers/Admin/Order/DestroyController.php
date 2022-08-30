@@ -12,6 +12,7 @@ class DestroyController extends Controller
         $orderTasks = [];
         $order->tasks()->sync($orderTasks);
         $order->schedule()->delete();
+        $order->parts()->delete();
         $order->delete();
         return redirect()->route('admin.orders.index');
     }

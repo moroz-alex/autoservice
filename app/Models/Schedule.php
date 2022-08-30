@@ -23,4 +23,9 @@ class Schedule extends Model
     public function master() {
         return $this->hasOne(Master::class, 'id', 'master_id');
     }
+
+    public function order()
+    {
+        return $this->hasOne(Order::class, 'id', 'order_id');
+    }
 }

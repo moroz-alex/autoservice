@@ -4,7 +4,7 @@
 @section('header', 'Редактировать расписание заказа ' . $order->id)
 @section('breadcrumb', 'Редактирования расписания заказа')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.schedules.index') }}">Расписание</a></li>
 @endsection
 
 @section('scriptTop')
@@ -42,7 +42,7 @@
                                     <th scope="col" style="width: 5em" hidden>Дата</th>
                                     <th scope="col" style="width: 5em">Время</th>
                                     @foreach($mastersList as $master)
-                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
+                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}<br><span class="text-black-50 fw-normal">{{ $master->function }}</span></th>
                                     @endforeach
                                 </tr>
                                 </thead>
@@ -62,12 +62,12 @@
                                                         Недоступно
                                                     @endif
                                                 </td>
-                                            @elseif($state == 'used')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }}
+                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
+                                                <td class="table-info protected">{{ date('H:i', $time) }}
                                                     Занято
                                                 </td>
                                             @else
-                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }}"><span hidden>{{ $master }}</span></td>
+                                                <td class="{{ isset($order->schedule) && $time == strtotime($order->schedule->start_time) && $order->schedule->master_id == $master ? 'selected' : '' }} {{ isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? 'table-warning' : '' }}">{{ isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? 'Пересечение' : '' }}<span hidden>{{ $master }}</span></td>
                                             @endif
                                         @endforeach
                                     </tr>
@@ -91,12 +91,11 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('admin.orders.edit', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
 
         </div>
         <script>
@@ -112,7 +111,7 @@
                         weekdays: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
                     },
                     minDate: new Date('{{ date('Y-m-d') }}'),
-                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month')) }}'),
+                    maxDate: new Date('{{ date('Y-m-d', strtotime('+1 month -1 day')) }}'),
                     disableDays: [{{ $disableDays }}],
                 });
 
@@ -142,16 +141,11 @@
                 });
 
                 table.cells('.selected').select();
+                getTableData();
 
                 table
                     .on('select', function () {
-                        master = table.cell({selected: true}).data();
-                        master = master.match(/>(\d+)</);
-                        if (master !== null) master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
-
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
+                        getTableData();
                     });
 
                 $('#schedules_filter').hide();
@@ -164,8 +158,18 @@
                     table.search(searchDate).draw();
                 });
 
-            });
+                function getTableData() {
+                    master = table.cell({selected: true}).data();
+                    if (master) {
+                        master = master.match(/>(\d+)</);
+                        master = master[1];
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
 
+                        $("input[name='start_time']").val(date);
+                        $("input[name='master_id']").val(master);
+                    }
+                }
+            });
         </script>
     </main>
     @include('admin.includes.footer')

@@ -31,7 +31,7 @@
                 </tbody>
             </table>
             {{ $models->links() }}
-            <a href="{{ route('admin.brands.index') }}" class="btn btn-secondary">Назад</a>
+            <a href="{{ route('admin.brands.index') }}" class="btn btn-secondary mb-5">Назад</a>
         </div>
     </main>
     @include('admin.includes.footer')

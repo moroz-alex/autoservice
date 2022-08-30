@@ -25,10 +25,10 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'order_id'=>'required|integer|exists:orders,id',
-            'start_time'=>'required|date_format:Y-m-d H:i',
-            'duration'=>'required|integer',
-            'master_id'=>'required|integer|exists:masters,id',
+            'order_id' => 'required|integer|exists:orders,id',
+            'start_time' => 'required|date_format:Y-m-d H:i',
+            'duration' => 'required|integer',
+            'master_id' => 'required|integer|exists:masters,id',
         ];
     }
 

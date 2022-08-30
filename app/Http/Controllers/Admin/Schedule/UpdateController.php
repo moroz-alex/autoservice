@@ -2,23 +2,18 @@
 
 namespace App\Http\Controllers\Admin\Schedule;
 
+use App\Facades\ScheduleService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Schedule\UpdateRequest;
 use App\Models\Order;
-use App\Models\Schedule;
 
 class UpdateController extends Controller
 {
     public function __invoke(UpdateRequest $request, Order $order)
     {
         $data = $request->validated();
-        $schedule = Schedule::where('order_id', $order->id)->first();
+        ScheduleService::update($data, $order);
 
-        if (isset($schedule)) {
-            $schedule->update($data);
-        } else {
-            Schedule::create($data);
-        }
-        return  redirect()->route('admin.orders.index');
+        return  redirect()->route('admin.orders.show', $order->id);
     }
 }

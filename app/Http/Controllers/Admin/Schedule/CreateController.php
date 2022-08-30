@@ -14,7 +14,8 @@ class CreateController extends Controller
         $timeSlots = ScheduleService::getTimeSlots($order, $mastersList);
         $timeSlotsNumber = ScheduleService::getTimeSlotsNumber();
         $disableDays = ScheduleService::getDisabledDays();
+        $unsafeTimeSlots = ScheduleService::getUnsafeTimeSlots($order);
 
-        return view('admin.schedules.create', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays'));
+        return view('admin.schedules.create', compact('order', 'timeSlots', 'timeSlotsNumber', 'mastersList', 'disableDays', 'unsafeTimeSlots'));
     }
 }

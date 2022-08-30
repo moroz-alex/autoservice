@@ -12,6 +12,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
 @endsection
 
 @section('content')
@@ -117,13 +118,66 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
-                        <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary ms-2">Назад</a>
+                        <div class="row mb-5">
+                            <div class="col-lg-6">
+                                <h3>Статусы заказа</h3>
+                                <table class="table" id="states">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col" style="width: 11em">Дата и время</th>
+                                        <th scope="col" style="width: 15em">Автор</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($order->states as $key => $state)
+                                        <tr {!! $key == last($order->states) ? "" : "class='text-black-50'" !!}>
+                                            <td>{{ $state->title }}</td>
+                                            <td>{{ $state->pivot->created_at }}</td>
+                                            <td>{{ $state->pivot->user->name ?? '' }} {{ $state->pivot->user->last_name ?? '' }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                                <div class="mb-3 pt-0">
+                                    <select class="form-select form-control" id="state" name="state">
+                                        <option value="">Обновить статус</option>
+                                        @foreach($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->title }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('state')
+                                    <div class="text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    <input type="hidden" name="is_paid" value="0">
+                                    <input type="checkbox" role="switch" class="form-check-input"
+                                           {{ $order->is_paid ? 'checked' : '' }} id="is_paid" name="is_paid"
+                                           value="1"/>
+                                    <label for="is_paid" class="form-check-label">Заказ оплачен</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <h3>Комментарий менеджера</h3>
+                                <textarea class="form-control" name="note" id="note" rows="7" maxlength="999" placeholder="Максимальная длина комментария 1000 символов">{{ old('note', $order->note) }}</textarea>
+                                @error('note')
+                                <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning text-danger" role="alert" id="tasks_change_alert"
+                             style="display: none">
+                            Внимание! После изменения работ в заказе обязательно проверьте расписание!
+                        </div>
+                        <button type="submit" class="btn btn-primary">Обновить заказ</button>
+                        <a href="{{ route('admin.schedules.edit', $order->id) }}" class="btn btn-secondary ms-2"
+                           title="Изменить расписание"><i class="fa-solid fa-calendar-days"></i></a>
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
         <script>
             var taskIds;
@@ -154,10 +208,14 @@
                             rows: ""
                         },
                     },
+                    keys: true,
                 });
 
                 table_cars.rows('.selected').select();
                 getTableCarsData();
+
+                var selectedCell = table_cars.row( '.selected' ).index();
+                table_cars.cell( selectedCell, 0 ).focus();
 
                 table_cars
                     .on('select', function (e, dt, type, indexes) {
@@ -206,9 +264,14 @@
                         {data: 'quantity'},
                     ],
                     stateSave: true,
+                    keys: true,
                 });
 
+                table_tasks.rows('.selected').select();
                 getTableTasksData();
+
+                var selectedCell = table_tasks.row( '.selected' ).index();
+                table_tasks.cell( selectedCell, 0 ).focus();
 
                 $('#tasks tbody').on('change', 'td', function () {
                     var data = table_tasks.cell(this).data();
@@ -219,22 +282,22 @@
                         data = "<input type=\"text\" name=\"" + name + "\" value=\"" + value + "\" style=\"width: 5em\">";
                         table_tasks.cell(this).data(data);
                     } else if (name == 'task_drs') {
-                        var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val();
+                        var value = table_tasks.cell(this).$("select[name='" + name + "']", this).val()
+                        data = data.replace(" selected", "");
                         data = data.replace("value=\"" + value + "\"", "value=\"" + value + "\" selected");
                         table_tasks.cell(this).data(data);
                     }
                     getTableTasksData();
                 });
 
-                table_tasks.rows('.selected').select();
-                getTableTasksData();
-
                 table_tasks
                     .on('select', function (e, dt, type, indexes) {
                         getTableTasksData();
+                        $('#tasks_change_alert').show('fast');
                     })
                     .on('deselect', function (e, dt, type, indexes) {
                         getTableTasksData();
+                        $('#tasks_change_alert').show('fast');
                     })
 
                 function getTableTasksData() {

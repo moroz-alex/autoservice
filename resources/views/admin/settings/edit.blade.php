@@ -15,7 +15,7 @@
                 </div>
             @endif
             <div class="row">
-                <div class="col-12">
+                <div class="col-12 mb-3">
                     <form action="{{ route('admin.settings.update') }}" method="post">
                         @csrf
                         @method('patch')
@@ -43,6 +43,15 @@
                                    placeholder="Введите номера телефонов через запятую"
                                    value="{{ !empty(old('phones')) ? old('phones') : $settings->phones }}">
                             @error('phones')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" name="email" id="email"
+                                   placeholder="Введите адрес электронной почты"
+                                   value="{{ !empty(old('email')) ? old('email') : $settings->email }}">
+                            @error('email')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

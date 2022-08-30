@@ -3,25 +3,12 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group(['namespace' => 'App\Http\Controllers\Main'], function () {
+    Route::get('/', 'IndexController')->name('main.index');
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'], function () {
-//    Route::group(['namespace' => 'Main'], function () {
-//        Route::get('/', 'IndexController')->name('admin.main.index');
-//    });
+Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
 
     Route::group(['namespace' => 'Task', 'prefix' => 'tasks'], function () {
         Route::get('/', 'IndexController')->name('admin.tasks.index');
@@ -63,13 +50,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::delete('/{user}', 'DestroyController')->name('admin.users.destroy');
 
         Route::group(['namespace' => 'Car', 'prefix' => '{user}/cars'], function () {
-            Route::get('/', 'IndexController')->name('users.cars.index');
-            Route::get('/create', 'CreateController')->name('users.cars.create');
-            Route::post('/', 'StoreController')->name('users.cars.store');
-            Route::get('/{car}', 'ShowController')->name('users.cars.show');
-            Route::get('/{car}/edit', 'EditController')->name('users.cars.edit');
-            Route::patch('/{car}', 'UpdateController')->name('users.cars.update');
-            Route::delete('/{car}', 'DestroyController')->name('users.cars.destroy');
+            Route::get('/', 'IndexController')->name('admin.users.cars.index');
+            Route::get('/create', 'CreateController')->name('admin.users.cars.create');
+            Route::post('/', 'StoreController')->name('admin.users.cars.store');
+            Route::get('/{car}', 'ShowController')->name('admin.users.cars.show');
+            Route::get('/{car}/edit', 'EditController')->name('admin.users.cars.edit');
+            Route::patch('/{car}', 'UpdateController')->name('admin.users.cars.update');
+            Route::delete('/{car}', 'DestroyController')->name('admin.users.cars.destroy');
         });
     });
 
@@ -95,16 +82,87 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin'],
         Route::get('/{order}/edit', 'EditController')->name('admin.orders.edit');
         Route::patch('/{order}', 'UpdateController')->name('admin.orders.update');
         Route::delete('/{order}', 'DestroyController')->name('admin.orders.destroy');
+        Route::get('/{order}/print', 'PrintController')->name('admin.orders.print');
+
+        Route::group(['namespace' => 'Part', 'prefix' => '{order}/parts'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.parts.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.parts.update');
+        });
+
+        Route::group(['namespace' => 'Car', 'prefix' => '{order}/car'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.car.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.car.update');
+        });
+
+        Route::group(['namespace' => 'Task', 'prefix' => '{order}/tasks'], function () {
+            Route::get('/edit', 'EditController')->name('admin.orders.tasks.edit');
+            Route::patch('/', 'UpdateController')->name('admin.orders.tasks.update');
+        });
+
+        Route::group(['namespace' => 'Note', 'prefix' => '{order}/note'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.note.update');
+        });
+
+        Route::group(['namespace' => 'State', 'prefix' => '{order}/state'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.state.update');
+        });
+
+        Route::group(['namespace' => 'Payment', 'prefix' => '{order}/payment'], function () {
+            Route::patch('/', 'UpdateController')->name('admin.orders.payment.update');
+        });
     });
 
     Route::group(['namespace' => 'Schedule', 'prefix' => 'schedules'], function () {
+        Route::get('/', 'IndexController')->name('admin.schedules.index');
         Route::get('/create/{order}', 'CreateController')->name('admin.schedules.create');
         Route::post('/', 'StoreController')->name('admin.schedules.store');
-//        Route::get('/', 'ShowController')->name('admin.schedules.show');
         Route::get('/edit/{order}', 'EditController')->name('admin.schedules.edit');
         Route::patch('/{order}', 'UpdateController')->name('admin.schedules.update');
     });
 });
 
-Auth::routes();
+Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', 'ShowController')->name('user.show');
+    Route::get('/edit', 'EditController')->name('user.edit');
+    Route::patch('/', 'UpdateController')->name('user.update');
+
+    Route::group(['namespace' => 'Password', 'prefix' => '/password'], function () {
+        Route::get('/', 'EditController')->name('user.password.edit');
+        Route::patch('/', 'UpdateController')->name('user.password.update');
+    });
+
+    Route::group(['namespace' => 'Car', 'prefix' => 'cars'], function () {
+        Route::get('/', 'IndexController')->name('user.cars.index');
+        Route::get('/create', 'CreateController')->name('user.cars.create');
+        Route::post('/', 'StoreController')->name('user.cars.store');
+        Route::get('/{car}', 'ShowController')->name('user.cars.show');
+        Route::get('/{car}/edit', 'EditController')->name('user.cars.edit');
+        Route::patch('/{car}', 'UpdateController')->name('user.cars.update');
+        Route::delete('/{car}', 'DestroyController')->name('user.cars.destroy');
+    });
+
+    Route::group(['namespace' => 'Order', 'prefix' => 'orders'], function () {
+        Route::get('/', 'IndexController')->name('user.orders.index');
+        Route::get('/create', 'CreateController')->name('user.orders.create');
+        Route::post('/', 'StoreController')->name('user.orders.store');
+        Route::get('/{order}', 'ShowController')->name('user.orders.show');
+        Route::get('/{order}/edit', 'EditController')->name('user.orders.edit');
+        Route::patch('/{order}', 'UpdateController')->name('user.orders.update');
+        Route::get('/{order}/cancel', 'CancelController')->name('user.orders.cancel');
+
+        Route::group(['namespace' => 'Feedback', 'prefix' => '{order}/feedback'], function () {
+            Route::post('/', 'StoreController')->name('user.orders.feedbacks.store');
+        });
+    });
+
+    Route::group(['namespace' => 'Schedule', 'prefix' => 'schedules'], function () {
+        Route::get('/create/{order}', 'CreateController')->name('user.schedules.create');
+        Route::post('/', 'StoreController')->name('user.schedules.store');
+        Route::get('/edit/{order}', 'EditController')->name('user.schedules.edit');
+        Route::patch('/{order}', 'UpdateController')->name('user.schedules.update');
+    });
+
+});
+
+Auth::routes(['verify' => true]);
 

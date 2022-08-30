@@ -32,6 +32,7 @@ class UpdateRequest extends FormRequest
             'company_name' => 'required|string',
             'address' => 'present',
             'phones' => 'present',
+            'email' => 'email|nullable',
             'work_days' => 'required|array',
             'work_days.*'=>'integer|in:' . $days,
             'schedule_start' => '',
@@ -43,6 +44,7 @@ class UpdateRequest extends FormRequest
     public function messages()
     {
         return [
+            'email.email' => 'Некорректный адрес электронной почты',
             'company_name.required' => 'Необходимо указать название организации',
             'work_days.required' => 'Необходимо выбрать рабочие дни',
             'schedule_start.required' => 'Необходимо выбрать время начала рабочего дня',

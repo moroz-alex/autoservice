@@ -14,9 +14,12 @@ class Task extends Model
     protected $table = 'tasks';
     protected $guarded = false;
 
+    protected $with = ['category'];
+
     const TIME_INTERVALS = [
         '15 минут' => 15,
         '30 минут' => 30,
+        '45 минут' => 45,
         '1 час' => 60,
         '1.5 часа' => 90,
         '2 часа' => 120,
@@ -34,5 +37,10 @@ class Task extends Model
 
     public function category() {
         return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_tasks', 'task_id', 'order_id');
     }
 }

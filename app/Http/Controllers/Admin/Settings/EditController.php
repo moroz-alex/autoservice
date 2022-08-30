@@ -9,6 +9,8 @@ class EditController extends Controller
 {
     public function __invoke()
     {
+        $this->authorize('view', auth()->user());
+
         $settings = Settings::first();
         $settings->work_days = explode(',', $settings->work_days);
         $days = Settings::getDays();

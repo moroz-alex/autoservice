@@ -13,7 +13,8 @@ class UpdateController extends Controller
     public function __invoke(UpdateRequest $request, User $user, Car $car)
     {
         $data = $request->validated();
+        $data['vin'] = strtoupper($data['vin']);
         $car->update($data);
-        return  redirect()->route('users.cars.index', $user->id);
+        return  redirect()->route('admin.users.cars.index', $user->id);
     }
 }

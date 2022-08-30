@@ -1,10 +1,12 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Добавление нового пользователя')
-@section('header', 'Добавить нового пользователя')
-@section('breadcrumb', 'Добавление пользователя')
+@section('title', 'МойАвтосервис : Добавление нового ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('header', 'Добавить нового ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('breadcrumb', 'Добавление ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Пользователи</a></li>
+    <li class="breadcrumb-item"><a
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
+    </li>
 @endsection
 
 @section('scriptTop')
@@ -40,20 +42,11 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" id="email"
                                    placeholder="Введите емейл пользователя"
                                    value="{{ old('email') }}">
                             @error('email')
-                            <div class="text-danger">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Пароль <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="password" id="password"
-                                   placeholder="Придумайте пароль"
-                                   value="{{ old('password') }}">
-                            @error('password')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -66,20 +59,26 @@
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                             <script>
-                                $(document).ready(function() {
+                                $(document).ready(function () {
                                     $("#phone").mask("+38 (999) 999-99-99");
                                 });
                             </script>
                         </div>
                         <div class="mb-3">
-                            <label for="role">Роль <span class="text-danger">*</span></label>
-                            <select class="form-select form-control" id="role" name="role">
-                                @foreach($userRoles as $id => $role)
-                                    <option value="{{ $id }}"
-                                        {{ $id === old('role') ? ' selected' : '' }}
-                                    >{{ $role }}</option>
-                                @endforeach
-                            </select>
+                            @if(auth()->user()->role == 1)
+                                <input type="hidden" name="role" value="0">
+                            @else
+                                <label for="role">Роль <span class="text-danger">*</span></label>
+                                <select class="form-select form-control" id="role" name="role">
+                                    @foreach($userRoles as $id => $role)
+                                        <option value="{{ $id }}"
+                                        @if(!empty(old('role')))
+                                            {{ $id == old('role') ? ' selected' : '' }}
+                                        @endif
+                                        >{{ $role }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                             @error('role')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror

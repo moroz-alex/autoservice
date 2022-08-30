@@ -4,7 +4,7 @@
 @section('header', 'Добавить заказ в расписание')
 @section('breadcrumb', 'Добавление заказа в расписание')
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="#">Расписание</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.schedules.index') }}">Расписание</a></li>
 @endsection
 
 @section('scriptTop')
@@ -22,7 +22,6 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
-
             <div class="row">
                 <div class="col-12 mb-5">
                     <form action="{{ route('admin.schedules.store') }}" method="post" name="schedules">
@@ -31,7 +30,7 @@
                             <label for="schedules" class="form-label">Выберите дату, свободное время и мастера<span
                                     class="text-danger">*</span></label>
                             <div class="fs-4 fw-bold mb-2">
-                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y') }}" readonly>
+                                Дата: <input type="text" id="pageInfoDate" name="date" value="{{ date('d.m.Y', array_key_first($timeSlots)) }}" readonly>
                             </div>
                             <table class="table compact hover cell-border" id="schedules">
                                 <thead>
@@ -39,7 +38,7 @@
                                     <th scope="col" style="width: 5em" hidden>Дата</th>
                                     <th scope="col" style="width: 5em">Время</th>
                                     @foreach($mastersList as $master)
-                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}</th>
+                                        <th scope="col">{{ $master->last_name . ' ' . $master->first_name }}<br><span class="text-black-50 fw-normal">{{ $master->function }}</span></th>
                                     @endforeach
                                 </tr>
                                 </thead>
@@ -53,10 +52,10 @@
                                                 <td class="table-secondary text-muted protected">{{ date('H:i', $time) }}
                                                     Недоступно
                                                 </td>
-                                            @elseif($state == 'used')
-                                                <td class="table-warning protected">{{ date('H:i', $time) }} Занято</td>
+                                            @elseif($state == 'used' || $state != 'unusable' && $state != 'free')
+                                                <td class="table-info protected">{{ date('H:i', $time) }} Занято</td>
                                             @else
-                                                <td><span hidden>{{ $master }}</span></td>
+                                                <td {!! isset($unsafeTimeSlots[$time]) && $unsafeTimeSlots[$time] == 'unsafe' ? "class='table-warning'>Пересечение" : ">" !!}<span hidden>{{ $master }}</span></td>
                                             @endif
                                         @endforeach
                                     </tr>
@@ -132,13 +131,7 @@
 
                 table
                     .on('select', function () {
-                        master = table.cell({selected: true}).data();
-                        master = master.match(/>(\d+)</);
-                        if (master !== null) master = master[1];
-                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
-
-                        $("input[name='start_time']").val(date);
-                        $("input[name='master_id']").val(master);
+                        getTableData();
                     });
 
                 $('#schedules_filter').hide();
@@ -151,8 +144,18 @@
                     table.search(searchDate).draw();
                 });
 
-            });
+                function getTableData() {
+                    master = table.cell({selected: true}).data();
+                    if (master) {
+                        master = master.match(/>(\d+)</);
+                        master = master[1];
+                        date = table.cell(table.cell({selected: true}).index().row, 0).data();
 
+                        $("input[name='start_time']").val(date);
+                        $("input[name='master_id']").val(master);
+                    }
+                }
+            });
         </script>
     </main>
     @include('admin.includes.footer')

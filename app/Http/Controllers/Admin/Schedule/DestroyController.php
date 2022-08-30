@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Category;
+namespace App\Http\Controllers\Admin\Schedule;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Schedule;
 
 class DestroyController extends Controller
 {
-    public function __invoke(Category $category)
+    public function __invoke(Schedule $schedule)
     {
-        $category->delete();
-        return redirect()->route('admin.categories.index');
+        $schedule->delete();
+        return redirect()->route('admin.orders.index');
     }
 }

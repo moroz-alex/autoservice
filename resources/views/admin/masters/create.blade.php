@@ -20,7 +20,7 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
 
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-12">
                     <form action="{{ route('admin.masters.store') }}" method="post" name="masters">
                         @csrf
@@ -39,6 +39,25 @@
                                    placeholder="Введите фамилию мастера"
                                    value="{{ old('last_name') }}">
                             @error('last_name')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="function" class="form-label">Должность</label>
+                            <input type="text" class="form-control" name="function" id="function"
+                                   placeholder="Введите должность мастера"
+                                   value="{{ old('function') }}">
+                            @error('function')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-check form-switch mt-2 mb-5">
+                            <input type="hidden" name="is_available" value="0">
+                            <input type="checkbox" role="switch" class="form-check-input" checked id="is_available"
+                                   name="is_available"
+                                   value="1"/>
+                            <label for="is_available" class="form-check-label">Мастер доступен</label>
+                            @error('is_available')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>
@@ -110,7 +129,7 @@
                     ]
                 });
 
-                table.rows( '.selected' ).select();
+                table.rows('.selected').select();
 
                 table
                     .on('select', function (e, dt, type, indexes) {
@@ -122,7 +141,7 @@
             });
             $("form").submit(function () {
                 var res = "";
-                taskIds.forEach(function(item, i, taskIds) {
+                taskIds.forEach(function (item, i, taskIds) {
                     res = res + "<input type='hidden' name='task_ids[" + i + "]' value='" + item + "'>";
                 });
                 document.getElementById('taskId').innerHTML = res;

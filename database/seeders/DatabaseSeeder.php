@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Settings;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\State;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,5 +16,23 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Settings::factory(1)->create();
+        State::insert(
+            [
+                [
+                    'title' => 'Новый',
+                ],
+                [
+                    'title' => 'Принят',
+                ],
+                [
+                    'title' => 'Выполнен',
+                ],
+                [
+                    'title' => 'Отменен',
+                ],
+                [
+                    'title' => 'Черновик',
+                ],
+            ]);
     }
 }

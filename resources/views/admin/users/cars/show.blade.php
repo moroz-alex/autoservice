@@ -4,10 +4,10 @@
 @section('header', 'Автомобиль ' . $car->model->title)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
     </li>
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $car->user->id) }}">{{ 'Пользователь ' . $car->user->last_name . ' ' . $car->user->name }}</a>
+            href="{{ route('admin.users.show', $car->user->id) }}">{{ ( auth()->user()->role == 2 ? 'Пользователь ' : 'Клиент ') . $car->user->last_name . ' ' . $car->user->name }}</a>
     </li>
 @endsection
 @section('breadcrumb', $car->model->title)
@@ -16,6 +16,13 @@
     <main>
         <div class="container-fluid px-4">
             @include('admin.includes.header')
+
+            @if(!empty(session()->get('error')))
+                <div class="alert alert-danger mt-3" role="alert">
+                    {{ session()->get('error') }}
+                </div>
+            @endif
+
             <table class="table">
                 <tbody>
                 <tr>
@@ -50,16 +57,23 @@
                 </tbody>
             </table>
             <div class="col-12">
-                <a href="{{ route('users.cars.index', $car->user->id) }}" class="btn btn-secondary me-2">Назад</a>
-                <a href="#" class="btn btn-warning me-2"><i
+                <a href="{{ route('admin.users.cars.index', $car->user->id) }}" class="btn btn-secondary me-2">Назад</a>
+                <a href="{{ route('admin.users.cars.edit',['user' => $car->user->id, 'car' => $car->id]) }}"
+                   class="btn btn-warning me-2"><i
                         class="fa-solid fa-pen"></i></a>
-                <form action="#" method="post" style="display:inline">
-                    @csrf
-                    @method('delete')
-                    <button class="btn btn-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>
+                @can('view', auth()->user())
+                    <form
+                        action="{{ route('admin.users.cars.destroy', ['user' => $car->user->id, 'car' => $car->id]) }}"
+                        method="post" class="me-2" style="display:inline">
+                        @csrf
+                        @method('delete')
+                        <button class="btn btn-danger">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>
+                @endcan
+                <a href="{{ route('admin.orders.create', ['carId' => $car->id]) }}" class="btn btn-primary">Добавить
+                    заказ</a>
             </div>
         </div>
     </main>

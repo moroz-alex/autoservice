@@ -1,10 +1,10 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Редактирование пользователя ' . $user->name . ' ' . $user->last_name)
-@section('header', 'Редактирование пользователя')
-@section('breadcrumb', 'Редактирование пользователя ' . $user->name . ' ' . $user->last_name)
+@section('title', 'МойАвтосервис : Редактирование ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->name . ' ' . $user->last_name)
+@section('header', 'Редактирование ' . (auth()->user()->role == 2 ? 'пользователя' : 'клиента'))
+@section('breadcrumb', 'Редактирование ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->name . ' ' . $user->last_name)
 @section('breadcrumb_subcat')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Пользователи</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a></li>
 @endsection
 
 @section('scriptTop')
@@ -40,7 +40,7 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <label for="email" class="form-label">Email</label>
                             <input type="email" class="form-control" name="email" id="email"
                                    placeholder="Введите емейл пользователя"
                                    value="{{ !empty(old('email')) ? old('email') : $user->email }}">
@@ -63,18 +63,22 @@
                             </script>
                         </div>
                         <div class="mb-3">
-                            <label for="role">Роль <span class="text-danger">*</span></label>
-                            <select class="form-select form-control" id="role" name="role">
-                                @foreach($userRoles as $id => $role)
-                                    <option value="{{ $id }}"
+                            @if(auth()->user()->role == 1)
+                                <input type="hidden" name="role" value="0">
+                            @else
+                                <label for="role">Роль <span class="text-danger">*</span></label>
+                                <select class="form-select form-control" id="role" name="role">
+                                    @foreach($userRoles as $id => $role)
+                                        <option value="{{ $id }}"
                                         @if(!empty(old('role')))
-                                        {{ $id == old('role') ? ' selected' : '' }}
-                                        @else
-                                        {{ $id == $user->role ? ' selected' : '' }}
-                                        @endif
-                                    >{{ $role }}</option>
-                                @endforeach
-                            </select>
+                                            {{ $id == old('role') ? ' selected' : '' }}
+                                            @else
+                                            {{ $id == $user->role ? ' selected' : '' }}
+                                            @endif
+                                        >{{ $role }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                             @error('role')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
@@ -85,8 +89,6 @@
                     </form>
                 </div>
             </div>
-            <!-- /.row -->
-
         </div>
     </main>
     @include('admin.includes.footer')

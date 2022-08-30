@@ -14,11 +14,18 @@ class Car extends Model
     protected $table = 'cars';
     protected $guarded = false;
 
+    protected $with = ['model'];
+
     public function model() {
         return $this->belongsTo(CarModel::class, 'model_id', 'id');
     }
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'car_id', 'id');
     }
 }

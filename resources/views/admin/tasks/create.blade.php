@@ -17,6 +17,14 @@
                     <form action="{{ route('admin.tasks.store') }}" method="post">
                         @csrf
                         <div class="mb-3">
+                            <label for="code" class="form-label">Код работы</label>
+                            <input type="text" class="form-control" name="code" id="code" placeholder="Введите код работы"
+                                   value="{{ old('code') }}" maxlength="20">
+                            @error('code')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
                             <label for="title" class="form-label">Название работы <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="title" id="title" placeholder="Введите название работы"
                                    value="{{ old('title') }}">
@@ -55,6 +63,16 @@
                             <input type="text" class="form-control" name="price" id="price" placeholder="Введите стоимость нормочаса в гривнах"
                                    value="{{ old('price') }}">
                             @error('price')
+                            <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-5">
+                            <div class="form-check form-switch mt-2">
+                                <input type="hidden" name="is_available_to_customer" value="0">
+                                <input type="checkbox" role="switch" class="form-check-input" id="is_available_to_customer" name="is_available_to_customer" value="1"/>
+                                <label for="is_available_to_customer" class="form-check-label">Доступно для самостоятельного заказа клиентом</label>
+                            </div>
+                            @error('is_available_to_customer')
                             <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

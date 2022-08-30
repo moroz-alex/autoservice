@@ -1,14 +1,14 @@
 @extends('admin.layouts.main')
 
-@section('title', 'МойАвтосервис : Добавление автомобиля пользователя')
-@section('header', 'Добавить авто пользователя ' . $user->last_name . ' ' . $user->name)
-@section('breadcrumb', 'Добавление авто пользователя')
+@section('title', 'МойАвтосервис : Добавление автомобиля ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
+@section('header', 'Добавить авто ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента ') . $user->last_name . ' ' . $user->name)
+@section('breadcrumb', 'Добавление авто ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
     </li>
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $user->id) }}">{{ 'Пользователь ' . $user->last_name . ' ' . $user->name }}</a>
+            href="{{ route('admin.users.show', $user->id) }}">{{ ( auth()->user()->role == 2 ? 'Пользователь ' : 'Клиент ') . $user->last_name . ' ' . $user->name }}</a>
     </li>
 @endsection
 
@@ -25,9 +25,9 @@
         <div class="container-fluid px-4">
             @include('admin.includes.header')
 
-            <div class="row">
+            <div class="row mb-5">
                 <div class="col-12">
-                    <form action="{{ route('users.cars.store', $user->id) }}" method="post">
+                    <form action="{{ route('admin.users.cars.store', $user->id) }}" method="post">
                         @csrf
                         <div class="mb-3">
                             <label for="models" class="form-label">Выберите модель <span class="text-danger">*</span></label>
@@ -95,7 +95,6 @@
                         </div>
 
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-
                         <button type="submit" class="btn btn-primary">Добавить</button>
                         <a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>

@@ -46,7 +46,6 @@
                 </tbody>
             </table>
             {{ $brands->links() }}
-
         </div>
     </main>
     @include('admin.includes.footer')

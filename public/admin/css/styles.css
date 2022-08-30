@@ -11699,3 +11699,56 @@ body {
   font-size: 0.75rem;
   border-radius: 0.25rem !important;
 }
+
+.state {
+    padding: 6px 12px 9px;
+    font-weight: normal;
+}
+
+.state-1 {
+    background-color: orange;
+}
+
+.state-2 {
+    background-color: steelblue;
+}
+
+.state-3 {
+    background-color: seagreen;
+}
+
+.state-4 {
+    background-color: black;
+}
+
+.state-5 {
+    background-color: lightgrey;
+}
+
+#orders {
+    cursor: pointer;
+}
+
+.star {
+    font-size: 2rem;
+    color: #ffc107;
+    text-shadow: 0 0 1px #333;
+    position: relative;
+    top: 3px;
+}
+
+.star-empty {
+    font-size: 2rem;
+    color: #888;
+    text-shadow: none;
+    position: relative;
+    top: 3px;
+}
+
+.rating-header {
+    margin-top: -14px;
+}
+
+#schedules td {
+    text-align: center;
+}

@@ -1,14 +1,14 @@
 @extends('admin.layouts.main')
 
 @section('title', 'МойАвтосервис : Редактирование автомобиля ' . $car->model->title)
-@section('header', 'Редактирование автомобиля пользователя')
+@section('header', 'Редактирование автомобиля ' . ( auth()->user()->role == 2 ? 'пользователя ' : 'клиента '))
 @section('breadcrumb', 'Редактирование авто ' . $car->model->brand->title . ' ' . $car->model->title)
 @section('breadcrumb_subcat')
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.index') }}">{{ 'Пользователи' }}</a>
+            href="{{ route('admin.users.index') }}">{{ auth()->user()->role == 2 ? 'Пользователи' : 'Клиенты' }}</a>
     </li>
     <li class="breadcrumb-item"><a
-            href="{{ route('admin.users.show', $user->id) }}">{{ 'Пользователь ' . $user->last_name . ' ' . $user->name }}</a>
+            href="{{ route('admin.users.show', $car->user->id) }}">{{ ( auth()->user()->role == 2 ? 'Пользователь ' : 'Клиент ') . $car->user->last_name . ' ' . $car->user->name }}</a>
     </li>
 @endsection
 
@@ -17,6 +17,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.0/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/select/1.4.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.7.0/js/dataTables.keyTable.min.js"></script>
     <script src="{{ asset('/js/jquery.maskedinput.min.js') }}"></script>
 @endsection
 
@@ -26,8 +27,8 @@
             @include('admin.includes.header')
 
             <div class="row">
-                <div class="col-12">
-                    <form action="{{ route('users.cars.update',['user' => $user->id, 'car' => $car->id]) }}" method="post">
+                <div class="col-12 mb-5">
+                    <form action="{{ route('admin.users.cars.update',['user' => $user->id, 'car' => $car->id]) }}" method="post">
                         @csrf
                         @method('patch')
                         <div class="mb-3">
@@ -98,7 +99,7 @@
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
 
                         <button type="submit" class="btn btn-primary">Обновить</button>
-                        <a href="{{ route('users.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
+                        <a href="{{ route('admin.users.cars.index', $user->id) }}" class="btn btn-secondary ms-2">Назад</a>
                     </form>
 
                 </div>
@@ -114,7 +115,7 @@
                     select: {
                         style: 'single'
                     },
-
+                    stateSave: true,
                     language: {
                         lengthMenu: 'Показать _MENU_ строк',
                         zeroRecords: 'Моделей не найдено',
@@ -130,9 +131,12 @@
                             rows: ""
                         },
                     },
+                    keys: true,
                 });
 
-                table.rows( '.selected' ).select();
+                table.row( '.selected' ).select();
+                var selectedCell = table.row( '.selected' ).index();
+                table.cell( selectedCell, 0 ).focus();
 
                 table
                     .on('select', function (e, dt, type, indexes) {

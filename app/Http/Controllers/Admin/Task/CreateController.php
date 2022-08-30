@@ -10,6 +10,8 @@ class CreateController extends Controller
 {
     public function __invoke()
     {
+        $this->authorize('view', auth()->user());
+
         $categories = Category::all();
         $timeIntervals = Task::getTimeIntervals();
         return  view('admin.tasks.create', compact('categories', 'timeIntervals'));

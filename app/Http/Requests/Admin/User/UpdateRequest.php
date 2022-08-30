@@ -31,8 +31,8 @@ class UpdateRequest extends FormRequest
             'id' => 'required|integer|exists:users,id',
             'name' => 'required|string',
             'last_name' => 'string|nullable',
-            'email' => 'required|email|unique:users,email,' . $this->id,
-            'phone' => 'required|string',
+            'email' => 'nullable|email|unique:users,email,' . $this->id,
+            'phone' => 'required|string|unique:users,phone',
             'role' => 'required|in:' . $roles,
         ];
     }
@@ -41,10 +41,10 @@ class UpdateRequest extends FormRequest
     {
         return [
             'name.required' => 'Необходимо указать имя пользователя',
-            'email.required' => 'Необходимо указать емейл',
             'email.email' => 'Указан некорректный емейл',
             'email.unique' => 'Пользователь с данным емейл-ом уже существует',
             'phone.required' => 'Необходимо указать номер телефона',
+            'phone.unique' => 'Пользователь с данным телефоном уже существует',
             'role.required' => 'Необходимо выбрать роль пользователя',
             'role.in' => 'Недопустимый идентификатор роли пользователя',
         ];

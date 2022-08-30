@@ -8,6 +8,8 @@ class CreateController extends Controller
 {
     public function __invoke()
     {
+        $this->authorize('view', auth()->user());
+
         return  view('admin.categories.create');
     }
 
