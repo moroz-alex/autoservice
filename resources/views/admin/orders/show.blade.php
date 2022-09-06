@@ -46,7 +46,7 @@
                         </tr>
                         <tr>
                             <th scope="col">Менеджер</th>
-                            <td>{{ isset($order->car) && isset($order->car->user) ? $order->user->name  . ' ' . $order->user->last_name : ''}}</td>
+                            <td>{{ isset($order->user) ? $order->user->name  . ' ' . $order->user->last_name : ''}}</td>
                         </tr>
                         <tr>
                             <th scope="col">Мастер</th>
@@ -70,7 +70,7 @@
                             <td>{{ $order->price }} грн.</td>
                         </tr>
                         <tr>
-                            <th scope="col">Заказ оплачен</th>
+                            <th scope="col">Оплата заказа</th>
                             <td>{!! $order->is_paid ? "<span class='badge bg-success state me-4'>Оплачен</span>" : "<span class='badge bg-secondary state me-4'>Не оплачен</span>" !!}
                                 <form id="is_paid_form" style="display:inline"
                                       action="{{ route('admin.orders.payment.update', $order->id) }}" method="post"

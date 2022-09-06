@@ -6,6 +6,7 @@
 <div class="d-none d-md-inline-block ms-auto ">
 </div>
 <!-- Navbar-->
+<a href="{{ route('main.help') }}" class="nav-link me-5 text-white-50"><i class="fa-solid fa-circle-question"></i> Руководство</a>
 <span class="text-white-50">{{ auth()->user()->name . ' ' . auth()->user()->last_name }}</span>
 <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
     <li class="nav-item dropdown">
@@ -24,3 +25,4 @@
         </ul>
     </li>
 </ul>
+

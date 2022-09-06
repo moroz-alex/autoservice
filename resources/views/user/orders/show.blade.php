@@ -26,7 +26,7 @@
                         </tr>
                         <tr>
                             <th scope="col">Менеджер</th>
-                            <td>{{ $order->user->name  . ' ' . $order->user->last_name}}</td>
+                            <td>{{ isset($order->user) ? $order->user->name  . ' ' . $order->user->last_name : ''}}</td>
                         </tr>
                         <tr>
                             <th scope="col">Мастер</th>
@@ -127,7 +127,7 @@
                 </div>
             </div>
             <h3>Перечень работ</h3>
-            <table class="table">
+            <table class="table mb-5">
                 <thead>
                 <tr>
                     <th scope="col" style="width: 12em">Код</th>

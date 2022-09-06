@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Master;
-use App\Models\Order;
 use App\Models\Schedule;
 use App\Models\Settings;
 
@@ -152,7 +151,8 @@ class ScheduleService
 
         $orderDuration = $order->duration ?? $this->timeSlotSize;
         $orderTimeSlotsNumber = $orderDuration / $this->timeSlotSize;
-        $timeNow = $startTime ? strtotime($startTime) : strtotime('now');
+        $timeNow = $startTime ? strtotime($startTime) : strtotime('-5 minutes');
+
         foreach ($mastersList as $master) {
             $timeSlotsKeys = array_keys($timeSlots);
             $timeSlotsCount = count($timeSlotsKeys);
@@ -194,7 +194,16 @@ class ScheduleService
         $master = $master ?? $order->schedule->master;
         $mastersList[] = $master;
 
-        $scheduleTasks = Schedule::where('start_time', '<=', $orderDate . ' ' . $this->settings->schedule_end)
+        $scheduleTasks = Schedule::select('*')
+            ->leftjoin('order_states', 'schedules.order_id', '=', 'order_states.order_id')
+            ->where('order_states.created_at', function ($query) {
+                $query->from('order_states')
+                    ->whereRaw('`order_states`.`order_id` = `schedules`.`order_id`')
+                    ->selectRaw('max(`created_at`)')
+                    ->orWhereNull('order_states.state_id');
+            })
+            ->whereNotIn('order_states.state_id', [4, 5])
+            ->where('start_time', '<=', $orderDate . ' ' . $this->settings->schedule_end)
             ->where('start_time', '>=', $orderDate . ' ' . $this->settings->schedule_start)
             ->where('master_id', $master->id)
             ->get();
@@ -216,7 +225,7 @@ class ScheduleService
     public function getTimeSlotsForClient($order, $mastersList)
     {
         $startDate = strtotime('now') < strtotime($this->settings->schedule_end) ? date('Y-m-d') : date('Y-m-d', strtotime('+1 day'));
-        $timeSlots = $this->getTimeSlots($order, $mastersList, $startDate);
+        $timeSlots = $this->getTimeSlots($order, $mastersList, $startDate, null, date('Y-m-d H:i:s', strtotime('+30 minutes')));
         $carScheduleTasks = $this->getCarScheduleTasks($order);
 
         foreach ($timeSlots as $time => $masters) {
@@ -263,11 +272,13 @@ class ScheduleService
             })
             ->whereNotIn('order_states.state_id', [4, 5])
             ->where('start_time', '>=', date('Y-m-d') . ' ' . $this->settings->schedule_start)
+            ->whereNot('schedules.order_id', $order->id)
             ->get();
     }
 
     public function getUnsafeTimeSlots($order)
     {
+        $unsafeTimeSlots = [];
         $carScheduleTasks = $this->getCarScheduleTasks($order);
         foreach ($carScheduleTasks as $task) {
             $taskStart = strtotime($task->start_time);

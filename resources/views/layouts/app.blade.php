@@ -13,6 +13,8 @@
     <link href="{{ asset('/css/styles.css') }}" rel="stylesheet" />
     <link type="image/png" rel="icon" href="{{ asset('/favicon.png') }}">
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('/js/jquery.maskedinput.min.js') }}"></script>
 </head>
 <body>
     <div id="app" class="h-100 bg-light">
@@ -33,7 +35,7 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
-                        <a href="#" class="nav-link me-5">Документация</a>
+                        <a href="{{ route('main.help') }}" class="nav-link me-5"><i class="fa-solid fa-circle-question"></i> Руководство</a>
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
@@ -54,6 +56,10 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ Auth::user()->role == 0 ? route('user.orders.index') : route('admin.orders.index') }}">
+                                        Кабинет
+                                    </a>
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">

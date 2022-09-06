@@ -14,7 +14,7 @@ class StoreController extends Controller
         $data = $request->validated();
         $order = OrderService::store($data, 2);
         OrderService::updateOrderParts($order, $data);
-        $order->user->notify(new NewOrderUserNotification($order->id));
+        $order->car->user->notify(new NewOrderUserNotification($order->id));
 
         $request->session()->forget('carId');
 

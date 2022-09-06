@@ -39,7 +39,6 @@ class ImportCarModelsJob implements ShouldQueue
     {
         $models = $this->service->importCarData('auto/categories/1/marks/' . $this->brand->value . '/models/');
         foreach ($models as $model) {
-            echo $model->name . '<br>';
             CarModel::firstOrCreate(
                 [
                     'source_id' => $model->value,

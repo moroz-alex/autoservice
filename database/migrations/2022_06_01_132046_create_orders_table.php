@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('duration');
             $table->unsignedInteger('price');
             $table->boolean('is_confirmed');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->boolean('is_done');
             $table->boolean('is_paid');
             $table->timestamps();

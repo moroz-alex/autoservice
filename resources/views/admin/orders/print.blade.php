@@ -71,7 +71,7 @@
             display: inline-block;
             font-size: 24px;
             margin: 0 5px;
-            position: fixed;
+            position: absolute;
             top: 6px;
         }
 
@@ -83,6 +83,7 @@
 
         .print {
             float: right;
+            margin-bottom: 100px;
         }
 
         .btn-back {
