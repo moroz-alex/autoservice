@@ -13,6 +13,7 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
 
     protected function buildMailMessage($url)
     {
+        $url = str_replace('http:', 'https:', $url);
         return (new MailMessage)
             ->subject('Подтвердите Email адрес')
             ->greeting('Здравствуйте!')
