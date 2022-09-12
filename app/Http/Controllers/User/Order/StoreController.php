@@ -20,7 +20,7 @@ class StoreController extends Controller
         $order = OrderService::store($data, 1);
         $settings = Settings::first();
         $settings->notify(new NewOrderAdminNotification($order->id));
-        $order->user->notify(new NewOrderUserNotification($order->id));
+        $order->car->user->notify(new NewOrderUserNotification($order->id));
 
         return redirect()->route('user.schedules.create', compact('order'));
     }

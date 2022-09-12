@@ -11803,3 +11803,31 @@ body {
 .main-logo {
     color: #495057;
 }
+
+.help {
+    font-size: 1.1rem;
+}
+
+.help h2, h3 {
+    margin-top: -2rem;
+    padding-top: 3.5rem;
+}
+
+.help h4 {
+    margin-top: -2rem;
+    padding-top: 3.5rem;
+    color: darkblue;
+}
+
+.help h5 {
+    color: slategray;
+}
+
+.help > .contents > ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.help > .contents li {
+    list-style-type: none;
+}

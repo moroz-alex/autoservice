@@ -9,6 +9,8 @@ use App\Models\OrderTask;
 use App\Models\Part;
 use App\Models\Schedule;
 use App\Models\Task;
+use App\Notifications\CancelledOrderUserNotification;
+use App\Notifications\ConfirmedOrderUserNotification;
 use Illuminate\Support\Facades\DB;
 
 class OrderService
@@ -57,7 +59,6 @@ class OrderService
                 ]
             ];
             $order->states()->attach($data['state']);
-
 
             DB::commit();
 
@@ -124,7 +125,7 @@ class OrderService
             'car_id' => $data['car_id'],
             'duration' => $data['orderDuration'],
             'price' => $data['orderPrice'],
-            'user_id' => auth()->user()->id,
+            'user_id' => auth()->user()->role == 0 ? null : auth()->user()->id,
             'is_paid' => $data['is_paid'] ?? '0',
             'note' => $data['note'] ?? '',
         ];
@@ -245,6 +246,7 @@ class OrderService
             DB::beginTransaction();
 
             if (isset($data['state'])) {
+                $state = $data['state'];
                 $data['state'] = [
                     [
                         'state_id' => $data['state'],
@@ -252,6 +254,15 @@ class OrderService
                     ]
                 ];
                 $order->states()->attach($data['state']);
+                if ($state == 2) {
+                    $orderData = [
+                        'user_id' => auth()->user()->id,
+                    ];
+                    $order->update($orderData);
+                }
+
+                $this->updateOrderStateScheduleError($order, $state);
+                $this->sendOrderStateNotification($order, $state);
             }
 
             DB::commit();
@@ -261,6 +272,38 @@ class OrderService
         } catch (\Exception $exception) {
             DB::rollBack();
             abort(500, 'Ошибка обновления статуса заказа');
+        }
+    }
+
+    private function sendOrderStateNotification($order, $state)
+    {
+        if ($state == 4) {
+            $order->car->user->notify(new CancelledOrderUserNotification($order->id));
+        }
+
+        if ($state == 2) {
+            $order->car->user->notify(new ConfirmedOrderUserNotification($order->id, $order->schedule->start_time ?? null));
+        }
+    }
+
+    private function updateOrderStateScheduleError($order, $state)
+    {
+        if ($state == 4 || $state == 5) {
+            if (isset($order->schedule)) {
+                $scheduleData['has_error'] = false;
+                $order->schedule->update($scheduleData);
+            }
+        }
+
+        if ($state == 1 || $state == 2) {
+            if (isset($order->schedule)) {
+                if (ScheduleService::checkOrderScheduleFit($order, $order->schedule->start_time, $order->schedule->master) == 0) {
+                    $scheduleData['has_error'] = false;
+                } else {
+                    $scheduleData['has_error'] = true;
+                }
+                $order->schedule->update($scheduleData);
+            }
         }
     }
 

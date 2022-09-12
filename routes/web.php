@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'App\Http\Controllers\Main'], function () {
     Route::get('/', 'IndexController')->name('main.index');
+    Route::get('/help', 'HelpController')->name('main.help');
+    Route::get('/contacts', 'ContactsController')->name('main.contacts');
 });
 
 Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 'middleware' => ['auth', 'admin']], function () {
@@ -121,7 +123,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin', 'prefix' => 'admin', 
     });
 });
 
-Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user', 'middleware' => ['auth', 'verified']], function () {
+Route::group(['namespace' => 'App\Http\Controllers\User', 'prefix' => 'user', 'middleware' => ['auth', 'verified', 'user']], function () {
     Route::get('/', 'ShowController')->name('user.show');
     Route::get('/edit', 'EditController')->name('user.edit');
     Route::patch('/', 'UpdateController')->name('user.update');

@@ -53,7 +53,7 @@
                     <tr id="{{ $order->id }}">
                         <td>{{ $order->id }}</td>
                         <td>{{ $order->created_at }}</td>
-                        <td>{{ isset($order->car) && isset($order->car->model) && isset($order->car->model->brand) ? $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year : 'Ошибка!' }}</td>
+                        <td>{{ isset($order->car) && isset($order->car->model) && isset($order->car->model->brand) ? $order->car->model->brand->title . ' ' . $order->car->model->title . ' ' . $order->car->year . ' ' . $order->car->number : 'Ошибка!' }}</td>
                         <td>
                             @foreach($order->tasks->sortBy('category.title') as $task)
                                 <span class="text-black-50">{{ $task->category->title }}: </span>{{ $task->title }} <br>

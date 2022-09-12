@@ -22,7 +22,7 @@ class ConfirmedOrderUserNotification extends Notification implements ShouldQueue
     public function __construct($orderId, $scheduled = null)
     {
         $this->orderId = $orderId;
-        $this->scheduled = $scheduled ?? '-';
+        $this->scheduled = $scheduled ?? 'не назначены';
     }
 
     /**

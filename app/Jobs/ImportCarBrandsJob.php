@@ -45,7 +45,7 @@ class ImportCarBrandsJob implements ShouldQueue
                     'title' => $brand->name,
                 ],
             );
-            echo $brand->name . '<br>';
+
             ImportCarModelsJob::dispatch($this->service, $brand, $newBrand);
         }
     }

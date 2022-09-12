@@ -11,11 +11,7 @@
             <table class="table">
                 <tbody>
                 <tr>
-                    <th scope="col" style="width: 15em">ID</th>
-                    <td>{{ $user->id }}</td>
-                </tr>
-                <tr>
-                    <th scope="col">Имя</th>
+                    <th scope="col" style="width: 15em">Имя</th>
                     <td>{{ $user->name }}</td>
                 </tr>
                 <tr>

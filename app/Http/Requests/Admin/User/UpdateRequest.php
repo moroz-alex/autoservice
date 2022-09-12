@@ -26,13 +26,12 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         $roles = implode(',',array_keys(User::getRoles()));
-
         return [
             'id' => 'required|integer|exists:users,id',
             'name' => 'required|string',
             'last_name' => 'string|nullable',
             'email' => 'nullable|email|unique:users,email,' . $this->id,
-            'phone' => 'required|string|unique:users,phone',
+            'phone' => 'required|string|unique:users,phone,' . $this->id,
             'role' => 'required|in:' . $roles,
         ];
     }
